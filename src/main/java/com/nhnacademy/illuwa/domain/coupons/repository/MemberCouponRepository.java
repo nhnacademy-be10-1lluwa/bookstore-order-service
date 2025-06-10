@@ -1,6 +1,6 @@
-package com.nhnacademy.illuwa.repository;
+package com.nhnacademy.illuwa.domain.coupons.repository;
 
-import com.nhnacademy.illuwa.entity.MemberCoupon;
+import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

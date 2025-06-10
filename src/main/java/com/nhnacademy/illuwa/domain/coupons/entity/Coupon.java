@@ -1,9 +1,8 @@
-package com.nhnacademy.illuwa.entity;
+package com.nhnacademy.illuwa.domain.coupons.entity;
 
-import com.nhnacademy.illuwa.entity.type.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 
@@ -24,13 +23,12 @@ public class Coupon {
     @JoinColumn(name = "policy_id")
     private CouponPolicy policy;
 
-    private String comment;
-
     private LocalDate validFrom;
     private LocalDate validTo;
 
     private CouponType couponType;
 
+    private String comment;
     // 특정 도서에만 적용되는 경우
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "book_id")

@@ -1,7 +1,6 @@
-package com.nhnacademy.illuwa.entity;
+package com.nhnacademy.illuwa.domain.coupons.entity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.web.bind.annotation.BindParam;
 
 import java.time.LocalDate;
 

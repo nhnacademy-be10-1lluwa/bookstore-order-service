@@ -1,0 +1,29 @@
+package com.nhnacademy.illuwa.domain.coupons.dto.coupon;
+
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CouponResponse {
+    private Long id;
+    private String couponName;
+    private String code;
+    private LocalDate validFrom;
+    private LocalDate validTo;
+    private CouponType couponType;
+    private String comment;
+
+    // 도서와 카테고리 연동시 주석해제
+//    private Long bookId;
+//    private Long categoryId;
+
+
+}
