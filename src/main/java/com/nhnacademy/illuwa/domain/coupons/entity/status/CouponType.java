@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.entity.type;
+package com.nhnacademy.illuwa.domain.coupons.entity.status;
 
 public enum CouponType {
     WELCOME,

@@ -1,9 +1,8 @@
-package com.nhnacademy.illuwa.repository;
+package com.nhnacademy.illuwa.domain.coupons.repository;
 
-import com.nhnacademy.illuwa.entity.Coupon;
+import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
