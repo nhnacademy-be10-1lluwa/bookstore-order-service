@@ -1,9 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,13 +10,20 @@ import java.math.BigDecimal;
 
 @Entity
 @Getter
+@Table(
+        name = "order_item",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uq_order_book",
+                columnNames = {"order_id", "book_id"}
+        )
+)
 @NoArgsConstructor
 public class OrderItem {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long orderItemId;
 
-    // 도서 API 사용하여 ID값 가져오기
     private long bookId;
 
     @ManyToOne
@@ -28,10 +33,16 @@ public class OrderItem {
     private int quantity;
 
     @Setter
-    private BigDecimal price; // 항목별 구매가격
+    private BigDecimal price; // 항목별 구매가격 = 도서가격 * 수량
 
     @ManyToOne
     private Packaging packaging;
 
-    // fixme 관계 테이블 확인 후 생성자 코드 작성
+    public OrderItem(long bookId, Order order, int quantity, BigDecimal price, Packaging packaging) {
+        this.bookId = bookId;
+        this.order = order;
+        this.quantity = quantity;
+        this.price = price;
+        this.packaging = packaging;
+    }
 }

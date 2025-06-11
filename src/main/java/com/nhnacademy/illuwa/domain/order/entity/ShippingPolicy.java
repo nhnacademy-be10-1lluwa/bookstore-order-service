@@ -1,9 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +10,8 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ShippingPolicies {
+@Table(name = "shipping_policies")
+public class ShippingPolicy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +26,9 @@ public class ShippingPolicies {
     @Setter
     private boolean isActive; // 활성화 여부
 
-    public ShippingPolicies(BigDecimal minAmount, BigDecimal fee) {
+    public ShippingPolicy(BigDecimal minAmount, BigDecimal fee, boolean isActive) {
         this.minAmount = minAmount;
         this.fee = fee;
-        this.isActive = false;
+        this.isActive = isActive;
     }
 }
