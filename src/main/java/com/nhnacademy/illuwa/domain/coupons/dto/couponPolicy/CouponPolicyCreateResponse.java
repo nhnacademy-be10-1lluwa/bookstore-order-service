@@ -2,6 +2,8 @@ package com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy;
 
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,30 +15,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CouponPolicyResponse {
-    private Long id;
+public class CouponPolicyCreateResponse {
 
-    private String code;
+   private Long id;
+   private String code;
+   private CouponStatus status;
+   private Integer minOrderAmount;
+   private Integer discountAmount;
+   private Integer discountPercent;
+   private Integer maxDiscountAmount;
+   private LocalDateTime createdAt;
 
-    private int minOrderAmount; // 최소 주문 금액
-
-    private Integer discountAmount; // 할인 금액
-
-    private Integer discountPercent; // 할인 퍼센트
-
-    private Integer maxDiscountAmount; // 최대 할인 금액
-
-    private CouponStatus status; // 상태 여부
-
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
-
-    // 정적 팩토리 메서드 사용
-    public static CouponPolicyResponse fromEntity(CouponPolicy policy) {
-        if (policy == null) {
-            return null;
-        }
-        return CouponPolicyResponse.builder()
+    public static CouponPolicyCreateResponse fromEntity(CouponPolicy policy) {
+        return CouponPolicyCreateResponse.builder()
                 .id(policy.getId())
                 .code(policy.getCode())
                 .status(policy.getStatus())
@@ -44,9 +35,7 @@ public class CouponPolicyResponse {
                 .discountAmount(policy.getDiscountAmount())
                 .discountPercent(policy.getDiscountPercent())
                 .maxDiscountAmount(policy.getMaxDiscountAmount())
-                .createAt(policy.getCreateAt())
-                .updateAt(policy.getUpdateAt())
+                .createdAt(policy.getCreateAt())
                 .build();
     }
-
 }

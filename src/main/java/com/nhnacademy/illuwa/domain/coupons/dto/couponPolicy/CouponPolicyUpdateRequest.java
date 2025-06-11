@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CouponPolicyUpdateRequest {
-    private int minOrderAmount; // 최소 주문 금액
+    private Integer minOrderAmount; // 최소 주문 금액
 
     private Integer discountAmount; // 할인 금액
 
