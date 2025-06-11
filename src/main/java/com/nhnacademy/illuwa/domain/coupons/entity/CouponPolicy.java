@@ -13,11 +13,12 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 public class CouponPolicy {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = false, length = 30)
+    @Column(nullable = false, unique = true, length = 30)
     private String code; // 고유 id 식별 x -> 코드로 식별o
 
     @Enumerated(EnumType.STRING)
