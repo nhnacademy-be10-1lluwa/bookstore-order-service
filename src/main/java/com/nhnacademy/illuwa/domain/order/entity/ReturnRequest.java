@@ -1,5 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.entity;
 
+import com.nhnacademy.illuwa.domain.order.ReturnReason;
+import com.nhnacademy.illuwa.domain.order.ReturnStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +27,12 @@ public class ReturnRequest {
 
     @Setter
     private BigDecimal shippingFeeDeducted;
+
+    @Setter
+    private ReturnReason reason;
+
+    @Setter
+    private ReturnStatus status;
 
     @OneToOne
     private Order order;

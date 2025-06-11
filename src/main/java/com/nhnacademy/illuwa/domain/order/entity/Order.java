@@ -21,8 +21,9 @@ public class Order {
     private long memberId;
 
     @ManyToOne
-    private ShippingPolicies shippingPolicy;
+    private ShippingPolicy shippingPolicy;
 
+    @Setter
     private ZonedDateTime orderDate;
 
     @Setter
@@ -37,9 +38,9 @@ public class Order {
     private OrderStatus orderStatus;
 
     @Setter
-    private String password;
+    private String orderPassword;
 
-    public Order(long memberId, ShippingPolicies shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus) {
+    public Order(long memberId, ShippingPolicy shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus) {
         this.memberId = memberId;
         this.shippingPolicy = shippingPolicy;
         this.orderDate = orderDate;
@@ -49,13 +50,13 @@ public class Order {
     }
 
     // 비회원 생성자
-    public Order(long memberId, ShippingPolicies shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus, String password) {
+    public Order(long memberId, ShippingPolicy shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus, String orderPassword) {
         this.memberId = memberId;
         this.shippingPolicy = shippingPolicy;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
         this.totalPrice = totalPrice;
         this.orderStatus = orderStatus;
-        this.password = password;
+        this.orderPassword = orderPassword;
     }
 }
