@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.order;
+package com.nhnacademy.illuwa.domain.order.entity.types;
 
 public enum ReturnStatus {
     Requested, // 반품 요청됨
