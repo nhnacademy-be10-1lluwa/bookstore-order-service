@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -24,5 +25,7 @@ public class CouponUpdateRequest {
     private CouponType couponType;
     // 쿠폰 부연설명 재설정
     private String comment;
+    // 쿠폰 수량 재설정
+    private BigDecimal issueCount;
 
 }
