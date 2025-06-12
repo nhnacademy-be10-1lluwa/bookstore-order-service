@@ -18,4 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // 주문일 기준 기간 조회 (YYYY-MM-DD HH:MM:SS 기준)
     List<Order> findByOrderDateBetween(ZonedDateTime from, ZonedDateTime to);
 
+    // 모든 주문 내역 조회
+    // findAll
+
 }
