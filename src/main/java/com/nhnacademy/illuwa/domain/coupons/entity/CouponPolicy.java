@@ -38,7 +38,6 @@ public class CouponPolicy {
     @PrePersist // DB 저장하기전 자동 호출
     public void prePersist() {
         this.createAt = LocalDateTime.now();
-        this.updateAt = LocalDateTime.now();
         if (Objects.isNull(this.status)) {
             this.status = CouponStatus.ACTIVE; // 기본상태 활성
         }
