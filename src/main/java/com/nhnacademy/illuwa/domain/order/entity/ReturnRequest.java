@@ -1,7 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.entity;
 
-import com.nhnacademy.illuwa.domain.order.ReturnReason;
-import com.nhnacademy.illuwa.domain.order.ReturnStatus;
+import com.nhnacademy.illuwa.domain.order.entity.types.ReturnReason;
+import com.nhnacademy.illuwa.domain.order.entity.types.ReturnStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

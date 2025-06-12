@@ -1,6 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.dto.order;
 
-import com.nhnacademy.illuwa.domain.order.OrderStatus;
+import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

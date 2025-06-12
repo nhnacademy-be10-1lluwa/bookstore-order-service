@@ -1,6 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.entity;
 
-import com.nhnacademy.illuwa.domain.order.OrderStatus;
+import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
