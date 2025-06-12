@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@Builder
 public class Packaging {
 
     @Id
@@ -25,6 +26,8 @@ public class Packaging {
 
     @Setter
     private Boolean active;
+
+    public Packaging() {}
 
     public Packaging(String packagingName, BigDecimal packagingPrice, Boolean active) {
         this.packagingName = packagingName;
