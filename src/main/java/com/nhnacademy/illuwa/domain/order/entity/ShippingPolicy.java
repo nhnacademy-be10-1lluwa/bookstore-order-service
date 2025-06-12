@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Getter
 @NoArgsConstructor
 @Table(name = "shipping_policies")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class ShippingPolicy {
 
     @Id
