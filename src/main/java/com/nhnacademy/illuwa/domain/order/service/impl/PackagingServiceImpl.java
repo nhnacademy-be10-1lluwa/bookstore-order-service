@@ -15,11 +15,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class PackagingServiceImpl implements PackagingService {
 
-    private PackagingRepository packagingRepository;
+    private final PackagingRepository packagingRepository;
 
     public PackagingServiceImpl(PackagingRepository packagingRepository) {
         this.packagingRepository = packagingRepository;
@@ -65,7 +64,8 @@ public class PackagingServiceImpl implements PackagingService {
     @Override
     public Packaging updatePackaging(String packagingId, PackagingCreateRequestDto packagingCreateDto) {
         int result = removePackaging(packagingId);
-        return addPackaging(packagingCreateDto);
+        Packaging pkg = addPackaging(packagingCreateDto);
+        return packagingRepository.save(pkg);
     }
 
 
