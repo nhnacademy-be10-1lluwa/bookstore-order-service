@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface PackagingRepository extends JpaRepository<Packaging, Long> {
@@ -18,7 +19,7 @@ public interface PackagingRepository extends JpaRepository<Packaging, Long> {
     List<Packaging> findByActive(boolean active);
 
     // 해당 포장 옵션 조회
-    Packaging findByPackagingId(Long packagingId);
+    Optional<Packaging> findByPackagingId(Long packagingId);
 
 
 
