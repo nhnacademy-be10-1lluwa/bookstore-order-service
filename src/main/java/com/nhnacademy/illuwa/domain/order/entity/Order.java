@@ -1,10 +1,8 @@
 package com.nhnacademy.illuwa.domain.order.entity;
 
-import com.nhnacademy.illuwa.domain.order.OrderStatus;
+import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -20,8 +18,11 @@ public class Order {
 
     private long memberId;
 
+    private long guestId;
+
     @ManyToOne
     private ShippingPolicy shippingPolicy;
+
 
     @Setter
     private ZonedDateTime orderDate;
@@ -32,31 +33,32 @@ public class Order {
     @Setter
     private BigDecimal totalPrice;
 
+    @Setter
+    private BigDecimal discountPrice;
+
+    @Setter
+    private BigDecimal usedPoint;
+
+    @Setter
+    private BigDecimal finalPrice;
+
     // enum 주문 상태
     @Setter
     @Enumerated(EnumType.STRING)
+    
     private OrderStatus orderStatus;
 
-    @Setter
-    private String orderPassword;
-
-    public Order(long memberId, ShippingPolicy shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus) {
+    @Builder
+    public Order(long memberId, long guestId, ShippingPolicy shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus) {
         this.memberId = memberId;
+        this.guestId = guestId;
         this.shippingPolicy = shippingPolicy;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
         this.totalPrice = totalPrice;
+        this.discountPrice = discountPrice;
+        this.usedPoint = usedPoint;
+        this.finalPrice = finalPrice;
         this.orderStatus = orderStatus;
-    }
-
-    // 비회원 생성자
-    public Order(long memberId, ShippingPolicy shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus, String orderPassword) {
-        this.memberId = memberId;
-        this.shippingPolicy = shippingPolicy;
-        this.orderDate = orderDate;
-        this.deliveryDate = deliveryDate;
-        this.totalPrice = totalPrice;
-        this.orderStatus = orderStatus;
-        this.orderPassword = orderPassword;
     }
 }
