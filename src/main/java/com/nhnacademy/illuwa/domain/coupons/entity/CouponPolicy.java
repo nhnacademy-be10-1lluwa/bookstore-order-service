@@ -3,6 +3,8 @@ package com.nhnacademy.illuwa.domain.coupons.entity;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -25,10 +27,10 @@ public class CouponPolicy {
     @Column(nullable = false, length = 10)
     private CouponStatus status; // 상태
 
-    private int minOrderAmount; // 최소 주문 금액
-    private Integer discountAmount; // 할인 금액
-    private Integer discountPercent; // 할인 퍼센트
-    private Integer maxDiscountAmount; // 최대 할인 금액
+    private BigDecimal minOrderAmount; // 최소 주문 금액
+    private BigDecimal discountAmount; // 할인 금액
+    private BigDecimal discountPercent; // 할인 퍼센트
+    private BigDecimal maxDiscountAmount; // 최대 할인 금액
 
     private LocalDateTime createAt;
     private LocalDateTime updateAt;

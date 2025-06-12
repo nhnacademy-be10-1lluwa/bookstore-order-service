@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -18,13 +19,13 @@ public class CouponPolicyResponse {
 
     private String code;
 
-    private int minOrderAmount; // 최소 주문 금액
+    private BigDecimal minOrderAmount; // 최소 주문 금액
 
-    private Integer discountAmount; // 할인 금액
+    private BigDecimal discountAmount; // 할인 금액
 
-    private Integer discountPercent; // 할인 퍼센트
+    private BigDecimal discountPercent; // 할인 퍼센트
 
-    private Integer maxDiscountAmount; // 최대 할인 금액
+    private BigDecimal maxDiscountAmount; // 최대 할인 금액
 
     private CouponStatus status; // 상태 여부
 
