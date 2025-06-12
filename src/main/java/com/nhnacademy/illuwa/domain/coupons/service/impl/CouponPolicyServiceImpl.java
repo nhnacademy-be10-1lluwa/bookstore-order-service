@@ -35,6 +35,13 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     }
 
     @Override
+    public CouponPolicyResponse getPolicyById(Long id) {
+        return couponPolicyRepository.findById(id)
+                .map(CouponPolicyResponse::fromEntity)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰 ID 입니다. -> " + id));
+    }
+
+    @Override
     public CouponPolicyResponse getPolicyByCode(String code) {
 
         return couponPolicyRepository.findByCode(code)

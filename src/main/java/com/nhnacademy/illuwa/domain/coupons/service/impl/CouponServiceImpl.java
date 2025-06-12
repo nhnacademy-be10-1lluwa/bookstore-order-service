@@ -1,0 +1,119 @@
+package com.nhnacademy.illuwa.domain.coupons.service.impl;
+
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.*;
+import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyResponse;
+import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
+import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
+import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
+import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.nio.charset.IllegalCharsetNameException;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class CouponServiceImpl implements CouponService {
+
+    private final CouponRepository couponRepository;
+    private final CouponPolicyRepository couponPolicyRepository;
+
+    @Override
+    public CouponCreateResponse createCoupon(CouponCreateRequest request) {
+        CouponPolicy policy = couponPolicyRepository.findByCode(request.getPolicyCode())
+                .orElseThrow(() -> new IllegalCharsetNameException("해당 정책코드는 존재하지 않습니다."));
+        if (!policy.getStatus().equals(CouponStatus.INACTIVE)) {
+            Coupon coupon = Coupon.builder()
+                    .couponName(request.getCouponName())
+                    .policy(policy)
+                    .validFrom(request.getValidFrom())
+                    .validTo(request.getValidTo())
+                    .couponType(request.getCouponType())
+                    .comment(request.getComment())
+                    .issueCount(request.getIssueCount())
+                    .build();
+            Coupon save = couponRepository.save(coupon);
+            return CouponCreateResponse.fromEntity(save);
+        } else {
+            throw new IllegalArgumentException("쿠폰 정책 상태가 비활성화이므로 생성 불가합니다.");
+        }
+
+    }
+
+    @Override
+    public CouponResponse getCouponById(Long id) {
+
+        return couponRepository.findById(id)
+                .map(CouponResponse::fromEntity)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰입니다. -> " + id));
+    }
+
+    @Override
+    public List<CouponResponse> getCouponsByPolicyCode(String code) {
+        return couponRepository.findByPolicy_Code(code).stream()
+                .map(CouponResponse::fromEntity)
+                .toList();
+    }
+
+    @Override
+    public List<CouponResponse> getCouponsByType(CouponType type) {
+        return couponRepository.findByCouponType(type).stream()
+                .map(CouponResponse::fromEntity)
+                .toList();
+    }
+
+    @Override
+    public List<CouponResponse> getCouponsByName(String name) {
+        return couponRepository.findByCouponName(name).stream()
+                .map(CouponResponse::fromEntity)
+                .toList();
+    }
+
+    @Override
+    public List<CouponResponse> getAllCoupons() {
+        return couponRepository.findAll().stream()
+                .map(CouponResponse::fromEntity)
+                .toList();
+    }
+
+    @Override
+    public CouponUpdateResponse updateCoupon(Long id, CouponUpdateRequest request) {
+        Coupon coupon = couponRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰ID 입니다. ->" + id));
+        if (request.getCouponName() != null) {
+            coupon.setCouponName(request.getCouponName());
+        }
+        if (request.getValidFrom() != null) {
+            coupon.setValidFrom(request.getValidFrom());
+        }
+        if (request.getValidTo() != null) {
+            coupon.setValidTo(request.getValidTo());
+        }
+        if (request.getCouponType() != null) {
+            coupon.setCouponType(request.getCouponType());
+        }
+        if (request.getComment() != null) {
+            coupon.setComment(request.getComment());
+        }
+        if (request.getIssueCount() != null) {
+            coupon.setIssueCount(request.getIssueCount());
+        }
+
+        return CouponUpdateResponse.fromEntity(coupon);
+    }
+
+    // 추후에 소프트 삭제를 할지 영구 삭제를 할지 고민
+    @Override
+    public void deleteCoupon(Long id) {
+        Coupon coupon = couponRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰 ID 입니다. -> " + id));
+        couponRepository.delete(coupon);
+    }
+
+}

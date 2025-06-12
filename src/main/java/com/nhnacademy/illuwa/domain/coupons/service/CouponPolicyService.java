@@ -6,6 +6,8 @@ import java.util.List;
 public interface CouponPolicyService {
     // 정책 생성
     CouponPolicyCreateResponse createPolicy(CouponPolicyCreateRequest request);
+    // 각 정책의 Id를 기준으로 단건 조회
+    CouponPolicyResponse getPolicyById(Long id);
     // 각 정책의 코드를 기준으로 단건 조회
     CouponPolicyResponse getPolicyByCode(String code);
     // 모든 정책 조회

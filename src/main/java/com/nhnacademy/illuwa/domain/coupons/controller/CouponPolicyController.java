@@ -23,9 +23,16 @@ public class CouponPolicyController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // 쿠폰 정책 단건 조회
-    @GetMapping("/{code}")
-    public ResponseEntity<CouponPolicyResponse> getPolicyByCode(@PathVariable String code) {
+    // 쿠폰 정책 단건 조회 (id)기준
+    @GetMapping("/{id}")
+    public ResponseEntity<CouponPolicyResponse> getPolicyById(@PathVariable Long id) {
+        CouponPolicyResponse response = couponPolicyService.getPolicyById(id);
+        return ResponseEntity.ok(response);
+    }
+    // 쿠폰 정책 단건 조회 (code)기준
+    // Query Parameter 방식
+    @GetMapping(params = "code")
+    public ResponseEntity<CouponPolicyResponse> getPolicyByCode(@RequestParam String code) {
         CouponPolicyResponse response = couponPolicyService.getPolicyByCode(code);
         return ResponseEntity.ok(response);
     }
