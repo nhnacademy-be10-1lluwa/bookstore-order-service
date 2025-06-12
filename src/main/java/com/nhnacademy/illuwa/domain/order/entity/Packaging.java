@@ -23,9 +23,13 @@ public class Packaging {
     @Setter
     private BigDecimal packagingPrice;
 
-    public Packaging(String packagingName, BigDecimal packagingPrice) {
+    @Setter
+    private Boolean active;
+
+    public Packaging(String packagingName, BigDecimal packagingPrice, Boolean active) {
         this.packagingName = packagingName;
         this.packagingPrice = packagingPrice;
+        this.active = active;
     }
 
 }
