@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "code": "AMT15K_DC3K",
-  "minAmount": 20000,
+  "minOrderAmount": 20000,
   "discountAmount": 3000,
   "discountPercent": null,
   "maxDiscountAmount": null

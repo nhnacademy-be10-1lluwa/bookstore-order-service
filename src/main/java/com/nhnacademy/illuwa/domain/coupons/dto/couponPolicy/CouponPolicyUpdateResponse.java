@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,10 +18,10 @@ public class CouponPolicyUpdateResponse {
 
    private String code;
    private CouponStatus status;
-   private Integer minOrderAmount;
-   private Integer discountAmount;
-   private Integer discountPercent;
-   private Integer maxDiscountAmount;
+   private BigDecimal minOrderAmount;
+   private BigDecimal discountAmount;
+   private BigDecimal discountPercent;
+   private BigDecimal maxDiscountAmount;
    private LocalDateTime updatedAt;
 
     public static CouponPolicyUpdateResponse fromEntity(CouponPolicy policy) {
