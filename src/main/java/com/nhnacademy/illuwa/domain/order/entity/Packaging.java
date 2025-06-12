@@ -13,6 +13,7 @@ public class Packaging {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter
     private long packagingId;
 
     @Setter
