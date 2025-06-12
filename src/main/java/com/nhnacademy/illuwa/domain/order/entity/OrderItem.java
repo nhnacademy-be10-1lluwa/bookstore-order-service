@@ -2,9 +2,7 @@ package com.nhnacademy.illuwa.domain.order.entity;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -33,16 +31,30 @@ public class OrderItem {
     private int quantity;
 
     @Setter
-    private BigDecimal price; // 항목별 구매가격 = 도서가격 * 수량
+    private BigDecimal price;
+
+    private long memberCouponId;
+
+    private BigDecimal discountPrice;
+
+    private BigDecimal itemTotalPrice;
 
     @ManyToOne
     private Packaging packaging;
 
-    public OrderItem(long bookId, Order order, int quantity, BigDecimal price, Packaging packaging) {
+    // 스냅샷용 포장 옵션
+    private BigDecimal packagingPrice;
+
+    @Builder
+    public OrderItem(long bookId, Order order, int quantity, BigDecimal price, long memberCouponId, BigDecimal discountPrice, BigDecimal itemTotalPrice, Packaging packaging, BigDecimal packagingPrice) {
         this.bookId = bookId;
         this.order = order;
         this.quantity = quantity;
         this.price = price;
+        this.memberCouponId = memberCouponId;
+        this.discountPrice = discountPrice;
+        this.itemTotalPrice = itemTotalPrice;
         this.packaging = packaging;
+        this.packagingPrice = packagingPrice;
     }
 }

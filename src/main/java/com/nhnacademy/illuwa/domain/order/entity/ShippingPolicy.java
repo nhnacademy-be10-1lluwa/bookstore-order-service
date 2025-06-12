@@ -1,9 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -11,6 +9,7 @@ import java.math.BigDecimal;
 @Getter
 @NoArgsConstructor
 @Table(name = "shipping_policies")
+@RequiredArgsConstructor
 public class ShippingPolicy {
 
     @Id
@@ -26,6 +25,7 @@ public class ShippingPolicy {
     @Setter
     private boolean isActive; // 활성화 여부
 
+    @Builder
     public ShippingPolicy(BigDecimal minAmount, BigDecimal fee, boolean isActive) {
         this.minAmount = minAmount;
         this.fee = fee;
