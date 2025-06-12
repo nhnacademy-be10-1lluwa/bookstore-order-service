@@ -3,9 +3,7 @@ package com.nhnacademy.illuwa.domain.order.entity;
 import com.nhnacademy.illuwa.domain.order.entity.types.ReturnReason;
 import com.nhnacademy.illuwa.domain.order.entity.types.ReturnStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -29,7 +27,7 @@ public class ReturnRequest {
     private BigDecimal shippingFeeDeducted;
 
     @Setter
-    private ReturnReason reason;
+    private ReturnReason returnReason;
 
     @Setter
     private ReturnStatus status;
@@ -37,10 +35,13 @@ public class ReturnRequest {
     @OneToOne
     private Order order;
 
-    public ReturnRequest(ZonedDateTime requestedAt, ZonedDateTime returnedAt, BigDecimal shippingFeeDeducted, Order order) {
+    @Builder
+    public ReturnRequest(ZonedDateTime requestedAt, ZonedDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason returnReason, ReturnStatus status, Order order) {
         this.requestedAt = requestedAt;
         this.returnedAt = returnedAt;
         this.shippingFeeDeducted = shippingFeeDeducted;
+        this.returnReason = returnReason;
+        this.status = status;
         this.order = order;
     }
 }
