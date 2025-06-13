@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActiveShippingPolicyDto {
+    private long shippingPolicyId;
     private BigDecimal minAmount;
     private BigDecimal fee;
 }

@@ -123,7 +123,7 @@ class PackagingServiceTest {
 
         Long targetId = savedList.get(0).getPackagingId();
 
-        service.updatePackaging(targetId.toString(), new PackagingCreateRequestDto("Nothing", new BigDecimal("10000")));
+        Packaging packaging = service.updatePackaging(targetId.toString(), new PackagingCreateRequestDto("Nothing", new BigDecimal("10000")));
 
         Boolean isActive = jdbcTemplate.queryForObject(
                 String.format("SELECT active FROM packaging WHERE packaging_id = %d", targetId) , Boolean.class

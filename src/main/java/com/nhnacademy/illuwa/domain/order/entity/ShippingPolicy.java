@@ -22,12 +22,12 @@ public class ShippingPolicy {
     private BigDecimal fee; // 기본 배송비
 
     @Setter
-    private boolean isActive; // 활성화 여부
+    private boolean active; // 활성화 여부
 
     @Builder
-    public ShippingPolicy(BigDecimal minAmount, BigDecimal fee, boolean isActive) {
+    public ShippingPolicy(BigDecimal minAmount, BigDecimal fee, boolean active) {
         this.minAmount = minAmount;
         this.fee = fee;
-        this.isActive = isActive;
+        this.active = active;
     }
 }
