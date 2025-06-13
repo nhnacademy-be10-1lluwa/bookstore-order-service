@@ -7,7 +7,6 @@ import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.packaging.PackagingNotFoundException;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +62,7 @@ public class PackagingServiceImpl implements PackagingService {
     // fixme 삭제 로직 고려 후 수정
     @Override
     public Packaging updatePackaging(String packagingId, PackagingCreateRequestDto packagingCreateDto) {
-        int result = removePackaging(packagingId);
+        removePackaging(packagingId);
         Packaging pkg = addPackaging(packagingCreateDto);
         return packagingRepository.save(pkg);
     }

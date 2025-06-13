@@ -23,7 +23,7 @@ public interface PackagingService {
     // 포장 옵션 삭제 (활성화 여부 false 로 변경)
     int removePackaging(String packagingId);
 
-    // 포장 옵션 수정
+    // 포장 옵션 수정 (해당 id의 포장 옵션을 false 한 후, 새로운 행 추가)
     Packaging updatePackaging(String packagingId, PackagingCreateRequestDto packagingCreateDto);
 
 
