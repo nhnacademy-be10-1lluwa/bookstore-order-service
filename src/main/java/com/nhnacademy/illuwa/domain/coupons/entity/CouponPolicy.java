@@ -27,7 +27,9 @@ public class CouponPolicy {
     @Column(nullable = false, length = 10)
     private CouponStatus status; // 상태
 
+    @Column(nullable = false)
     private BigDecimal minOrderAmount; // 최소 주문 금액
+
     private BigDecimal discountAmount; // 할인 금액
     private BigDecimal discountPercent; // 할인 퍼센트
     private BigDecimal maxDiscountAmount; // 최대 할인 금액
