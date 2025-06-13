@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase  // H2 인메모리로 대체
 @Transactional              // 각 테스트 후 롤백
 @Rollback
-class PackagingServiceTest {
+public class PackagingServiceTest {
 
     @Autowired
     private PackagingServiceImpl service;
