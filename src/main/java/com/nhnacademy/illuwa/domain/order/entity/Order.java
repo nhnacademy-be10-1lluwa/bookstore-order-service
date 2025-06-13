@@ -16,6 +16,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long orderId;
 
+    private String orderNumber;
+
     private long memberId;
 
     @ManyToOne
@@ -46,8 +48,9 @@ public class Order {
     private OrderStatus orderStatus;
 
     @Builder
-    public Order(long memberId, ShippingPolicy shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus) {
+    public Order(long memberId, String orderNumber, ShippingPolicy shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus) {
         this.memberId = memberId;
+        this.orderNumber = orderNumber;
         this.shippingPolicy = shippingPolicy;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
