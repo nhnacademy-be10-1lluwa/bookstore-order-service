@@ -18,8 +18,6 @@ public class Order {
 
     private long memberId;
 
-    private long guestId;
-
     @ManyToOne
     private ShippingPolicy shippingPolicy;
 
@@ -49,9 +47,8 @@ public class Order {
     private OrderStatus orderStatus;
 
     @Builder
-    public Order(long memberId, long guestId, ShippingPolicy shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus) {
+    public Order(long memberId, ShippingPolicy shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus) {
         this.memberId = memberId;
-        this.guestId = guestId;
         this.shippingPolicy = shippingPolicy;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;

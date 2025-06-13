@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Table(name = "shipping_policies")
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class ShippingPolicy {
 
     @Id
