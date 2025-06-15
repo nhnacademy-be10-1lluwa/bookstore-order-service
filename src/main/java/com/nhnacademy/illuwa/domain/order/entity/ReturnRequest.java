@@ -11,10 +11,12 @@ import java.time.ZonedDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "return_request")
 public class ReturnRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "return_id")
     private long returnId;
 
     @Setter

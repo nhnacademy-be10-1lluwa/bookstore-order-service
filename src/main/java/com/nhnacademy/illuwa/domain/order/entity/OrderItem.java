@@ -2,19 +2,14 @@ package com.nhnacademy.illuwa.domain.order.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @Getter
-@Table(
-        name = "order_item",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uq_order_book",
-                columnNames = {"order_id", "book_id"}
-        )
-)
+@Table(name = "order_item")
 @NoArgsConstructor
 public class OrderItem {
 
@@ -25,6 +20,7 @@ public class OrderItem {
     private long bookId;
 
     @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     @Setter
@@ -40,6 +36,7 @@ public class OrderItem {
     private BigDecimal itemTotalPrice;
 
     @ManyToOne
+    @JoinColumn(name = "packaging_id")
     private Packaging packaging;
 
     // 스냅샷용 포장 옵션

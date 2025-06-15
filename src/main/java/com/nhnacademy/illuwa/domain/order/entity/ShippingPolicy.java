@@ -13,6 +13,7 @@ public class ShippingPolicy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "shipping_policy_id")
     private long shippingPolicyId;
 
     @Setter
