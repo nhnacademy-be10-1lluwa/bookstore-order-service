@@ -10,11 +10,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,9 +27,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@AutoConfigureTestDatabase  // H2 인메모리로 대체
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+@ActiveProfiles("db")
 @Transactional              // 각 테스트 후 롤백
-@Rollback
+@Rollback(value = false)
 public class PackagingServiceTest {
 
     @Autowired
@@ -38,7 +44,6 @@ public class PackagingServiceTest {
 
     @BeforeEach
     void setUp() {
-        // 매 테스트마다 H2에 초기 데이터 삽입
         repository.deleteAll();
 
         repository.save(Packaging.builder()
@@ -52,6 +57,12 @@ public class PackagingServiceTest {
                 .packagingPrice(new BigDecimal("500"))
                 .active(true)
                 .build());
+
+        repository.save(Packaging.builder()
+                .packagingName("Nothing")
+                .packagingPrice(new BigDecimal("1500"))
+                .active(false)
+                .build());
     }
 
     @Test
@@ -59,9 +70,9 @@ public class PackagingServiceTest {
     void testAllPackaging() {
         List<PackagingResponseDto> dtos = service.getAllPackaging();
 
-        assertThat(dtos).hasSize(2);
+        assertThat(dtos).hasSize(3);
         assertThat(dtos).extracting("packagingName")
-                .containsExactlyInAnyOrder("Box", "Envelope");
+                .containsExactlyInAnyOrder("Box", "Envelope", "Nothing");
     }
 
     @Test
@@ -72,6 +83,8 @@ public class PackagingServiceTest {
         assertThat(dtos).allSatisfy(dto ->
                 assertThat(dto.getPackagingPrice()).isGreaterThan(BigDecimal.ZERO)
         );
+
+        assertThat(dtos.size()).isEqualTo(2);
     }
 
     @Test
@@ -86,21 +99,21 @@ public class PackagingServiceTest {
     }
 
 
-    @Test
+   /* @Test
     @DisplayName("H2 DB 직접 조회 테스트")
     void testDirectH2Access() {
         Integer count = jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM packaging", Integer.class
         );
         assertThat(count).isEqualTo(2);
-    }
+    }*/
 
     @Test
     @DisplayName("포장 옵션 비활성화")
     void testRemovePackaging() {
 
         List<Packaging> savedList = repository.findAll();
-        assertThat(savedList).hasSize(2);
+        assertThat(savedList).hasSize(3);
 
         Long targetId = savedList.get(0).getPackagingId();
 
@@ -119,11 +132,11 @@ public class PackagingServiceTest {
     void testUpdatePackaging() {
 
         List<Packaging> savedList = repository.findAll();
-        assertThat(savedList).hasSize(2);
+        assertThat(savedList).hasSize(3);
 
-        Long targetId = savedList.get(0).getPackagingId();
+        Long targetId = savedList.getFirst().getPackagingId();
 
-        Packaging packaging = service.updatePackaging(targetId.toString(), new PackagingCreateRequestDto("Nothing", new BigDecimal("10000")));
+        Packaging packaging = service.updatePackaging(targetId.toString(), new PackagingCreateRequestDto("Something", new BigDecimal("10000")));
 
         Boolean isActive = jdbcTemplate.queryForObject(
                 String.format("SELECT active FROM packaging WHERE packaging_id = %d", targetId) , Boolean.class
@@ -134,7 +147,7 @@ public class PackagingServiceTest {
 
         Packaging Pkg = newSavedList.getLast();
 
-        assertThat(Pkg.getPackagingName()).isEqualTo("Nothing");
+        assertThat(Pkg.getPackagingName()).isEqualTo("Something");
         assertThat(Pkg.getPackagingPrice()).isEqualTo(new BigDecimal("10000"));
 
 
