@@ -13,16 +13,13 @@ public class Packaging {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter
+    @Column(name = "packaging_id")
     private long packagingId;
 
-    @Setter
     private String packagingName;
 
-    @Setter
     private BigDecimal packagingPrice;
 
-    @Setter
     private Boolean active;
 
 

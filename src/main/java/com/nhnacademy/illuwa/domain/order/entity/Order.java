@@ -10,10 +10,12 @@ import java.time.ZonedDateTime;
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(name = "orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id")
     private long orderId;
 
     private String orderNumber;
@@ -21,29 +23,28 @@ public class Order {
     private long memberId;
 
     @ManyToOne
+    @JoinColumn(name = "shipping_policy_id", referencedColumnName = "shipping_policy_id")
     private ShippingPolicy shippingPolicy;
 
 
-    @Setter
     private ZonedDateTime orderDate;
 
-    @Setter
+
     private ZonedDateTime deliveryDate;
 
-    @Setter
+
     private BigDecimal totalPrice;
 
-    @Setter
+
     private BigDecimal discountPrice;
 
-    @Setter
+
     private BigDecimal usedPoint;
 
-    @Setter
+
     private BigDecimal finalPrice;
 
     // enum 주문 상태
-    @Setter
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
