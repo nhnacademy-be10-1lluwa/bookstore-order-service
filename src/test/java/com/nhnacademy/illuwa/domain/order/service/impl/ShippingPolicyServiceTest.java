@@ -1,0 +1,121 @@
+package com.nhnacademy.illuwa.domain.order.service.impl;
+
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ActiveShippingPolicyDto;
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyCreateRequestDto;
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyResponseDto;
+import com.nhnacademy.illuwa.domain.order.entity.Packaging;
+import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
+import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
+import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
+import com.nhnacademy.illuwa.domain.order.service.ShippingPolicyService;
+import jakarta.persistence.Table;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+@ActiveProfiles("db")
+@Transactional
+@Rollback(value = false)
+public class ShippingPolicyServiceTest {
+
+    @Autowired
+    private ShippingPolicyService service;
+
+    @Autowired
+    private ShippingPolicyRepository repository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+
+    @BeforeEach
+    void setUp() {
+        repository.deleteAll();
+
+        repository.save(ShippingPolicy.builder()
+                .minAmount(new BigDecimal("30000"))
+                .fee(new BigDecimal("5000"))
+                .active(true)
+                .build()
+                );
+
+        repository.save(ShippingPolicy.builder()
+                .minAmount(new BigDecimal("20000"))
+                .fee(new BigDecimal("3000"))
+                .active(true)
+                .build());
+
+        repository.save(ShippingPolicy.builder()
+                .minAmount(new BigDecimal("25000"))
+                .fee(new BigDecimal("4000"))
+                .active(false)
+                .build());
+    }
+
+    @Test
+    @DisplayName("전체 조회 테스트")
+    void testAllShippingPolicy() {
+        List<ActiveShippingPolicyDto> dtos = service.getAllShippingPolicy();
+
+        assertThat(dtos).hasSize(3);
+        assertThat(dtos).extracting("fee")
+                .containsExactly(new BigDecimal("5000"), new BigDecimal("3000"), new BigDecimal("4000"));
+
+    }
+
+    @Test
+    @DisplayName("활성 정책 조회 테스트")
+    void testGetShippingPolicyByActive() {
+        List<ActiveShippingPolicyDto> dtos = service.getShippingPolicyByActive();
+
+        assertThat(dtos.size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("정책 주가 및 조회")
+    void testAdd_and_getShippingPolicy() {
+        ShippingPolicyCreateRequestDto req = new ShippingPolicyCreateRequestDto(new BigDecimal("10000"), new BigDecimal("5000"), true);
+        ShippingPolicy created = service.addShippingPolicy(req);
+
+        ActiveShippingPolicyDto dto = service.getShippingPolicy( String.valueOf(created.getShippingPolicyId()));
+        assertThat(dto.getMinAmount()).isEqualTo(new BigDecimal("10000"));
+        assertThat(dto.getFee()).isEqualTo(new BigDecimal("5000"));
+
+    }
+
+    @Test
+    @DisplayName("포장 옵션 비활성화")
+    void testRemoveShippingPolicy() {
+
+        List<ShippingPolicy> savedList = repository.findAll();
+        assertThat(savedList).hasSize(3);
+
+        Long targetId = savedList.getFirst().getShippingPolicyId();
+
+        int removed = service.removeShippingPolicy(targetId.toString());
+
+        assertThat(removed).isEqualTo(1);
+        Boolean isActive = jdbcTemplate.queryForObject(
+                String.format("SELECT active FROM shipping_policies WHERE shipping_policy_id = %d", targetId), Boolean.class
+        );
+        assertThat(isActive).isFalse();
+    }
+
+    // 정책 수정 메서드는 보류
+}
