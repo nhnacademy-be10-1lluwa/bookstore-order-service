@@ -4,7 +4,7 @@ import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingCreateRequestDt
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
-import com.nhnacademy.illuwa.domain.order.exception.packaging.PackagingNotFoundException;
+import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,8 @@ public class PackagingServiceImpl implements PackagingService {
     @Transactional(readOnly = true)
     public PackagingResponseDto getPackaging(String packagingId) {
         long id = parseId(packagingId);
-        Packaging packaging = packagingRepository.findByPackagingId(id).orElseThrow(() -> new PackagingNotFoundException(id));
+        Packaging packaging = packagingRepository.findByPackagingId(id).orElseThrow(()
+                -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", id));
         return toResponseDto(packaging);
     }
 
