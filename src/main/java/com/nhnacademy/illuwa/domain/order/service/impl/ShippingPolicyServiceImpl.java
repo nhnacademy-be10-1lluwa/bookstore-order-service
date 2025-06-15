@@ -7,7 +7,7 @@ import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyUpdat
 import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
-import com.nhnacademy.illuwa.domain.order.exception.shippingPolicy.ShippingPolicyNotFoundException;
+import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import com.nhnacademy.illuwa.domain.order.service.ShippingPolicyService;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class ShippingPolicyServiceImpl implements ShippingPolicyService {
     public ActiveShippingPolicyDto getShippingPolicy(String shippingPolicyId) {
         long id = parseId(shippingPolicyId);
         ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(id)
-                .orElseThrow(() -> new ShippingPolicyNotFoundException(id));
+                .orElseThrow(() -> new NotFoundException("해당 배송 정책을 찾을 수 없습니다.", id));
 
         return toResponseDto(shippingPolicy);
     }

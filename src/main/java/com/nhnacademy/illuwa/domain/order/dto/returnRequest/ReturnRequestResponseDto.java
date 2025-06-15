@@ -14,6 +14,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 public class ReturnRequestResponseDto {
 
+    private String memberId;
     private ZonedDateTime requestedAt;
     private ZonedDateTime returnedAt;
     private BigDecimal shippingFeeDeducted;
@@ -21,3 +22,5 @@ public class ReturnRequestResponseDto {
     private ReturnStatus status;
     private long orderId;
 }
+
+//
