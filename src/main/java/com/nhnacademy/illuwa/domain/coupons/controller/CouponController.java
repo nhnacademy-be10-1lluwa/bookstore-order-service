@@ -3,6 +3,7 @@ package com.nhnacademy.illuwa.domain.coupons.controller;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class CouponController {
 
     // (정책기반) 쿠폰 생성
     @PostMapping
-    public ResponseEntity<CouponCreateResponse> createCoupon(@RequestBody CouponCreateRequest request) {
+    public ResponseEntity<CouponCreateResponse> createCoupon(@RequestBody @Valid CouponCreateRequest request) {
         CouponCreateResponse response = couponService.createCoupon(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
