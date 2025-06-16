@@ -5,6 +5,7 @@ import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
+import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
@@ -57,35 +58,51 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderListResponseDto> getOrderByOrderStatus(OrderStatus status) {
         return orderRepository.findByOrderStatus(status).stream().map(this::toListOrderDto).toList();
     }
 
     @Override
-    public Order addOrder(String memberId, OrderCreateRequestDto orderCreateDto) {
+    public Order createOrderWithItems(String memberId, OrderCreateRequestDto dto) {
 
-        String orderNumber = generateOrderNumber(orderCreateDto.getOrderDate());
+        String orderNumber = generateOrderNumber(dto.getOrderDate());
 
         long mId = parseId(memberId);
-        long orderId = orderCreateDto.getShippingPolicyId();
+        long orderId = dto.getShippingPolicyId();
+
 
         ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(orderId).orElseThrow(()
                 -> new NotFoundException("해당 배송정책을 찾을 수 없습니다.", orderId));
-
 
         // fixme OrderItem 서비스 작성 후 코드 수정 and 쿠폰 작성 후 and 중복 예외 처리
         Order order = Order.builder()
                 .orderNumber(orderNumber)
                 .memberId(mId)
                 .shippingPolicy(shippingPolicy)
-                .orderDate(orderCreateDto.getOrderDate())
-                .deliveryDate(orderCreateDto.getDeliveryDate())
-                .totalPrice(orderCreateDto.getTotalPrice())
+                .orderDate(dto.getOrderDate())
+                .deliveryDate(dto.getDeliveryDate())
+                .totalPrice(dto.getTotalPrice())
                 .discountPrice(new BigDecimal("1000"))
                 .usedPoint(new BigDecimal("2000"))
-                .finalPrice(orderCreateDto.getTotalPrice())
+                .finalPrice(dto.getTotalPrice())
                 .orderStatus(OrderStatus.Pending)
                 .build();
+
+        List<OrderItem> items = dto.getItems().stream().map(orderItem
+                -> OrderItem.builder()
+                .bookId(orderItem.getBookId())
+                .order(order)
+                .quantity(orderItem.getQuantity())
+                .price(orderItem.getPrice())
+                .memberCouponId(orderItem.getMemberCouponId())
+                .discountPrice(orderItem.getDiscountPrice())
+                .itemTotalPrice(orderItem.getPrice().subtract(orderItem.getDiscountPrice()))
+                .packaging(orderItem.getPackaging())
+                .packagingPrice(orderItem.getPackagingPrice())
+                .build()).toList();
+
+        order.getItems().addAll(items);
 
         return orderRepository.save(order);
     }
