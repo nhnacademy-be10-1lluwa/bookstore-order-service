@@ -2,6 +2,7 @@ package com.nhnacademy.illuwa.domain.coupons.controller;
 
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.*;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponPolicyService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class CouponPolicyController {
 
     // 쿠폰 정책 생성
     @PostMapping
-    public ResponseEntity<CouponPolicyCreateResponse> createPolicy(@RequestBody CouponPolicyCreateRequest request) {
+    public ResponseEntity<CouponPolicyCreateResponse> createPolicy(@RequestBody @Valid CouponPolicyCreateRequest request) {
         CouponPolicyCreateResponse response = couponPolicyService.createPolicy(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

@@ -1,6 +1,6 @@
-package com.nhnacademy.illuwa.domain.coupon.service.impl;
+package com.nhnacademy.illuwa.domain.coupon.service;
 
-import com.nhnacademy.illuwa.domain.coupon.service.CouponPolicyTestUtils;
+import com.nhnacademy.illuwa.domain.coupon.CouponPolicyTestUtils;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;

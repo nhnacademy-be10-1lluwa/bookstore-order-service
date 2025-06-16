@@ -1,9 +1,12 @@
-package com.nhnacademy.illuwa.domain.coupon.service;
+package com.nhnacademy.illuwa.domain.coupon;
 
+import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyCreateResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyUpdateResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
+
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -98,7 +101,33 @@ public class CouponPolicyTestUtils {
         } else {
             assertThat(actual.getUpdatedAt()).isNull();
         }
+    }
 
+    // 생성 req
+    public static CouponPolicyCreateRequest createRequest() {
+        return CouponPolicyCreateRequest.builder()
+                .code("testCode")
+                .minOrderAmount(BigDecimal.valueOf(20_000))
+                .discountAmount(BigDecimal.valueOf(3_000))
+                .build();
+    }
 
+    // 생성 응답 res
+    public static CouponPolicyCreateResponse createResponse() {
+        return CouponPolicyCreateResponse.builder()
+                .code(createRequest().getCode())
+                .minOrderAmount(createRequest().getMinOrderAmount())
+                .discountAmount(createRequest().getDiscountAmount())
+                .build();
+    }
+
+    // 기본 응답 res
+    public static CouponPolicyResponse response() {
+        return CouponPolicyResponse.builder()
+                .id(1L)
+                .code(createRequest().getCode())
+                .minOrderAmount(createRequest().getMinOrderAmount())
+                .discountAmount(createRequest().getDiscountAmount())
+                .build();
     }
 }
