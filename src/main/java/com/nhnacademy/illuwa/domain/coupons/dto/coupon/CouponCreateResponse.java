@@ -20,19 +20,25 @@ import java.time.LocalDate;
 @Builder
 public class CouponCreateResponse {
     // 쿠폰 이름
+    @NotNull
     private String couponName;
 
     // 정책 코드 (고유 id)
+    @NotBlank
     private String policyCode;
 
+    @NotNull
     private LocalDate validFrom;
 
+    @NotNull
     private LocalDate validTo;
 
+    @NotNull
     private CouponType couponType;
 
     private String comment;
 
+    @NotBlank
     private BigDecimal issueCount;
 
     // 연동 시 주석해제
