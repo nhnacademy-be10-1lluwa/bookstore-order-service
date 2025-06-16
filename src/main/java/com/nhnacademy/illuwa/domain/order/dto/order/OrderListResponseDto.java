@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderListItemResponseDto {
+public class OrderListResponseDto {
 
     private long orderId;
     private ZonedDateTime orderDate;
