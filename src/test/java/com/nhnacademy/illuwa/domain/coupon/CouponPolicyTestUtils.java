@@ -1,12 +1,21 @@
 package com.nhnacademy.illuwa.domain.coupon;
 
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponCreateRequest;
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponCreateResponse;
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyCreateResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyUpdateResponse;
+import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -103,8 +112,17 @@ public class CouponPolicyTestUtils {
         }
     }
 
-    // 생성 req
-    public static CouponPolicyCreateRequest createRequest() {
+    public static CouponPolicy createPolicy() {
+        return CouponPolicy.builder()
+                .code("testCode")
+                .minOrderAmount(BigDecimal.valueOf(20_000))
+                .discountAmount(BigDecimal.valueOf(3_000))
+                .build();
+
+    }
+
+    // 정책 생성 req
+    public static CouponPolicyCreateRequest createPolicyRequest() {
         return CouponPolicyCreateRequest.builder()
                 .code("testCode")
                 .minOrderAmount(BigDecimal.valueOf(20_000))
@@ -112,22 +130,84 @@ public class CouponPolicyTestUtils {
                 .build();
     }
 
-    // 생성 응답 res
-    public static CouponPolicyCreateResponse createResponse() {
+    // 정책 생성 res
+    public static CouponPolicyCreateResponse createPolicyResponse() {
         return CouponPolicyCreateResponse.builder()
-                .code(createRequest().getCode())
-                .minOrderAmount(createRequest().getMinOrderAmount())
-                .discountAmount(createRequest().getDiscountAmount())
+                .code(createPolicyRequest().getCode())
+                .minOrderAmount(createPolicyRequest().getMinOrderAmount())
+                .discountAmount(createPolicyRequest().getDiscountAmount())
                 .build();
     }
 
-    // 기본 응답 res
-    public static CouponPolicyResponse response() {
+    // 정책 응답 res
+    public static CouponPolicyResponse policyResponse() {
         return CouponPolicyResponse.builder()
                 .id(1L)
-                .code(createRequest().getCode())
-                .minOrderAmount(createRequest().getMinOrderAmount())
-                .discountAmount(createRequest().getDiscountAmount())
+                .code(createPolicyRequest().getCode())
+                .minOrderAmount(createPolicyRequest().getMinOrderAmount())
+                .discountAmount(createPolicyRequest().getDiscountAmount())
                 .build();
     }
+
+    public static Coupon createCoupon() {
+        return Coupon.builder()
+                .id(1L)
+                .couponName("테 스 트 쿠 폰 이 름 임")
+                .policy(createPolicy())
+                .validFrom(LocalDate.now())
+                .validTo(LocalDate.now().plusYears(1L))
+                .couponType(CouponType.WELCOME)
+                .comment("회원가입시 쿠폰 드림 -> 100명 선착순")
+                .issueCount(BigDecimal.valueOf(100))
+                .build();
+    }
+
+    public static CouponCreateRequest createCouponRequest() {
+        return CouponCreateRequest.builder()
+                .couponName(createCoupon().getCouponName())
+                .policyCode(createCoupon().getPolicy().getCode())
+                .validFrom(createCoupon().getValidFrom())
+                .validTo(createCoupon().getValidTo())
+                .couponType(createCoupon().getCouponType()) // 일반
+                .comment(createCoupon().getComment())
+                .issueCount(createCoupon().getIssueCount())
+                .build();
+    }
+
+    public static CouponCreateResponse createCouponResponse() {
+        return CouponCreateResponse.fromEntity(createCoupon());
+    }
+
+    public static CouponResponse couponResponse() {
+        return CouponResponse.fromEntity(createCoupon());
+    }
+
+
+    // 테코 목록 조회용도
+    public static List<Coupon> createCoupons(int count) {
+        List<Coupon> coupons = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            coupons.add(
+                    Coupon.builder()
+                            .id((long) (i + 1))
+                            .couponName("목록 테스트 쿠폰 " + (i + 1))
+                            .policy(createPolicy())
+                            .validFrom(LocalDate.now())
+                            .validTo(LocalDate.now().plusDays(1L))
+                            .couponType(CouponType.GENERAL)
+                            .comment("테스트용도 쿠폰 생성 " + (i + 1))
+                            .issueCount(BigDecimal.valueOf(100))
+                            .build()
+            );
+        }
+
+        return coupons;
+    }
+
+    public static List<CouponResponse> createCouponResponses(int count) {
+        return createCoupons(count).stream()
+                .map(CouponResponse::fromEntity)
+                .toList();
+    }
+
 }

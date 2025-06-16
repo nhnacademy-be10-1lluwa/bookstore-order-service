@@ -31,13 +31,13 @@ public class CouponCreateRequest {
     @NotNull
     private LocalDate validTo;
 
-    @NotBlank
+    @NotNull
     private CouponType couponType;
 
     private String comment;
 
     // 쿠폰 발급수량
-    @NotBlank
+    @NotNull
     private BigDecimal issueCount;
     // 연동 시 주석해제
 //    private Long bookId;
