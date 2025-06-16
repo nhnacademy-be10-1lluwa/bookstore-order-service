@@ -70,39 +70,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         return orderItemRepository.findByOrderOrderId(id).stream().map(this::toResponseDto).toList();
     }
 
-    @Override
-    public OrderItem addOrderItem(OrderItemCreateRequestDto dto) {
-
-        long oId = dto.getOrderId();
-        long pId = dto.getPackagingId();
-
-        Order order = orderRepository.findByOrderId(oId).orElseThrow(()
-                -> new NotFoundException("해당 주문을 찾을 수 없습니다.", oId));
-
-        BigDecimal totalPrice = dto.getPrice().subtract(dto.getDiscountPrice());
-
-        Packaging packaging = packagingRepository.findByPackagingId(pId).orElseThrow(()
-                -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", pId));
-
-        BigDecimal packagingPrice = packaging.getPackagingPrice();
-
-
-        // fixme 쿠폰과 합의 후 처리
-        OrderItem orderItem = OrderItem.builder()
-                .bookId(dto.getBookId())
-                .order(order)
-                .quantity(dto.getQuantity())
-                .price(dto.getPrice())
-                .memberCouponId(1L)
-                .discountPrice(new BigDecimal("1000"))
-                .itemTotalPrice(totalPrice)
-                .packaging(packaging)
-                .packagingPrice(packagingPrice)
-                .build();
-
-        return orderItemRepository.save(orderItem);
-    }
-
     // entity -> Dto
     private OrderItemResponseDto toResponseDto(OrderItem item) {
         return new OrderItemResponseDto(item.getOrderItemId(),

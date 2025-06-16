@@ -20,7 +20,4 @@ public interface OrderItemService {
     // 주문별 주문 아이템 내역 조회 (MEMBERS, ADMIN)
     List<OrderItemResponseDto> getOrderItemByOrderId(String orderId);
 
-    // 주문하기 (아이템 개별)
-    OrderItem addOrderItem(OrderItemCreateRequestDto dto);
-
 }
