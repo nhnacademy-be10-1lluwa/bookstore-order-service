@@ -45,6 +45,7 @@ public class Order {
     private BigDecimal finalPrice;
 
     // enum 주문 상태
+    @Setter
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
