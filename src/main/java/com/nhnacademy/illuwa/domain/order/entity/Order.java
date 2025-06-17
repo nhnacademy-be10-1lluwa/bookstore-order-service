@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -17,6 +19,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private long orderId;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private final List<OrderItem> items = new ArrayList<>();
 
     private String orderNumber;
 
@@ -45,6 +50,7 @@ public class Order {
     private BigDecimal finalPrice;
 
     // enum 주문 상태
+    @Setter
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
