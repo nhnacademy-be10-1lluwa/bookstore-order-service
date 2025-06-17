@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.entity;
 
+import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,6 +21,8 @@ public class Order {
     @Column(name = "order_id")
     private long orderId;
 
+
+    // 양방향 매핑 : order 삽입 -> orderItem 삽입
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private final List<OrderItem> items = new ArrayList<>();
 
@@ -67,4 +70,5 @@ public class Order {
         this.finalPrice = finalPrice;
         this.orderStatus = orderStatus;
     }
+
 }

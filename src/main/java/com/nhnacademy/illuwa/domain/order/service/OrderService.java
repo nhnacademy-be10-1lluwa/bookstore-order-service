@@ -8,7 +8,6 @@ import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface OrderService {
 
@@ -28,9 +27,9 @@ public interface OrderService {
     Order createOrderWithItems(String memberId, OrderCreateRequestDto dto);
 
     // 주문 취소하기(MEMBERS)
-    int cancelOrderById(String orderId);
+    void cancelOrderById(String orderId);
 
     // 주문 상태 변경하기(ADMIN)
-    int updateOrderStatus(String orderId, OrderUpdateStatusDto orderUpdateDto);
+    void updateOrderStatus(String orderId, OrderUpdateStatusDto orderUpdateDto);
 
 }
