@@ -190,7 +190,7 @@ public class CouponPolicyTestUtils {
             coupons.add(
                     Coupon.builder()
                             .id((long) (i + 1))
-                            .couponName("목록 테스트 쿠폰 " + (i + 1))
+                            .couponName("couponTestName")
                             .policy(createPolicy())
                             .validFrom(LocalDate.now())
                             .validTo(LocalDate.now().plusDays(1L))
@@ -200,7 +200,6 @@ public class CouponPolicyTestUtils {
                             .build()
             );
         }
-
         return coupons;
     }
 
