@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static com.nhnacademy.illuwa.domain.coupon.CouponPolicyTestUtils.*;
-import static com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus.INACTIVE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,7 +41,7 @@ class CouponPolicyControllerTest {
 
     @BeforeEach
     void setup() throws JsonProcessingException {
-        json = objectMapper.writeValueAsString(createRequest());
+        json = objectMapper.writeValueAsString(createPolicyRequest());
     }
 
     @Test
@@ -50,7 +49,7 @@ class CouponPolicyControllerTest {
     void registerCouponPolicyTest() throws Exception {
         // given
         Mockito.when(couponPolicyService.createPolicy(Mockito.any()))
-                .thenReturn(createResponse());
+                .thenReturn(createPolicyResponse());
 
         // when & then
         mockMvc.perform(post("/coupon-policies")
@@ -66,15 +65,15 @@ class CouponPolicyControllerTest {
     void getCouponPolicyTest() throws Exception {
         // given
         Mockito.when(couponPolicyService.getPolicyById(Mockito.any()))
-                .thenReturn(response());
+                .thenReturn(policyResponse());
 
         // when & then
         mockMvc.perform(get("/coupon-policies/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(jsonPath("$.code").value("testCode"))
-                .andExpect(jsonPath("$.minOrderAmount").value(response().getMinOrderAmount()))
-                .andExpect(jsonPath("$.discountAmount").value(response().getDiscountAmount()))
+                .andExpect(jsonPath("$.minOrderAmount").value(policyResponse().getMinOrderAmount()))
+                .andExpect(jsonPath("$.discountAmount").value(policyResponse().getDiscountAmount()))
                 .andExpect(status().isOk());
 
     }
@@ -83,14 +82,14 @@ class CouponPolicyControllerTest {
     @DisplayName("GET /coupon-policies?code={code}")
     void getByIdCouponPolicyTest() throws Exception {
         Mockito.when(couponPolicyService.getPolicyByCode(Mockito.any()))
-                .thenReturn(response());
+                .thenReturn(policyResponse());
 
         mockMvc.perform(get("/coupon-policies?code=testCode")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(jsonPath("$.id").value(response().getId()))
-                .andExpect(jsonPath("$.minOrderAmount").value(response().getMinOrderAmount()))
-                .andExpect(jsonPath("$.discountAmount").value(response().getDiscountAmount()))
+                .andExpect(jsonPath("$.id").value(policyResponse().getId()))
+                .andExpect(jsonPath("$.minOrderAmount").value(policyResponse().getMinOrderAmount()))
+                .andExpect(jsonPath("$.discountAmount").value(policyResponse().getDiscountAmount()))
                 .andExpect(status().isOk());
     }
 
@@ -106,7 +105,7 @@ class CouponPolicyControllerTest {
 
         // 업데이트 응답 객체
         CouponPolicyUpdateResponse updatedResponse = CouponPolicyUpdateResponse.builder()
-                .code(createRequest().getCode())
+                .code(createPolicyRequest().getCode())
                 .minOrderAmount(updateRequest.getMinOrderAmount())
                 .discountAmount(updateRequest.getDiscountAmount())
                 .build();
