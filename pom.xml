@@ -43,11 +43,6 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
-        <!-- Spring Cloud Eureka Client -->
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.cloud</groupId>-->
-        <!--            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
-        <!--        </dependency>-->
 
         <!-- Spring Boot Starters -->
         <dependency>
@@ -199,5 +194,6 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>order-service</finalName>
     </build>
 </project>
