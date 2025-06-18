@@ -71,7 +71,7 @@ public class PackagingServiceTest {
         List<PackagingResponseDto> dtos = service.getAllPackaging();
 
         assertThat(dtos).extracting("packagingName")
-                .containsExactlyInAnyOrder("포장지", "Box", "Envelope", "Nothing");
+                .containsExactlyInAnyOrder("Box", "Envelope", "Nothing");
     }
 
     @Test

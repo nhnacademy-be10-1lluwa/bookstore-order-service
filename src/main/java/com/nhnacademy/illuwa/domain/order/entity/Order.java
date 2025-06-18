@@ -4,8 +4,10 @@ import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.cglib.core.Local;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +37,10 @@ public class Order {
     private ShippingPolicy shippingPolicy;
 
 
-    private ZonedDateTime orderDate;
+    private LocalDateTime orderDate;
 
 
-    private ZonedDateTime deliveryDate;
+    private LocalDateTime deliveryDate;
 
 
     private BigDecimal totalPrice;
@@ -58,7 +60,7 @@ public class Order {
     private OrderStatus orderStatus;
 
     @Builder
-    public Order(long memberId, String orderNumber, ShippingPolicy shippingPolicy, ZonedDateTime orderDate, ZonedDateTime deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus) {
+    public Order(long memberId, String orderNumber, ShippingPolicy shippingPolicy, LocalDateTime orderDate, LocalDateTime deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus) {
         this.memberId = memberId;
         this.orderNumber = orderNumber;
         this.shippingPolicy = shippingPolicy;

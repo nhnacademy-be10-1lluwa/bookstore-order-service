@@ -1,8 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.service;
 
-import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
-import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 
 import java.util.List;
 

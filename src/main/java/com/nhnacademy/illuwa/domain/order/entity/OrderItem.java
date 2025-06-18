@@ -39,11 +39,9 @@ public class OrderItem {
     @JoinColumn(name = "packaging_id")
     private Packaging packaging;
 
-    // 스냅샷용 포장 옵션
-    private BigDecimal packagingPrice;
 
     @Builder
-    public OrderItem(long bookId, Order order, int quantity, BigDecimal price, long memberCouponId, BigDecimal discountPrice, BigDecimal itemTotalPrice, Packaging packaging, BigDecimal packagingPrice) {
+    public OrderItem(long bookId, Order order, int quantity, BigDecimal price, long memberCouponId, BigDecimal discountPrice, BigDecimal itemTotalPrice, Packaging packaging) {
         this.bookId = bookId;
         this.order = order;
         this.quantity = quantity;
@@ -52,6 +50,5 @@ public class OrderItem {
         this.discountPrice = discountPrice;
         this.itemTotalPrice = itemTotalPrice;
         this.packaging = packaging;
-        this.packagingPrice = packagingPrice;
     }
 }

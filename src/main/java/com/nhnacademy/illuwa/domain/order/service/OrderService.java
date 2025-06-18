@@ -24,7 +24,7 @@ public interface OrderService {
     List<OrderListResponseDto> getOrderByOrderStatus(OrderStatus status);
 
     // 주문하기(MEMBERS)
-    Order createOrderWithItems(String memberId, OrderCreateRequestDto dto);
+    Order createOrderWithItems(OrderCreateRequestDto dto);
 
     // 주문 취소하기(MEMBERS)
     void cancelOrderById(String orderId);
