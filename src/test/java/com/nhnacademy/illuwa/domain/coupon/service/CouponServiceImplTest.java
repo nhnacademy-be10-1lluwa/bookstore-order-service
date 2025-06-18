@@ -45,6 +45,7 @@ class CouponServiceImplTest {
 
     @BeforeEach
     void setup() {
+        couponRepository.deleteAll(); // ddl-auto -> update시
         couponPolicyRepository.deleteAll();
 
         couponPolicyRepository.save(CouponPolicy.builder()

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">illuwa</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.illuwa.domain.order.entity</a> &gt; <span class="el_source">OrderItem.java</span></div><h1>OrderItem.java</h1><pre class="source lang-java linenums">package com.nhnacademy.illuwa.domain.order.entity;
+
+
+import jakarta.persistence.*;
+import jakarta.persistence.Table;
+import lombok.*;
+
+import java.math.BigDecimal;
+
+@Entity
+@Getter
+@Table(name = &quot;order_item&quot;)
+<span class="fc" id="L13">@NoArgsConstructor</span>
+public class OrderItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="nc" id="L18">    private long orderItemId;</span>
+
+<span class="nc" id="L20">    private long bookId;</span>
+
+    @ManyToOne
+    @JoinColumn(name = &quot;order_id&quot;, nullable = false)
+<span class="nc" id="L24">    private Order order;</span>
+
+<span class="nc" id="L26">    @Setter</span>
+<span class="nc" id="L27">    private int quantity;</span>
+
+<span class="nc" id="L29">    @Setter</span>
+<span class="nc" id="L30">    private BigDecimal price;</span>
+
+<span class="nc" id="L32">    private long memberCouponId;</span>
+
+<span class="nc" id="L34">    private BigDecimal discountPrice;</span>
+
+<span class="nc" id="L36">    private BigDecimal itemTotalPrice;</span>
+
+    @ManyToOne
+    @JoinColumn(name = &quot;packaging_id&quot;)
+<span class="nc" id="L40">    private Packaging packaging;</span>
+
+
+<span class="nc" id="L43">    @Builder</span>
+<span class="nc" id="L44">    public OrderItem(long bookId, Order order, int quantity, BigDecimal price, long memberCouponId, BigDecimal discountPrice, BigDecimal itemTotalPrice, Packaging packaging) {</span>
+<span class="nc" id="L45">        this.bookId = bookId;</span>
+<span class="nc" id="L46">        this.order = order;</span>
+<span class="nc" id="L47">        this.quantity = quantity;</span>
+<span class="nc" id="L48">        this.price = price;</span>
+<span class="nc" id="L49">        this.memberCouponId = memberCouponId;</span>
+<span class="nc" id="L50">        this.discountPrice = discountPrice;</span>
+<span class="nc" id="L51">        this.itemTotalPrice = itemTotalPrice;</span>
+<span class="nc" id="L52">        this.packaging = packaging;</span>
+<span class="nc" id="L53">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

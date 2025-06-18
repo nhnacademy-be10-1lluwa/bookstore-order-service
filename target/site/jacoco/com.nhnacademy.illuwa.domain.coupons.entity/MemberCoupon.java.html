@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MemberCoupon.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">illuwa</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.illuwa.domain.coupons.entity</a> &gt; <span class="el_source">MemberCoupon.java</span></div><h1>MemberCoupon.java</h1><pre class="source lang-java linenums">package com.nhnacademy.illuwa.domain.coupons.entity;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
+
+import static java.math.BigDecimal.ONE;
+
+@Entity
+<span class="nc" id="L12">@Getter @Setter</span>
+<span class="fc" id="L13">@NoArgsConstructor</span>
+<span class="nc" id="L14">@AllArgsConstructor</span>
+<span class="nc" id="L15">@Builder</span>
+// 현재 회원 쿠폰이라는 엔티티는
+// 1. 회원이라는 테이블이 존재해야함
+// 2. 쿠폰 정책에 의해 파생된 쿠폰이 존재해야함.
+// 3. 위 두가지중 하나라도 없을시 해당 엔티티는 생성이 불가능함
+// 이 상황의 시나리오는 ? -&gt; 백엔드 쪽에서는 memberCouponRepo.getId를 활용해서 회원이 존재하지 않을 시 에러 발생
+// 프론트 쪽에서는 ? -&gt; 응답본문에 404에러가 포함되어있을시 새 창이나 해당 페이지에서 에러메시지 or 에러페이지 반환
+public class MemberCoupon {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="nc" id="L25">    private Long id;</span>
+
+    // 쿠폰을 가진 사용자
+    @ManyToOne
+    @JoinColumn(name = &quot;member_id&quot;)
+<span class="nc" id="L30">    private Member member;</span>
+
+    // 어떠한 쿠폰을 가지고 있는지 판별
+    @ManyToOne
+    @JoinColumn(name = &quot;coupon_id&quot;)
+<span class="nc" id="L35">    private Coupon coupon;</span>
+
+<span class="nc" id="L37">    private boolean used; // 사용여부</span>
+<span class="nc" id="L38">    private LocalDate usedAt; // 사용 일자</span>
+<span class="nc" id="L39">    private LocalDate issuedAt; // 발급 일자</span>
+<span class="nc" id="L40">    private LocalDate expiresAt; // 실제 유효기간</span>
+
+    // 발급과 동시에 유효기간 설정
+    @PrePersist
+    public void prePersist() {
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (Objects.nonNull(issuedAt)) {</span>
+<span class="nc" id="L46">            this.expiresAt = this.issuedAt.plusDays(30);</span>
+        }
+<span class="nc" id="L48">    }</span>
+
+//     사용여부가 true 일 경우 현재 날짜로 사용일자 업데이트
+    @PreUpdate
+    public void preUpdate() {
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (!used) {</span>
+<span class="nc" id="L54">            this.usedAt = LocalDate.now();</span>
+        }
+<span class="nc" id="L56">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

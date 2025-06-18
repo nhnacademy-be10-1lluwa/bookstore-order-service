@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShippingPolicyServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">illuwa</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.illuwa.domain.order.service.impl</a> &gt; <span class="el_source">ShippingPolicyServiceImpl.java</span></div><h1>ShippingPolicyServiceImpl.java</h1><pre class="source lang-java linenums">package com.nhnacademy.illuwa.domain.order.service.impl;
+
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ActiveShippingPolicyDto;
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyCreateRequestDto;
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyUpdateRequestDto;
+import com.nhnacademy.illuwa.domain.order.entity.Packaging;
+import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
+import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
+import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
+import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
+import com.nhnacademy.illuwa.domain.order.service.ShippingPolicyService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+public class ShippingPolicyServiceImpl implements ShippingPolicyService {
+
+    private final ShippingPolicyRepository shippingPolicyRepository;
+
+<span class="fc" id="L25">    public ShippingPolicyServiceImpl(ShippingPolicyRepository shippingPolicyRepository) {</span>
+<span class="fc" id="L26">        this.shippingPolicyRepository = shippingPolicyRepository;</span>
+<span class="fc" id="L27">    }</span>
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;ActiveShippingPolicyDto&gt; getAllShippingPolicy() {
+<span class="fc" id="L33">        return shippingPolicyRepository.findAll().stream().map(this::toResponseDto).collect(Collectors.toList());</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;ActiveShippingPolicyDto&gt; getShippingPolicyByActive() {
+<span class="fc" id="L39">        return shippingPolicyRepository.findByActive(true).stream().map(this::toResponseDto).collect(Collectors.toList());</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ActiveShippingPolicyDto getShippingPolicy(String shippingPolicyId) {
+<span class="fc" id="L45">        long id = parseId(shippingPolicyId);</span>
+<span class="fc" id="L46">        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(id)</span>
+<span class="pc" id="L47">                .orElseThrow(() -&gt; new NotFoundException(&quot;해당 배송 정책을 찾을 수 없습니다.&quot;, id));</span>
+
+<span class="fc" id="L49">        return toResponseDto(shippingPolicy);</span>
+    }
+
+    @Override
+    public ShippingPolicy addShippingPolicy(ShippingPolicyCreateRequestDto shippingPolicyCreateDto) {
+<span class="fc" id="L54">        ShippingPolicy sp = ShippingPolicy.builder()</span>
+<span class="fc" id="L55">                .minAmount(shippingPolicyCreateDto.getMinAmount())</span>
+<span class="fc" id="L56">                .fee(shippingPolicyCreateDto.getFee())</span>
+<span class="fc" id="L57">                .active(true)</span>
+<span class="fc" id="L58">                .build();</span>
+<span class="fc" id="L59">        return shippingPolicyRepository.save(sp);</span>
+    }
+
+    @Override
+    public int removeShippingPolicy(String shippingPolicyId) {
+<span class="fc" id="L64">        long id = parseId(shippingPolicyId);</span>
+<span class="fc" id="L65">        return shippingPolicyRepository.updateActiveByPackagingId(id, false);</span>
+    }
+
+    @Override
+    public ShippingPolicy updateShippingPolicy(String shippingPolicyId, ShippingPolicyCreateRequestDto shippingPolicyCreateDto) {
+<span class="nc" id="L70">        long id = parseId(shippingPolicyId);</span>
+<span class="nc" id="L71">        shippingPolicyRepository.updateActiveByPackagingId(id, false);</span>
+<span class="nc" id="L72">        return addShippingPolicy(shippingPolicyCreateDto);</span>
+    }
+
+    // Entity -&gt; Dto
+    private ActiveShippingPolicyDto toResponseDto(ShippingPolicy pkg) {
+<span class="fc" id="L77">        return new ActiveShippingPolicyDto(pkg.getShippingPolicyId(),</span>
+<span class="fc" id="L78">                pkg.getMinAmount(),</span>
+<span class="fc" id="L79">                pkg.getFee()</span>
+        );
+    }
+
+    // ID 파싱 오류
+    private long parseId(String shippingPolicyId) {
+        try {
+<span class="fc" id="L86">            return Long.parseLong(shippingPolicyId);</span>
+<span class="nc" id="L87">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L88">            throw new BadRequestException(&quot;유효하지 않은 배송비 정책 ID&quot; + shippingPolicyId);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderItemResponseDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">illuwa</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.illuwa.domain.order.dto.orderItem</a> &gt; <span class="el_source">OrderItemResponseDto.java</span></div><h1>OrderItemResponseDto.java</h1><pre class="source lang-java linenums">package com.nhnacademy.illuwa.domain.order.dto.orderItem;
+
+import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
+import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+<span class="nc bnc" id="L12" title="All 22 branches missed.">@Data</span>
+<span class="nc" id="L13">@NoArgsConstructor</span>
+<span class="nc" id="L14">@Builder</span>
+public class OrderItemResponseDto {
+
+<span class="nc" id="L17">    private long orderItemId;</span>
+<span class="nc" id="L18">    private long bookId;</span>
+<span class="nc" id="L19">    private int quantity;</span>
+<span class="nc" id="L20">    private BigDecimal price;</span>
+<span class="nc" id="L21">    private long packagingId;</span>
+
+    @QueryProjection
+<span class="nc" id="L24">    public OrderItemResponseDto(long orderItemId, long bookId, int quantity, BigDecimal price, long packagingId) {</span>
+<span class="nc" id="L25">        this.orderItemId = orderItemId;</span>
+<span class="nc" id="L26">        this.bookId = bookId;</span>
+<span class="nc" id="L27">        this.quantity = quantity;</span>
+<span class="nc" id="L28">        this.price = price;</span>
+<span class="nc" id="L29">        this.packagingId = packagingId;</span>
+<span class="nc" id="L30">    }</span>
+
+    public static OrderItemResponseDto orderItemResponseDto(OrderItem orderItem) {
+<span class="nc" id="L33">        return OrderItemResponseDto.builder()</span>
+<span class="nc" id="L34">                .orderItemId(orderItem.getOrderItemId())</span>
+<span class="nc" id="L35">                .bookId(orderItem.getBookId())</span>
+<span class="nc" id="L36">                .quantity(orderItem.getQuantity())</span>
+<span class="nc" id="L37">                .price(orderItem.getPrice())</span>
+<span class="nc" id="L38">                .packagingId(orderItem.getPackaging().getPackagingId())</span>
+<span class="nc" id="L39">                .build();</span>
+    }
+}
+
+// order 서버 -&gt; 프론트 (개별 주문 상품 조회 요청)
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

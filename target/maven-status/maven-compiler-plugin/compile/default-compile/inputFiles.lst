@@ -41,10 +41,11 @@
 /Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/coupons/service/impl/MemberCouponServiceImpl.java
 /Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/coupons/service/impl/MemberServiceImpl.java
 /Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/order/dto/order/OrderCreateRequestDto.java
+/Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/order/dto/order/OrderCreateResponseDto.java
 /Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/order/dto/order/OrderListResponseDto.java
 /Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/order/dto/order/OrderResponseDto.java
 /Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/order/dto/order/OrderUpdateStatusDto.java
-/Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/order/dto/orderItem/OrderItemCreateRequestDto.java
+/Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/order/dto/orderItem/OrderItemRequestDto.java
 /Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/order/dto/orderItem/OrderItemResponseDto.java
 /Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/order/dto/packaging/PackagingCreateRequestDto.java
 /Users/chosun-nhn31/Documents/bookstore-order-service/src/main/java/com/nhnacademy/illuwa/domain/order/dto/packaging/PackagingResponseDto.java
