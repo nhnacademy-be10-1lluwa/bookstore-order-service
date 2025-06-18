@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 
@@ -63,28 +63,35 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrderWithItems(String memberId, OrderCreateRequestDto dto) {
+    public Order createOrderWithItems(OrderCreateRequestDto dto) {
 
-        String orderNumber = generateOrderNumber(dto.getOrderDate());
+        // 주문 번호 생성
+        String orderNumber = generateOrderNumber(LocalDateTime.now());
 
-        long mId = parseId(memberId);
-        long orderId = dto.getShippingPolicyId();
+        // 배송 정책 조회
+        long shippingPolicyId = dto.getShippingPolicyId();
+        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(shippingPolicyId).orElseThrow(()
+                -> new NotFoundException("해당 배송정책을 찾을 수 없습니다.", shippingPolicyId));
 
+        BigDecimal totalPrice = dto.getItems().stream()
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(orderId).orElseThrow(()
-                -> new NotFoundException("해당 배송정책을 찾을 수 없습니다.", orderId));
+        BigDecimal discountPrice = BigDecimal.ZERO; // todo 할인 될 가격 로직 추가
+        BigDecimal usedPoint = BigDecimal.ZERO; // todo 사용될 포인트 로직 추가
+        BigDecimal finalPrice = totalPrice.subtract(discountPrice).subtract(usedPoint);
 
         // fixme OrderItem 서비스 작성 후 코드 수정 and 쿠폰 작성 후 and 중복 예외 처리
         Order order = Order.builder()
                 .orderNumber(orderNumber)
-                .memberId(mId)
+                .memberId(dto.getMemberId())
                 .shippingPolicy(shippingPolicy)
-                .orderDate(dto.getOrderDate())
-                .deliveryDate(dto.getDeliveryDate())
-                .totalPrice(dto.getTotalPrice())
-                .discountPrice(new BigDecimal("1000"))
-                .usedPoint(new BigDecimal("2000"))
-                .finalPrice(dto.getTotalPrice())
+                .orderDate(LocalDateTime.now())
+                .deliveryDate(dto.getRequestedDeliveryDate())
+                .totalPrice(totalPrice)
+                .discountPrice(discountPrice)
+                .usedPoint(finalPrice)
+                .finalPrice(finalPrice)
                 .orderStatus(OrderStatus.Pending)
                 .build();
 
@@ -138,9 +145,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // 주문 번호 생성 메서드
-    private static String generateOrderNumber(ZonedDateTime time) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        String currentTime = dateFormat.format(time);
+    private static String generateOrderNumber(LocalDateTime time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String currentTime = time.format(formatter);
         String randomNumber = generateRandomNumber();
 
         return currentTime + "-" + randomNumber;
