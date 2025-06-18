@@ -2,6 +2,7 @@ package com.nhnacademy.illuwa.domain.order.dto.order;
 
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,6 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class OrderResponseDto {
 
     private long orderId;
@@ -22,6 +22,16 @@ public class OrderResponseDto {
     private LocalDateTime deliveryDate;
     private BigDecimal totalPrice;
     private OrderStatus orderStatus;
+
+    @QueryProjection
+    public OrderResponseDto(long orderId, long memberId, LocalDateTime orderDate, LocalDateTime deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus) {
+        this.orderId = orderId;
+        this.memberId = memberId;
+        this.orderDate = orderDate;
+        this.deliveryDate = deliveryDate;
+        this.totalPrice = totalPrice;
+        this.orderStatus = orderStatus;
+    }
 
     public static OrderResponseDto orderResponseDto(Order order) {
          return OrderResponseDto.builder()
