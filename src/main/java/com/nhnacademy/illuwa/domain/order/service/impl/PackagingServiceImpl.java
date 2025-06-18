@@ -26,22 +26,21 @@ public class PackagingServiceImpl implements PackagingService {
     @Override
     @Transactional(readOnly = true)
     public List<PackagingResponseDto> getAllPackaging() {
-        return packagingRepository.findAll().stream().map(this::toResponseDto).collect(Collectors.toList());
+        return packagingRepository.findPackagingDtos();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<PackagingResponseDto> getPackagingByActive() {
-        return packagingRepository.findByActive(true).stream().map(this::toResponseDto).collect(Collectors.toList());
+    public List<PackagingResponseDto> getPackagingByActive(boolean active) {
+        return packagingRepository.findPackagingDtosByActive(active);
     }
 
     @Override
     @Transactional(readOnly = true)
     public PackagingResponseDto getPackaging(String packagingId) {
         long id = parseId(packagingId);
-        Packaging packaging = packagingRepository.findByPackagingId(id).orElseThrow(()
+        return packagingRepository.findPackagingDtoById(id).orElseThrow(()
                 -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", id));
-        return toResponseDto(packaging);
     }
 
     @Override
