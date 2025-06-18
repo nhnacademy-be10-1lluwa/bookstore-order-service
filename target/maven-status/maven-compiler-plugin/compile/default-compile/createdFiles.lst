@@ -38,8 +38,10 @@ com/nhnacademy/illuwa/domain/order/dto/order/OrderListResponseDto$OrderListRespo
 com/nhnacademy/illuwa/domain/order/repository/OrderItemRepository.class
 com/nhnacademy/illuwa/domain/coupons/dto/couponPolicy/CouponPolicyCreateRequest.class
 com/nhnacademy/illuwa/domain/coupons/entity/Member.class
+com/nhnacademy/illuwa/domain/order/dto/order/QOrderResponseDto.class
 com/nhnacademy/illuwa/domain/order/service/impl/ShippingPolicyServiceImpl.class
 com/nhnacademy/illuwa/domain/coupons/controller/CouponPolicyController.class
+com/nhnacademy/illuwa/domain/order/dto/order/OrderCreateResponseDto$OrderCreateResponseDtoBuilder.class
 com/nhnacademy/illuwa/domain/order/dto/shippingPolicy/ShippingPolicyResponseDto.class
 com/nhnacademy/illuwa/domain/coupons/service/MemberService.class
 com/nhnacademy/illuwa/domain/order/dto/shippingPolicy/ShippingPolicyCreateRequestDto.class
@@ -50,11 +52,11 @@ com/nhnacademy/illuwa/domain/coupons/dto/couponPolicy/CouponPolicyCreateResponse
 com/nhnacademy/illuwa/domain/order/entity/ReturnRequest$ReturnRequestBuilder.class
 com/nhnacademy/illuwa/domain/coupons/dto/couponPolicy/CouponPolicyUpdateRequest$CouponPolicyUpdateRequestBuilder.class
 com/nhnacademy/illuwa/common/dto/MessageResponse.class
-com/nhnacademy/illuwa/domain/order/dto/orderItem/OrderItemCreateRequestDto.class
 com/nhnacademy/illuwa/domain/coupons/repository/MemberRepository.class
 com/nhnacademy/illuwa/domain/coupons/dto/member/MemberResponse.class
 com/nhnacademy/illuwa/domain/coupons/entity/QMemberCoupon.class
 com/nhnacademy/illuwa/domain/order/entity/QShippingPolicy.class
+com/nhnacademy/illuwa/domain/order/dto/order/OrderCreateResponseDto.class
 com/nhnacademy/illuwa/domain/order/dto/order/OrderResponseDto.class
 com/nhnacademy/illuwa/domain/coupons/dto/couponPolicy/CouponPolicyUpdateResponse$CouponPolicyUpdateResponseBuilder.class
 com/nhnacademy/illuwa/domain/coupons/dto/memberCoupon/MemberCouponCreateRequest.class
@@ -77,6 +79,7 @@ com/nhnacademy/illuwa/domain/order/dto/order/OrderUpdateStatusDto.class
 com/nhnacademy/illuwa/domain/coupons/dto/memberCoupon/MemberCouponUseResponse$MemberCouponUseResponseBuilder.class
 com/nhnacademy/illuwa/domain/order/dto/returnRequest/ReturnRequestListResponseDto.class
 com/nhnacademy/illuwa/domain/order/dto/order/QOrderListResponseDto.class
+com/nhnacademy/illuwa/domain/order/dto/orderItem/QOrderItemResponseDto.class
 com/nhnacademy/illuwa/domain/order/repository/ShippingPolicyRepository.class
 com/nhnacademy/illuwa/domain/order/entity/Order$OrderBuilder.class
 com/nhnacademy/illuwa/domain/coupons/dto/couponPolicy/CouponPolicyResponse.class
@@ -97,6 +100,8 @@ com/nhnacademy/illuwa/domain/order/entity/Order.class
 com/nhnacademy/illuwa/domain/order/entity/QOrder.class
 com/nhnacademy/illuwa/domain/coupons/dto/coupon/CouponCreateResponse$CouponCreateResponseBuilder.class
 com/nhnacademy/illuwa/domain/coupons/service/MemberCouponService.class
+com/nhnacademy/illuwa/domain/order/dto/orderItem/OrderItemRequestDto.class
+com/nhnacademy/illuwa/domain/order/dto/orderItem/OrderItemResponseDto$OrderItemResponseDtoBuilder.class
 com/nhnacademy/illuwa/domain/order/entity/ShippingPolicy$ShippingPolicyBuilder.class
 com/nhnacademy/illuwa/domain/coupons/service/CouponPolicyService.class
 com/nhnacademy/illuwa/IlluwaApplication.class

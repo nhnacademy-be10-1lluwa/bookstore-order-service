@@ -36,8 +36,6 @@ public class QOrderItem extends EntityPathBase<OrderItem> {
 
     public final QPackaging packaging;
 
-    public final NumberPath<java.math.BigDecimal> packagingPrice = createNumber("packagingPrice", java.math.BigDecimal.class);
-
     public final NumberPath<java.math.BigDecimal> price = createNumber("price", java.math.BigDecimal.class);
 
     public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>QOrder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">illuwa</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.illuwa.domain.order.entity</a> &gt; <span class="el_source">QOrder.java</span></div><h1>QOrder.java</h1><pre class="source lang-java linenums">package com.nhnacademy.illuwa.domain.order.entity;
+
+import static com.querydsl.core.types.PathMetadataFactory.*;
+
+import com.querydsl.core.types.dsl.*;
+
+import com.querydsl.core.types.PathMetadata;
+import javax.annotation.processing.Generated;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
+
+
+/**
+ * QOrder is a Querydsl query type for Order
+ */
+@Generated(&quot;com.querydsl.codegen.DefaultEntitySerializer&quot;)
+public class QOrder extends EntityPathBase&lt;Order&gt; {
+
+    private static final long serialVersionUID = 545491710L;
+
+<span class="nc" id="L21">    private static final PathInits INITS = PathInits.DIRECT2;</span>
+
+<span class="nc" id="L23">    public static final QOrder order = new QOrder(&quot;order1&quot;);</span>
+
+<span class="nc" id="L25">    public final DateTimePath&lt;java.time.LocalDateTime&gt; deliveryDate = createDateTime(&quot;deliveryDate&quot;, java.time.LocalDateTime.class);</span>
+
+<span class="nc" id="L27">    public final NumberPath&lt;java.math.BigDecimal&gt; discountPrice = createNumber(&quot;discountPrice&quot;, java.math.BigDecimal.class);</span>
+
+<span class="nc" id="L29">    public final NumberPath&lt;java.math.BigDecimal&gt; finalPrice = createNumber(&quot;finalPrice&quot;, java.math.BigDecimal.class);</span>
+
+<span class="nc" id="L31">    public final ListPath&lt;OrderItem, QOrderItem&gt; items = this.&lt;OrderItem, QOrderItem&gt;createList(&quot;items&quot;, OrderItem.class, QOrderItem.class, PathInits.DIRECT2);</span>
+
+<span class="nc" id="L33">    public final NumberPath&lt;Long&gt; memberId = createNumber(&quot;memberId&quot;, Long.class);</span>
+
+<span class="nc" id="L35">    public final DateTimePath&lt;java.time.LocalDateTime&gt; orderDate = createDateTime(&quot;orderDate&quot;, java.time.LocalDateTime.class);</span>
+
+<span class="nc" id="L37">    public final NumberPath&lt;Long&gt; orderId = createNumber(&quot;orderId&quot;, Long.class);</span>
+
+<span class="nc" id="L39">    public final StringPath orderNumber = createString(&quot;orderNumber&quot;);</span>
+
+<span class="nc" id="L41">    public final EnumPath&lt;com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus&gt; orderStatus = createEnum(&quot;orderStatus&quot;, com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus.class);</span>
+
+    public final QShippingPolicy shippingPolicy;
+
+<span class="nc" id="L45">    public final NumberPath&lt;java.math.BigDecimal&gt; totalPrice = createNumber(&quot;totalPrice&quot;, java.math.BigDecimal.class);</span>
+
+<span class="nc" id="L47">    public final NumberPath&lt;java.math.BigDecimal&gt; usedPoint = createNumber(&quot;usedPoint&quot;, java.math.BigDecimal.class);</span>
+
+    public QOrder(String variable) {
+<span class="nc" id="L50">        this(Order.class, forVariable(variable), INITS);</span>
+<span class="nc" id="L51">    }</span>
+
+    public QOrder(Path&lt;? extends Order&gt; path) {
+<span class="nc" id="L54">        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));</span>
+<span class="nc" id="L55">    }</span>
+
+    public QOrder(PathMetadata metadata) {
+<span class="nc" id="L58">        this(metadata, PathInits.getFor(metadata, INITS));</span>
+<span class="nc" id="L59">    }</span>
+
+    public QOrder(PathMetadata metadata, PathInits inits) {
+<span class="nc" id="L62">        this(Order.class, metadata, inits);</span>
+<span class="nc" id="L63">    }</span>
+
+    public QOrder(Class&lt;? extends Order&gt; type, PathMetadata metadata, PathInits inits) {
+<span class="nc" id="L66">        super(type, metadata, inits);</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        this.shippingPolicy = inits.isInitialized(&quot;shippingPolicy&quot;) ? new QShippingPolicy(forProperty(&quot;shippingPolicy&quot;)) : null;</span>
+<span class="nc" id="L68">    }</span>
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

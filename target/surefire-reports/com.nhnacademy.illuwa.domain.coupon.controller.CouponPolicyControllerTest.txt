@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.nhnacademy.illuwa.domain.coupon.controller.CouponPolicyControllerTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.261 s -- in com.nhnacademy.illuwa.domain.coupon.controller.CouponPolicyControllerTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.276 s -- in com.nhnacademy.illuwa.domain.coupon.controller.CouponPolicyControllerTest

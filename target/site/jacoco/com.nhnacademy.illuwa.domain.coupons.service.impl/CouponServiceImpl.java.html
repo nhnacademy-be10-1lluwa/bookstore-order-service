@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CouponServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">illuwa</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.illuwa.domain.coupons.service.impl</a> &gt; <span class="el_source">CouponServiceImpl.java</span></div><h1>CouponServiceImpl.java</h1><pre class="source lang-java linenums">package com.nhnacademy.illuwa.domain.coupons.service.impl;
+
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.*;
+import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
+import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
+import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
+import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.nio.charset.IllegalCharsetNameException;
+import java.util.List;
+
+@Service
+<span class="fc" id="L19">@RequiredArgsConstructor</span>
+@Transactional
+public class CouponServiceImpl implements CouponService {
+
+    private final CouponRepository couponRepository;
+    private final CouponPolicyRepository couponPolicyRepository;
+
+    @Override
+    public CouponCreateResponse createCoupon(CouponCreateRequest request) {
+<span class="fc" id="L28">        CouponPolicy policy = couponPolicyRepository.findByCode(request.getPolicyCode())</span>
+<span class="fc" id="L29">                .orElseThrow(() -&gt; new IllegalCharsetNameException(&quot;해당 정책코드는 존재하지 않습니다.&quot;));</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (!policy.getStatus().equals(CouponStatus.INACTIVE)) {</span>
+<span class="fc" id="L31">            Coupon coupon = Coupon.builder()</span>
+<span class="fc" id="L32">                    .couponName(request.getCouponName())</span>
+<span class="fc" id="L33">                    .policy(policy)</span>
+<span class="fc" id="L34">                    .validFrom(request.getValidFrom())</span>
+<span class="fc" id="L35">                    .validTo(request.getValidTo())</span>
+<span class="fc" id="L36">                    .couponType(request.getCouponType())</span>
+<span class="fc" id="L37">                    .comment(request.getComment())</span>
+<span class="fc" id="L38">                    .issueCount(request.getIssueCount())</span>
+<span class="fc" id="L39">                    .build();</span>
+<span class="fc" id="L40">            Coupon save = couponRepository.save(coupon);</span>
+<span class="fc" id="L41">            return CouponCreateResponse.fromEntity(save);</span>
+        } else {
+<span class="fc" id="L43">            throw new IllegalArgumentException(&quot;쿠폰 정책 상태가 비활성화이므로 생성 불가합니다.&quot;);</span>
+        }
+
+    }
+
+    @Override
+    public CouponResponse getCouponById(Long id) {
+
+<span class="fc" id="L51">        return couponRepository.findById(id)</span>
+<span class="fc" id="L52">                .map(CouponResponse::fromEntity)</span>
+<span class="fc" id="L53">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;존재하지 않는 쿠폰입니다. -&gt; &quot; + id));</span>
+    }
+
+    @Override
+    public List&lt;CouponResponse&gt; getCouponsByPolicyCode(String code) {
+<span class="fc" id="L58">        return couponRepository.findByPolicy_Code(code).stream()</span>
+<span class="fc" id="L59">                .map(CouponResponse::fromEntity)</span>
+<span class="fc" id="L60">                .toList();</span>
+    }
+
+    @Override
+    public List&lt;CouponResponse&gt; getCouponsByType(CouponType type) {
+<span class="fc" id="L65">        return couponRepository.findByCouponType(type).stream()</span>
+<span class="fc" id="L66">                .map(CouponResponse::fromEntity)</span>
+<span class="fc" id="L67">                .toList();</span>
+    }
+
+    @Override
+    public List&lt;CouponResponse&gt; getCouponsByName(String name) {
+<span class="fc" id="L72">        return couponRepository.findByCouponName(name).stream()</span>
+<span class="fc" id="L73">                .map(CouponResponse::fromEntity)</span>
+<span class="fc" id="L74">                .toList();</span>
+    }
+
+    @Override
+    public List&lt;CouponResponse&gt; getAllCoupons() {
+<span class="fc" id="L79">        return couponRepository.findAll().stream()</span>
+<span class="fc" id="L80">                .map(CouponResponse::fromEntity)</span>
+<span class="fc" id="L81">                .toList();</span>
+    }
+
+    @Override
+    public CouponUpdateResponse updateCoupon(Long id, CouponUpdateRequest request) {
+<span class="fc" id="L86">        Coupon coupon = couponRepository.findById(id)</span>
+<span class="pc" id="L87">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;존재하지 않는 쿠폰ID 입니다. -&gt;&quot; + id));</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        if (request.getCouponName() != null) {</span>
+<span class="fc" id="L89">            coupon.setCouponName(request.getCouponName());</span>
+        }
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        if (request.getValidFrom() != null) {</span>
+<span class="nc" id="L92">            coupon.setValidFrom(request.getValidFrom());</span>
+        }
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (request.getValidTo() != null) {</span>
+<span class="nc" id="L95">            coupon.setValidTo(request.getValidTo());</span>
+        }
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if (request.getCouponType() != null) {</span>
+<span class="nc" id="L98">            coupon.setCouponType(request.getCouponType());</span>
+        }
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if (request.getComment() != null) {</span>
+<span class="fc" id="L101">            coupon.setComment(request.getComment());</span>
+        }
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if (request.getIssueCount() != null) {</span>
+<span class="nc" id="L104">            coupon.setIssueCount(request.getIssueCount());</span>
+        }
+
+<span class="fc" id="L107">        return CouponUpdateResponse.fromEntity(coupon);</span>
+    }
+
+    // 추후에 소프트 삭제를 할지 영구 삭제를 할지 고민
+    @Override
+    public void deleteCoupon(Long id) {
+<span class="fc" id="L113">        Coupon coupon = couponRepository.findById(id)</span>
+<span class="pc" id="L114">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;존재하지 않는 쿠폰 ID 입니다. -&gt; &quot; + id));</span>
+<span class="fc" id="L115">        couponRepository.delete(coupon);</span>
+<span class="fc" id="L116">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

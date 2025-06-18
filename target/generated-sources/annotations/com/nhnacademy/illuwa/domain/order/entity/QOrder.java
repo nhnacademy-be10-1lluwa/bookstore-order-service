@@ -22,7 +22,7 @@ public class QOrder extends EntityPathBase<Order> {
 
     public static final QOrder order = new QOrder("order1");
 
-    public final DateTimePath<java.time.ZonedDateTime> deliveryDate = createDateTime("deliveryDate", java.time.ZonedDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> deliveryDate = createDateTime("deliveryDate", java.time.LocalDateTime.class);
 
     public final NumberPath<java.math.BigDecimal> discountPrice = createNumber("discountPrice", java.math.BigDecimal.class);
 
@@ -32,7 +32,7 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
 
-    public final DateTimePath<java.time.ZonedDateTime> orderDate = createDateTime("orderDate", java.time.ZonedDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> orderDate = createDateTime("orderDate", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> orderId = createNumber("orderId", Long.class);
 

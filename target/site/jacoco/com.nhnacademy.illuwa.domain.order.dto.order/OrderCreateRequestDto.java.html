@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderCreateRequestDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">illuwa</a> &gt; <a href="index.source.html" class="el_package">com.nhnacademy.illuwa.domain.order.dto.order</a> &gt; <span class="el_source">OrderCreateRequestDto.java</span></div><h1>OrderCreateRequestDto.java</h1><pre class="source lang-java linenums">package com.nhnacademy.illuwa.domain.order.dto.order;
+
+import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemRequestDto;
+import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+<span class="nc bnc" id="L13" title="All 38 branches missed.">@Data</span>
+<span class="nc" id="L14">@NoArgsConstructor</span>
+public class OrderCreateRequestDto {
+
+<span class="nc" id="L17">    private Long memberId;</span>
+
+    @NotNull
+<span class="nc" id="L20">    private Long shippingPolicyId;</span>
+
+    @Size(min=1)
+    @NotNull
+<span class="nc" id="L24">    private List&lt;OrderItemRequestDto&gt; items;</span>
+
+<span class="nc" id="L26">    private LocalDateTime requestedDeliveryDate;</span>
+
+}
+
+// 프론트 -&gt; order 서버 (주문 요청)
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
