@@ -11,18 +11,29 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long
     // 특정 회원을 기준으로 모든 쿠폰을 조회 (회원이 존재할 때)
     List<MemberCoupon> findMemberById(Long memberId);
 
-    List<MemberCoupon> findMemberByCouponId(Long couponId);
+    // 회원 소유 쿠폰을 가져옴 (ID 기준)
+    Optional<MemberCoupon> findMemberCouponById(Long memberCouponId);
 
-    // 사용 여부로 쿠폰 조회
-    List<MemberCoupon> findByUsed(boolean used);
+    // 회원 소유 쿠폰을 가져옴 (Email 기준)
+    Optional<MemberCoupon> findMemberCouponByMemberEmail(String memberEmail);
 
-    // 특정 회원의 사용된/미사용된 쿠폰 조회
-    List<MemberCoupon> findMemberByUsed(Long memberId, boolean used);
+    // 쿠폰 발급여부 Check
+    boolean existsByMemberIdAndCouponId(Long memberId, Long couponId);
 
-    // 특정 회원의 특정 쿠폰 조회
-    Optional<MemberCoupon> findMemberAndCouponById(Long memberId, Long couponId);
 
-    // 회원 이메일로 해당하는 쿠폰 조회 (회원 이메일 기반)
-    List<MemberCoupon> findMemberByEmail(String email);
+
+//    List<MemberCoupon> findMemberByCouponId(Long couponId);
+//
+//    // 사용 여부로 쿠폰 조회
+//    List<MemberCoupon> findByUsed(boolean used);
+//
+//    // 특정 회원의 사용된/미사용된 쿠폰 조회
+//    List<MemberCoupon> findMemberByUsed(Long memberId, boolean used);
+//
+//    // 특정 회원의 특정 쿠폰 조회
+//    Optional<MemberCoupon> findMemberAndCouponById(Long memberId, Long couponId);
+//
+//    // 회원 이메일로 해당하는 쿠폰 조회 (회원 이메일 기반)
+//    List<MemberCoupon> findMemberByEmail(String email);
 
 }

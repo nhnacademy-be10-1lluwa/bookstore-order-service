@@ -16,5 +16,5 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     // 쿠폰타입으로 조회
     List<Coupon> findByCouponType(CouponType couponType);
 
-    Optional<Coupon> findByCouponName2(String couponName);
+    Optional<Coupon> findCouponByCouponName(String couponName);
 }

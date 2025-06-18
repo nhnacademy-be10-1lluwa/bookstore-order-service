@@ -34,6 +34,8 @@ public class QMemberCoupon extends EntityPathBase<MemberCoupon> {
 
     public final BooleanPath used = createBoolean("used");
 
+    public final DatePath<java.time.LocalDate> usedAt = createDate("usedAt", java.time.LocalDate.class);
+
     public QMemberCoupon(String variable) {
         this(MemberCoupon.class, forVariable(variable), INITS);
     }

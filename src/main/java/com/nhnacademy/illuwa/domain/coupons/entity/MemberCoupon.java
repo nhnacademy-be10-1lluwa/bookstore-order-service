@@ -2,8 +2,11 @@ package com.nhnacademy.illuwa.domain.coupons.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
+
+import static java.math.BigDecimal.ONE;
 
 @Entity
 @Getter @Setter
@@ -32,13 +35,23 @@ public class MemberCoupon {
     private Coupon coupon;
 
     private boolean used; // 사용여부
+    private LocalDate usedAt; // 사용 일자
     private LocalDate issuedAt; // 발급 일자
     private LocalDate expiresAt; // 실제 유효기간
 
+    // 발급과 동시에 유효기간 설정
     @PrePersist
-    public void setExpireDate() {
+    public void prePersist() {
         if (Objects.nonNull(issuedAt)) {
             this.expiresAt = this.issuedAt.plusDays(30);
+        }
+    }
+
+//     사용여부가 true 일 경우 현재 날짜로 사용일자 업데이트
+    @PreUpdate
+    public void preUpdate() {
+        if (!used) {
+            this.usedAt = LocalDate.now();
         }
     }
 }
