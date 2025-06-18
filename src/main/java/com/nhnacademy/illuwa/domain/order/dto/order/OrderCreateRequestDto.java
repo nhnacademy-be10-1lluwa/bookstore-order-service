@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.dto.order;
 
+import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemRequestDto;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,7 +21,7 @@ public class OrderCreateRequestDto {
 
     @Size(min=1)
     @NotNull
-    private List<OrderItem> items;
+    private List<OrderItemRequestDto> items;
 
     private LocalDateTime requestedDeliveryDate;
 

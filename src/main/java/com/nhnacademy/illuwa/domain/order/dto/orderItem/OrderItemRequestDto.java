@@ -16,6 +16,8 @@ public class OrderItemRequestDto {
     @Positive
     private Integer quantity;
 
+    private Long memberCouponId;
+
     @NotNull
     private Long packagingId;
 }
