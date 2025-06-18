@@ -1,0 +1,19 @@
+-------------------------------------------------------------------------------
+Test set: com.nhnacademy.illuwa.domain.order.service.impl.PackagingServiceTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.328 s <<< FAILURE! -- in com.nhnacademy.illuwa.domain.order.service.impl.PackagingServiceTest
+com.nhnacademy.illuwa.domain.order.service.impl.PackagingServiceTest.testAllPackaging -- Time elapsed: 0.046 s <<< FAILURE!
+java.lang.AssertionError: 
+[Extracted: packagingName] 
+Expecting actual:
+  ["Box", "Envelope", "Nothing"]
+to contain exactly in any order:
+  ["포장지", "Box", "Envelope", "Nothing"]
+but could not find the following elements:
+  ["포장지"]
+
+	at com.nhnacademy.illuwa.domain.order.service.impl.PackagingServiceTest.testAllPackaging(PackagingServiceTest.java:74)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
