@@ -1,26 +1,16 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
-import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
-import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
-import com.nhnacademy.illuwa.domain.order.entity.Packaging;
-import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderItemService;
-import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service

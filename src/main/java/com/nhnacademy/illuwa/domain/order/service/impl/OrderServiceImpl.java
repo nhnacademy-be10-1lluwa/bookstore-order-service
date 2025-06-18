@@ -11,6 +11,7 @@ import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
+import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import org.springframework.stereotype.Service;
@@ -28,16 +29,18 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final ShippingPolicyRepository shippingPolicyRepository;
+    private final PackagingRepository packagingRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, ShippingPolicyRepository shippingPolicyRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, ShippingPolicyRepository shippingPolicyRepository, PackagingRepository packagingRepository) {
         this.orderRepository = orderRepository;
         this.shippingPolicyRepository = shippingPolicyRepository;
+        this.packagingRepository = packagingRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<OrderListResponseDto> getAllOrders() {
-        return orderRepository.findOrderItemDtos();
+        return orderRepository.findOrderDtos();
     }
 
     @Override
@@ -45,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDto getOrderById(String orderId) {
         long id = parseId(orderId);
 
-        return orderRepository.findByOrderId(id).map(OrderResponseDto::orderResponseDto).orElseThrow(()
+        return orderRepository.findOrderDto(id).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", id));
     }
 
@@ -68,13 +71,21 @@ public class OrderServiceImpl implements OrderService {
         // 주문 번호 생성
         String orderNumber = generateOrderNumber(LocalDateTime.now());
 
+        // todo 책 가격 가져오기
+        BigDecimal bookPrice = new BigDecimal("20000");
+        BigDecimal bookDiscountPrice = new BigDecimal("10000");
+        BigDecimal bookTotalPrice = bookPrice.subtract(bookDiscountPrice);
+
         // 배송 정책 조회
         long shippingPolicyId = dto.getShippingPolicyId();
         ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(shippingPolicyId).orElseThrow(()
                 -> new NotFoundException("해당 배송정책을 찾을 수 없습니다.", shippingPolicyId));
 
+        // 포장 옵션 조회
+
+
         BigDecimal totalPrice = dto.getItems().stream()
-                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .map(item -> bookPrice.multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal discountPrice = BigDecimal.ZERO; // todo 할인 될 가격 로직 추가
@@ -90,22 +101,24 @@ public class OrderServiceImpl implements OrderService {
                 .deliveryDate(dto.getRequestedDeliveryDate())
                 .totalPrice(totalPrice)
                 .discountPrice(discountPrice)
-                .usedPoint(finalPrice)
+                .usedPoint(usedPoint)
                 .finalPrice(finalPrice)
                 .orderStatus(OrderStatus.Pending)
                 .build();
 
+
+        // todo 가격 가져오기
         List<OrderItem> items = dto.getItems().stream().map(orderItem
                 -> OrderItem.builder()
                 .bookId(orderItem.getBookId())
                 .order(order)
                 .quantity(orderItem.getQuantity())
-                .price(orderItem.getPrice())
+                .price(bookPrice)
                 .memberCouponId(orderItem.getMemberCouponId())
-                .discountPrice(orderItem.getDiscountPrice())
-                .itemTotalPrice(orderItem.getPrice().subtract(orderItem.getDiscountPrice()))
-                .packaging(orderItem.getPackaging())
-                .packagingPrice(orderItem.getPackagingPrice())
+                .discountPrice(bookDiscountPrice)
+                .itemTotalPrice(bookTotalPrice)
+                .packaging(packagingRepository.findByPackagingId(orderItem.getPackagingId()).orElseThrow(()
+                        -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", orderItem.getPackagingId())))
                 .build()).toList();
 
         order.getItems().addAll(items);
