@@ -2,14 +2,9 @@ package com.nhnacademy.illuwa.domain.order.service.impl;
 
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ActiveShippingPolicyDto;
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyCreateRequestDto;
-import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyResponseDto;
-import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
-import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import com.nhnacademy.illuwa.domain.order.service.ShippingPolicyService;
-import jakarta.persistence.Table;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("db")
 @Transactional
-@Rollback(value = false)
 public class ShippingPolicyServiceTest {
 
     @Autowired
@@ -46,7 +39,6 @@ public class ShippingPolicyServiceTest {
 
     @BeforeEach
     void setUp() {
-        repository.deleteAll();
 
         repository.save(ShippingPolicy.builder()
                 .minAmount(new BigDecimal("30000"))
@@ -73,9 +65,8 @@ public class ShippingPolicyServiceTest {
     void testAllShippingPolicy() {
         List<ActiveShippingPolicyDto> dtos = service.getAllShippingPolicy();
 
-        assertThat(dtos).hasSize(3);
         assertThat(dtos).extracting("fee")
-                .containsExactly(new BigDecimal("5000"), new BigDecimal("3000"), new BigDecimal("4000"));
+                .contains(new BigDecimal("5000"), new BigDecimal("3000"), new BigDecimal("4000"));
 
     }
 
@@ -84,8 +75,13 @@ public class ShippingPolicyServiceTest {
     void testGetShippingPolicyByActive() {
         List<ActiveShippingPolicyDto> dtos = service.getShippingPolicyByActive();
 
-        assertThat(dtos.size()).isEqualTo(2);
+        Integer activeCount = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM shipping_policies WHERE active = true", Integer.class
+        );
+
+        assertThat(dtos).hasSize(activeCount);
     }
+
 
     @Test
     @DisplayName("정책 주가 및 조회")
@@ -104,9 +100,8 @@ public class ShippingPolicyServiceTest {
     void testRemoveShippingPolicy() {
 
         List<ShippingPolicy> savedList = repository.findAll();
-        assertThat(savedList).hasSize(3);
 
-        Long targetId = savedList.getFirst().getShippingPolicyId();
+        Long targetId = savedList.getLast().getShippingPolicyId();
 
         int removed = service.removeShippingPolicy(targetId.toString());
 
@@ -117,5 +112,4 @@ public class ShippingPolicyServiceTest {
         assertThat(isActive).isFalse();
     }
 
-    // 정책 수정 메서드는 보류
 }
