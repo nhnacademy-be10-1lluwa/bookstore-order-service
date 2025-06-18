@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon;
 
 
+import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,4 +21,16 @@ public class MemberCouponResponse {
     private boolean used;
     private LocalDate issuedAt;
     private LocalDate expiresAt;
+
+    public static MemberCouponResponse fromEntity(MemberCoupon memberCoupon) {
+        return MemberCouponResponse.builder()
+                .memberCouponId(memberCoupon.getId())
+                .memberName(memberCoupon.getMember().getName())
+                .couponName(memberCoupon.getCoupon().getCouponName())
+                .couponCode(memberCoupon.getCoupon().getPolicy().getCode())
+                .used(memberCoupon.isUsed())
+                .issuedAt(memberCoupon.getIssuedAt())
+                .expiresAt(memberCoupon.getExpiresAt())
+                .build();
+    }
 }

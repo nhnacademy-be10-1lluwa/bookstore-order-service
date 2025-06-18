@@ -16,4 +16,6 @@ public class MemberCouponCreateRequest {
     private String memberEmail;
     @NotBlank
     private String couponCode;
+
+    private String couponName;
 }
