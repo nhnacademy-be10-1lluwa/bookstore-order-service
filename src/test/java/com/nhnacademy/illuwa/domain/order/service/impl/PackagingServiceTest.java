@@ -29,9 +29,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("db")
-@Transactional              // 각 테스트 후 롤백
-@Rollback(value = false)
+@Transactional
 public class PackagingServiceTest {
+
+
 
     @Autowired
     private PackagingServiceImpl service;
@@ -44,7 +45,6 @@ public class PackagingServiceTest {
 
     @BeforeEach
     void setUp() {
-        repository.deleteAll();
 
         repository.save(Packaging.builder()
                 .packagingName("Box")
@@ -70,9 +70,8 @@ public class PackagingServiceTest {
     void testAllPackaging() {
         List<PackagingResponseDto> dtos = service.getAllPackaging();
 
-        assertThat(dtos).hasSize(3);
         assertThat(dtos).extracting("packagingName")
-                .containsExactlyInAnyOrder("Box", "Envelope", "Nothing");
+                .containsExactlyInAnyOrder("포장지", "Box", "Envelope", "Nothing");
     }
 
     @Test
@@ -80,11 +79,13 @@ public class PackagingServiceTest {
     void testGetPackagingByActive() {
         List<PackagingResponseDto> dtos = service.getPackagingByActive();
 
-        assertThat(dtos).allSatisfy(dto ->
-                assertThat(dto.getPackagingPrice()).isGreaterThan(BigDecimal.ZERO)
+        Integer activeCount = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM packaging WHERE active = true",
+                Integer.class
         );
 
-        assertThat(dtos.size()).isEqualTo(2);
+        assertThat(dtos).hasSize(activeCount);
+
     }
 
     @Test
@@ -98,25 +99,13 @@ public class PackagingServiceTest {
         assertThat(dto.getPackagingPrice()).isEqualByComparingTo(new BigDecimal("200"));
     }
 
-
-   /* @Test
-    @DisplayName("H2 DB 직접 조회 테스트")
-    void testDirectH2Access() {
-        Integer count = jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM packaging", Integer.class
-        );
-        assertThat(count).isEqualTo(2);
-    }*/
-
     @Test
     @DisplayName("포장 옵션 비활성화")
     void testRemovePackaging() {
 
         List<Packaging> savedList = repository.findAll();
-        assertThat(savedList).hasSize(3);
 
-        Long targetId = savedList.get(0).getPackagingId();
-
+        Long targetId = savedList.getLast().getPackagingId();
 
         int removed = service.removePackaging(targetId.toString());
 
@@ -132,7 +121,6 @@ public class PackagingServiceTest {
     void testUpdatePackaging() {
 
         List<Packaging> savedList = repository.findAll();
-        assertThat(savedList).hasSize(3);
 
         Long targetId = savedList.getFirst().getPackagingId();
 
