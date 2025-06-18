@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -18,8 +18,8 @@ public class OrderResponseDto {
 
     private long orderId;
     private long memberId;
-    private ZonedDateTime orderDate;
-    private ZonedDateTime deliveryDate;
+    private LocalDateTime orderDate;
+    private LocalDateTime deliveryDate;
     private BigDecimal totalPrice;
     private OrderStatus orderStatus;
 
