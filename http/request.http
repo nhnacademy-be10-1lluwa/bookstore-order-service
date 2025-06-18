@@ -74,3 +74,30 @@ Content-Type: application/json
 
 ### (정책기반) -> 쿠폰 삭제
 DELETE http://localhost:8080/coupons/1
+
+### (임시) -> 회원 생성
+POST http://localhost:8080/members
+Content-Type: application/json
+
+{
+  "birth": "1999-08-12",
+  "email": "test@test.com",
+  "name": "testName"
+}
+
+
+### (회원) -> 쿠폰 발급
+POST http://localhost:8080/member-coupons
+Content-Type: application/json
+
+{
+  "memberEmail": "test@test.com",
+  "couponName": "생일쿠폰"
+}
+
+### (회원) -> 쿠폰 발급내역
+GET http://localhost:8080/member-coupons/1
+
+
+### (회원) -> 쿠폰 사용
+PUT http://localhost:8080/member-coupons/1/use

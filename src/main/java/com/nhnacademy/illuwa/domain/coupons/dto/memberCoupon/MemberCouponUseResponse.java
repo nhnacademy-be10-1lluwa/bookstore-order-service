@@ -1,6 +1,5 @@
 package com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon;
 
-
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,26 +12,18 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MemberCouponResponse {
-    private Long memberCouponId;
+public class MemberCouponUseResponse {
     private String memberName;
     private String couponName;
-    private String couponCode;
     private boolean used;
     private LocalDate usedAt;
-    private LocalDate issuedAt;
-    private LocalDate expiresAt;
 
-    public static MemberCouponResponse fromEntity(MemberCoupon memberCoupon) {
-        return MemberCouponResponse.builder()
-                .memberCouponId(memberCoupon.getId())
+    public static MemberCouponUseResponse fromEntity(MemberCoupon memberCoupon) {
+        return MemberCouponUseResponse.builder()
                 .memberName(memberCoupon.getMember().getName())
                 .couponName(memberCoupon.getCoupon().getCouponName())
-                .couponCode(memberCoupon.getCoupon().getPolicy().getCode())
                 .used(memberCoupon.isUsed())
                 .usedAt(memberCoupon.getUsedAt())
-                .issuedAt(memberCoupon.getIssuedAt())
-                .expiresAt(memberCoupon.getExpiresAt())
                 .build();
     }
 }
