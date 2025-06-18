@@ -14,8 +14,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
-@NoArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderCreateResponseDto {
 
     private Long orderId;
@@ -28,30 +29,10 @@ public class OrderCreateResponseDto {
     private LocalDateTime deliveryDate;
 
     private BigDecimal finalPrice;
+
     private boolean isGuest;
 
     private BigDecimal discountPrice;
 
-    @QueryProjection
-    public OrderCreateResponseDto(Long orderId, String orderNumber, LocalDateTime orderDate, LocalDateTime deliveryDate, BigDecimal finalPrice, boolean isGuest, BigDecimal discountPrice) {
-        this.orderId = orderId;
-        this.orderNumber = orderNumber;
-        this.orderDate = orderDate;
-        this.deliveryDate = deliveryDate;
-        this.finalPrice = finalPrice;
-        this.isGuest = isGuest;
-        this.discountPrice = discountPrice;
-    }
-
-    public static OrderCreateResponseDto orderCreateResponseDto(Order order) {
-        return OrderCreateResponseDto.builder()
-                .orderId(order.getOrderId())
-                .orderNumber(order.getOrderNumber())
-                .orderDate(order.getDeliveryDate())
-                .finalPrice(order.getFinalPrice())
-                .isGuest(Objects.isNull(order.getMemberId()))
-                .discountPrice(order.getDiscountPrice())
-                .build();
-    }
 
 }
