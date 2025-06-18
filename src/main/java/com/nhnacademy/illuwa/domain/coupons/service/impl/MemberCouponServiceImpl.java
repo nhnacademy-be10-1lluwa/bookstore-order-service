@@ -70,6 +70,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         return MemberCouponResponse.fromEntity(memberCoupon);
     }
 
+    // 회원 소유 쿠폰 사용
     @Override
     public MemberCouponUseResponse useCoupon(Long id) {
         MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponById(id).orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
