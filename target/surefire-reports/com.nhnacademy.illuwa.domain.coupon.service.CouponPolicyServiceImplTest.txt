@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.nhnacademy.illuwa.domain.coupon.service.CouponPolicyServiceImplTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.228 s -- in com.nhnacademy.illuwa.domain.coupon.service.CouponPolicyServiceImplTest

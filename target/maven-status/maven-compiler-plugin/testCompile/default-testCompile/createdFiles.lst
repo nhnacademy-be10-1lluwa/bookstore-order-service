@@ -1,0 +1,9 @@
+com/nhnacademy/illuwa/domain/order/service/impl/ShippingPolicyServiceTest.class
+com/nhnacademy/illuwa/DatabaseConnectionTest.class
+com/nhnacademy/illuwa/domain/coupon/controller/CouponControllerTest.class
+com/nhnacademy/illuwa/domain/coupon/controller/CouponPolicyControllerTest.class
+com/nhnacademy/illuwa/IlluwaApplicationTests.class
+com/nhnacademy/illuwa/domain/coupon/service/CouponServiceImplTest.class
+com/nhnacademy/illuwa/domain/coupon/service/CouponPolicyServiceImplTest.class
+com/nhnacademy/illuwa/domain/coupon/CouponPolicyTestUtils.class
+com/nhnacademy/illuwa/domain/order/service/impl/PackagingServiceTest.class
