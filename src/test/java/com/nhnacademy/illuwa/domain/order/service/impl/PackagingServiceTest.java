@@ -77,7 +77,7 @@ public class PackagingServiceTest {
     @Test
     @DisplayName("활성된 포장 옵션 테스트")
     void testGetPackagingByActive() {
-        List<PackagingResponseDto> dtos = service.getPackagingByActive();
+        List<PackagingResponseDto> dtos = service.getPackagingByActive(true);
 
         Integer activeCount = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM packaging WHERE active = true",
