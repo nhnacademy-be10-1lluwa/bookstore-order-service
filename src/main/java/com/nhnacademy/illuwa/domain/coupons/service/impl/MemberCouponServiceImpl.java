@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -62,12 +63,21 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         return MemberCouponResponse.fromEntity(save);
     }
 
-    // 회원 소유 쿠폰 조회 {ID 기준}
+    // 회원 소유 쿠폰 조회 {ID 기준} --> 이거 필요없음 전체로 바꿔야함
     @Override
     public MemberCouponResponse getMemberCouponId(Long id) {
         MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponById(id).orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
 
         return MemberCouponResponse.fromEntity(memberCoupon);
+    }
+
+    // 회원 소유 쿠폰 전체조회
+    @Override
+    public List<MemberCouponResponse> getAllMemberCoupons(Long id) {
+        return memberCouponRepository.findMemberById(id)
+                .stream()
+                .map(MemberCouponResponse::fromEntity)
+                .toList();
     }
 
     // 회원 소유 쿠폰 사용

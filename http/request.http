@@ -39,11 +39,11 @@ POST http://localhost:8080/coupons
 Content-Type: application/json
 
 {
-  "couponName": "생일쿠폰",
+  "couponName": "일반쿠폰",
   "policyCode": "AMT15K_DC3K",
   "validFrom": "2024-01-01",
   "validTo": "2025-01-01",
-  "couponType": "BIRTHDAY",
+  "couponType": "GENERAL",
   "comment": "생일축하드립니다.",
   "issueCount": 10
 }
@@ -92,7 +92,7 @@ Content-Type: application/json
 
 {
   "memberEmail": "test@test.com",
-  "couponName": "생일쿠폰"
+  "couponName": "일반쿠폰"
 }
 
 ### (회원) -> 쿠폰 발급내역

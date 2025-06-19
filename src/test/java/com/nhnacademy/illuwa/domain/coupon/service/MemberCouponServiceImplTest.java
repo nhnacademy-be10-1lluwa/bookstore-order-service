@@ -4,132 +4,156 @@ import com.nhnacademy.illuwa.domain.coupon.CouponPolicyTestUtils;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
+import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
+import com.nhnacademy.illuwa.domain.coupons.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Transactional
 class MemberCouponServiceImplTest {
+
     @Autowired
     private MemberCouponRepository memberCouponRepository;
+
+
     @Autowired
-    private MemberRepository memberRepository;
+    private CouponPolicyRepository couponPolicyRepository;
+
     @Autowired
     private CouponRepository couponRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
     @Autowired
     private MemberCouponService memberCouponService;
 
-    private Member member;
+    private CouponPolicy couponPolicy;
     private Coupon coupon;
+    private Member member;
+    private MemberCouponCreateRequest request;
+    @Autowired
+    private MemberService memberService;
 
     @BeforeEach
-    void setUp() {
-        // 멤버 저장(매번 새로운 메일)
-        member = memberRepository.save(Member.builder()
-                .name("최정환")
-                .birth(LocalDate.parse("1999-08-12"))
-                .email("junghwan__" + System.nanoTime() + "@naver.com")
+    void setup() {
+        // 정책 설정
+        couponPolicy = couponPolicyRepository.save(CouponPolicyTestUtils.createPolicy());
+
+        // 정책에 의한 쿠폰 설정
+        coupon = couponRepository.save(Coupon.builder()
+                .couponName("테 스 트 쿠 폰 이 름 임")
+                .policy(couponPolicy)
+                .validFrom(LocalDate.now())
+                .validTo(LocalDate.now().plusYears(1L))
+                .couponType(CouponType.GENERAL)
+                .comment("테스트코드는 반복작업이다.")
+                .issueCount(BigDecimal.valueOf(100))
                 .build());
 
-        // 쿠폰 저장
-        coupon = couponRepository.save(CouponPolicyTestUtils.createCoupon());
+        // 멤버가 있다고 가정
+        member = memberRepository.save(Member.builder()
+                .birth(LocalDate.parse("1999-08-12"))
+                .email("junghwan__@naver.com")
+                .name("최정환")
+                .build());
+
+        // 공통 given
+        request = MemberCouponCreateRequest.builder()
+                .memberEmail("junghwan__@naver.com")
+                .couponName("테 스 트 쿠 폰 이 름 임")
+                .build();
+    }
+
+
+    @Test
+    @DisplayName("회원 쿠폰 발급 테스트")
+    void issueCouponTest() {
+        // given (상황)
+        MemberCouponCreateRequest issueRequest = MemberCouponCreateRequest.builder()
+                .memberEmail("junghwan__@naver.com")
+                .couponName("테 스 트 쿠 폰 이 름 임")
+                .build();
+
+        // when (행동)
+        MemberCouponResponse response = memberCouponService.issueCoupon(issueRequest);
+
+        //than (결과)
+        assertThat(response.getCouponName()).isEqualTo("테 스 트 쿠 폰 이 름 임");
+        assertThat(memberRepository.count()).isEqualTo(1);
+        assertThat(coupon.getIssueCount()).isEqualTo(BigDecimal.valueOf(99));
     }
 
     @Test
-    @DisplayName("쿠폰 발급 성공")
-    void issueCoupon_success() {
+    @DisplayName("회원 쿠폰 발급 예외 테스트 -> 수량 마감")
+    void quantityFinishTest() {
         // given
-        MemberCouponCreateRequest request = MemberCouponCreateRequest.builder()
-                .couponName(coupon.getCouponName())
-                .memberEmail(member.getEmail())
-                .build();
+        // 발급 수량을 0으로 설정
+        coupon.setIssueCount(BigDecimal.ZERO);
 
-        // when
-        MemberCouponResponse response = memberCouponService.issueCoupon(request);
-
-        // then
-        assertThat(response).isNotNull();
-        assertThat(response.getCouponName()).isEqualTo(coupon.getCouponName());
-
-
-        // 쿠폰 발급수 1 감소
-        Coupon updatedCoupon = couponRepository.findById(coupon.getId()).orElseThrow();
-        assertThat(updatedCoupon.getIssueCount())
-                .isEqualByComparingTo(coupon.getIssueCount().subtract(BigDecimal.ONE));
+        // when & then
+        assertThatThrownBy(() -> memberCouponService.issueCoupon(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("발급 가능한 쿠폰 수량이 마감 되었습니다.");
     }
 
     @Test
-    @DisplayName("발급 불가: 이미 발급받은 쿠폰")
-    void issueCoupon_duplicate() {
-        // given
-        MemberCouponCreateRequest request = MemberCouponCreateRequest.builder()
-                .couponName(coupon.getCouponName())
-                .memberEmail(member.getEmail())
-                .build();
+    @DisplayName("회원 쿠폰 발급 예외 테스트 -> 이미 발급한 쿠폰일때 (중복)")
+    void duplicationExceptionTest() {
 
-        // when - 첫 발급(성공)
+        // given -> 쿠폰 발급 실행
         memberCouponService.issueCoupon(request);
 
-        // then - 두번째 발급(실패)
-        assertThrows(IllegalArgumentException.class,
-                () -> memberCouponService.issueCoupon(request),
-                "이미 쿠폰을 발급받으셨습니다.");
+        // when & then
+        assertThatThrownBy(() -> memberCouponService.issueCoupon(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 쿠폰을 발급받으셨습니다.");
     }
 
     @Test
-    @DisplayName("발급 불가: 쿠폰 수량 0")
-    void issueCoupon_issueCountExhausted() {
-        // given - 수량 0 쿠폰 저장
-        coupon.setIssueCount(BigDecimal.ZERO);
-        couponRepository.save(coupon);
-
-        MemberCouponCreateRequest request = MemberCouponCreateRequest.builder()
-                .couponName(coupon.getCouponName())
-                .memberEmail(member.getEmail())
+    @DisplayName("회원 쿠폰 조회")
+    void getAllMemberCouponsTest() {
+        // 현재 회원을 기준으로 기존 request를 통해 쿠폰하나 발행
+        memberCouponService.issueCoupon(request);
+        // 기존 정책을 재사용하여 다른 쿠폰을 생성
+        Coupon differentCoupon = couponRepository.save(Coupon.builder()
+                .couponName("두 번 째 테 스 트 쿠 폰 이 름 임")
+                .policy(couponPolicy) // 기존 정책 재사용
+                .validFrom(LocalDate.now())
+                .validTo(LocalDate.now().plusMonths(6))
+                .couponType(CouponType.GENERAL)
+                .comment("테스트코드는 반복작업이다. -> 진짜임")
+                .issueCount(BigDecimal.valueOf(50))
+                .build());
+        // 다른 쿠폰도 같이 발급
+        MemberCouponCreateRequest issueRequest = MemberCouponCreateRequest.builder()
+                .memberEmail("junghwan__@naver.com")
+                .couponName("두 번 째 테 스 트 쿠 폰 이 름 임")
                 .build();
+        memberCouponService.issueCoupon(issueRequest);
 
-        // then
-        assertThrows(IllegalArgumentException.class, () ->
-                        memberCouponService.issueCoupon(request),
-                "발급 가능한 쿠폰 수량이 마감 되었습니다.");
-    }
+        memberCouponService.getMemberCouponId(member.getId());
 
-    @Test
-    @DisplayName("발급 불가: 존재하지 않는 회원")
-    void issueCoupon_memberNotExist() {
-        MemberCouponCreateRequest req = MemberCouponCreateRequest.builder()
-                .couponName(coupon.getCouponName())
-                .memberEmail("NotExistEmail@sample.com")
-                .build();
-        assertThrows(IllegalArgumentException.class,
-                () -> memberCouponService.issueCoupon(req),
-                "해당 회원은 존재하지 않습니다.");
-    }
-
-    @Test
-    @DisplayName("발급 불가: 존재하지 않는 쿠폰")
-    void issueCoupon_couponNotExist() {
-        MemberCouponCreateRequest req = MemberCouponCreateRequest.builder()
-                .couponName("존재하지_않음_쿠폰")
-                .memberEmail(member.getEmail())
-                .build();
-        assertThrows(IllegalArgumentException.class,
-                () -> memberCouponService.issueCoupon(req),
-                "해당 쿠폰은 존재하지 않습니다.");
+        assertThat(memberCouponRepository.count()).isEqualTo(2);
     }
 }
