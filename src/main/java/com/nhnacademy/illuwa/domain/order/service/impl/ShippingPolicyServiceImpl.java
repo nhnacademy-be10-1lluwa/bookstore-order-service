@@ -1,10 +1,8 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
-import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ActiveShippingPolicyDto;
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.AllShippingPolicyDto;
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyUpdateRequestDto;
-import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
@@ -29,24 +27,22 @@ public class ShippingPolicyServiceImpl implements ShippingPolicyService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ActiveShippingPolicyDto> getAllShippingPolicy() {
-        return shippingPolicyRepository.findAll().stream().map(this::toResponseDto).collect(Collectors.toList());
+    public List<AllShippingPolicyDto> getAllShippingPolicy() {
+        return shippingPolicyRepository.findAllShippingDtosPolicy();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ActiveShippingPolicyDto> getShippingPolicyByActive() {
-        return shippingPolicyRepository.findByActive(true).stream().map(this::toResponseDto).collect(Collectors.toList());
+    public List<ShippingPolicyResponseDto> getShippingPolicyByActive(boolean active) {
+        return shippingPolicyRepository.findShippingPolicyDtosByActive(active);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ActiveShippingPolicyDto getShippingPolicy(String shippingPolicyId) {
+    public ShippingPolicyResponseDto getShippingPolicy(String shippingPolicyId) {
         long id = parseId(shippingPolicyId);
-        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(id)
+        return shippingPolicyRepository.findSHippingPolicyDtoByShippingPolicyId(id)
                 .orElseThrow(() -> new NotFoundException("해당 배송 정책을 찾을 수 없습니다.", id));
-
-        return toResponseDto(shippingPolicy);
     }
 
     @Override
@@ -70,14 +66,6 @@ public class ShippingPolicyServiceImpl implements ShippingPolicyService {
         long id = parseId(shippingPolicyId);
         shippingPolicyRepository.updateActiveByPackagingId(id, false);
         return addShippingPolicy(shippingPolicyCreateDto);
-    }
-
-    // Entity -> Dto
-    private ActiveShippingPolicyDto toResponseDto(ShippingPolicy pkg) {
-        return new ActiveShippingPolicyDto(pkg.getShippingPolicyId(),
-                pkg.getMinAmount(),
-                pkg.getFee()
-        );
     }
 
     // ID 파싱 오류
