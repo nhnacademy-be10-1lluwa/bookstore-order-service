@@ -1,7 +1,8 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
-import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ActiveShippingPolicyDto;
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.AllShippingPolicyDto;
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyCreateRequestDto;
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import com.nhnacademy.illuwa.domain.order.service.ShippingPolicyService;
@@ -63,17 +64,17 @@ public class ShippingPolicyServiceTest {
     @Test
     @DisplayName("전체 조회 테스트")
     void testAllShippingPolicy() {
-        List<ActiveShippingPolicyDto> dtos = service.getAllShippingPolicy();
+        List<AllShippingPolicyDto> dtos = service.getAllShippingPolicy();
 
         assertThat(dtos).extracting("fee")
-                .contains(new BigDecimal("5000"), new BigDecimal("3000"), new BigDecimal("4000"));
+                .contains(new BigDecimal("5000.00"), new BigDecimal("3000.00"), new BigDecimal("4000.00"));
 
     }
 
     @Test
     @DisplayName("활성 정책 조회 테스트")
     void testGetShippingPolicyByActive() {
-        List<ActiveShippingPolicyDto> dtos = service.getShippingPolicyByActive();
+        List<ShippingPolicyResponseDto> dtos = service.getShippingPolicyByActive(true);
 
         Integer activeCount = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM shipping_policies WHERE active = true", Integer.class
@@ -89,9 +90,9 @@ public class ShippingPolicyServiceTest {
         ShippingPolicyCreateRequestDto req = new ShippingPolicyCreateRequestDto(new BigDecimal("10000"), new BigDecimal("5000"), true);
         ShippingPolicy created = service.addShippingPolicy(req);
 
-        ActiveShippingPolicyDto dto = service.getShippingPolicy( String.valueOf(created.getShippingPolicyId()));
-        assertThat(dto.getMinAmount()).isEqualTo(new BigDecimal("10000"));
-        assertThat(dto.getFee()).isEqualTo(new BigDecimal("5000"));
+        ShippingPolicyResponseDto dto = service.getShippingPolicy( String.valueOf(created.getShippingPolicyId()));
+        assertThat(dto.getMinAmount()).isEqualTo(new BigDecimal("10000.00"));
+        assertThat(dto.getFee()).isEqualTo(new BigDecimal("5000.00"));
 
     }
 
