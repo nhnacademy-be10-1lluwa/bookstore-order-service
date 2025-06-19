@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.repository;
 
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
+import com.nhnacademy.illuwa.domain.order.repository.custom.ShippingPolicyQuerydslRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-public interface ShippingPolicyRepository extends JpaRepository<ShippingPolicy, Long> {
+public interface ShippingPolicyRepository extends JpaRepository<ShippingPolicy, Long>, ShippingPolicyQuerydslRepository {
 
     // 전체 조회
     // findAll
