@@ -3,17 +3,14 @@ package com.nhnacademy.illuwa.domain.coupon.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.illuwa.domain.coupons.controller.CouponController;
-import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponCreateResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponUpdateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponUpdateResponse;
-import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,13 +19,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 import static com.nhnacademy.illuwa.domain.coupon.CouponPolicyTestUtils.*;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

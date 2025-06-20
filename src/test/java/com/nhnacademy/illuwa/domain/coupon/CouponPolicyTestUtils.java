@@ -7,8 +7,12 @@ import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyCreateR
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyCreateResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyUpdateResponse;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
+import com.nhnacademy.illuwa.domain.coupons.entity.Member;
+import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 
 import java.math.BigDecimal;
@@ -162,6 +166,26 @@ public class CouponPolicyTestUtils {
                 .build();
     }
 
+    public static Member createMember() {
+        return Member.builder()
+                .id(1L)
+                .name("testName")
+                .email("test@test.com")
+                .birth(LocalDate.now())
+                .build();
+
+    }
+
+    public static MemberCoupon createMemberCoupon() {
+        return MemberCoupon.builder()
+                .id(1L)
+                .member(createMember())
+                .coupon(createCoupon())
+                .issuedAt(LocalDate.now())
+                .expiresAt(LocalDate.now().plusMonths(1L))
+                .build();
+    }
+
     public static CouponCreateRequest createCouponRequest() {
         return CouponCreateRequest.builder()
                 .couponName(createCoupon().getCouponName())
@@ -173,6 +197,19 @@ public class CouponPolicyTestUtils {
                 .issueCount(createCoupon().getIssueCount())
                 .build();
     }
+
+    public static MemberCouponCreateRequest createMemberCouponRequest() {
+        return MemberCouponCreateRequest.builder()
+                .memberEmail("test@test.com")
+                .couponName("테 스 트 쿠 폰 이 름 임")
+                .build();
+    }
+
+    public static MemberCouponResponse memberCouponResponse() {
+        return MemberCouponResponse.fromEntity(createMemberCoupon());
+    }
+
+
 
     public static CouponCreateResponse createCouponResponse() {
         return CouponCreateResponse.fromEntity(createCoupon());
