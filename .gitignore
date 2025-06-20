@@ -153,5 +153,6 @@ gradle-app.setting
 
 /target
 
+target
 
-!/terget/generated-sources
+!target/generated-sources
