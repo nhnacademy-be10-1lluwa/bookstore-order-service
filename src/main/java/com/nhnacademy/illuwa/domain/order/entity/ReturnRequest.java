@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,13 +23,13 @@ public class ReturnRequest {
     private long returnId;
 
     @Setter
-    private String memberId;
+    private Long memberId;
 
     @Setter
-    private ZonedDateTime requestedAt;
+    private LocalDateTime requestedAt;
 
     @Setter
-    private ZonedDateTime returnedAt;
+    private LocalDateTime returnedAt;
 
     @Setter
     private BigDecimal shippingFeeDeducted;
@@ -47,7 +47,7 @@ public class ReturnRequest {
     private Order order;
 
     @Builder
-    public ReturnRequest(String memberId, ZonedDateTime requestedAt, ZonedDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason returnReason, ReturnStatus status, Order order) {
+    public ReturnRequest(Long memberId, LocalDateTime requestedAt, LocalDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason returnReason, ReturnStatus status, Order order) {
         this.memberId = memberId;
         this.requestedAt = requestedAt;
         this.returnedAt = returnedAt;
@@ -56,4 +56,5 @@ public class ReturnRequest {
         this.status = status;
         this.order = order;
     }
+
 }

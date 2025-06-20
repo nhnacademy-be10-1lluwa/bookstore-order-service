@@ -12,7 +12,7 @@ public interface PackagingService {
     List<PackagingResponseDto> getAllPackaging();
 
     // 활성된 포장 옵션 조회
-    List<PackagingResponseDto> getPackagingByActive();
+    List<PackagingResponseDto> getPackagingByActive(boolean active);
 
     // 단일 포장 옵션 조회
     PackagingResponseDto getPackaging(String packagingId);

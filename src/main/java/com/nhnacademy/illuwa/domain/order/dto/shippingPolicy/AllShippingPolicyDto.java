@@ -9,17 +9,19 @@ import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
-public class ShippingPolicyResponseDto {
+public class AllShippingPolicyDto {
     private long shippingPolicyId;
     private BigDecimal minAmount;
     private BigDecimal fee;
+    private boolean active;
 
     @QueryProjection
-    public ShippingPolicyResponseDto(long shippingPolicyId, BigDecimal minAmount, BigDecimal fee) {
+    public AllShippingPolicyDto(long shippingPolicyId, BigDecimal minAmount, BigDecimal fee, boolean active) {
         this.shippingPolicyId = shippingPolicyId;
         this.minAmount = minAmount;
         this.fee = fee;
+        this.active = active;
     }
 }
 
-// order 서버 -> 프론트 (배송 정책 정보 전송)
+// order 서버 -> 프론트 (활성화 된 정책만 전송) 필요시 사용

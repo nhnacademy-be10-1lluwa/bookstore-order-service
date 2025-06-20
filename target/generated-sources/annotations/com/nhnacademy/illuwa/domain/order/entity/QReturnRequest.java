@@ -22,13 +22,13 @@ public class QReturnRequest extends EntityPathBase<ReturnRequest> {
 
     public static final QReturnRequest returnRequest = new QReturnRequest("returnRequest");
 
-    public final StringPath memberId = createString("memberId");
+    public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
 
     public final QOrder order;
 
-    public final DateTimePath<java.time.ZonedDateTime> requestedAt = createDateTime("requestedAt", java.time.ZonedDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> requestedAt = createDateTime("requestedAt", java.time.LocalDateTime.class);
 
-    public final DateTimePath<java.time.ZonedDateTime> returnedAt = createDateTime("returnedAt", java.time.ZonedDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> returnedAt = createDateTime("returnedAt", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> returnId = createNumber("returnId", Long.class);
 
