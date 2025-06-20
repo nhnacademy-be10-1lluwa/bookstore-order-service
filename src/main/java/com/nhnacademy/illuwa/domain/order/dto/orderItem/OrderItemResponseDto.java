@@ -29,15 +29,6 @@ public class OrderItemResponseDto {
         this.packagingId = packagingId;
     }
 
-    public static OrderItemResponseDto orderItemResponseDto(OrderItem orderItem) {
-        return OrderItemResponseDto.builder()
-                .orderItemId(orderItem.getOrderItemId())
-                .bookId(orderItem.getBookId())
-                .quantity(orderItem.getQuantity())
-                .price(orderItem.getPrice())
-                .packagingId(orderItem.getPackaging().getPackagingId())
-                .build();
-    }
 }
 
 // order 서버 -> 프론트 (개별 주문 상품 조회 요청)
