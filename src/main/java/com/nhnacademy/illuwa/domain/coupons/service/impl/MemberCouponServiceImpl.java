@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -63,27 +64,58 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         return MemberCouponResponse.fromEntity(save);
     }
 
-    // 회원 소유 쿠폰 조회 {ID 기준} --> 이거 필요없음 전체로 바꿔야함
-    @Override
-    public MemberCouponResponse getMemberCouponId(Long id) {
-        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponById(id).orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+//    // 회원 소유 쿠폰 조회 {ID 기준} --> 이거 필요없음 전체로 바꿔야함
+//    @Override
+//    public MemberCouponResponse getMemberCouponId(Long id) {
+//        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponByMemberId(id).orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+//
+//        return MemberCouponResponse.fromEntity(memberCoupon);
+//    }
 
-        return MemberCouponResponse.fromEntity(memberCoupon);
-    }
+    // 회원 소유 쿠폰 전체조회 (이거이거 개 멍청하게 memberCouponId도 조회를 시도했음 ㅎㅎ..)
+//    @Override
+//    public List<MemberCouponResponse> getAllMemberCoupons(Long id) {
+//        return memberCouponRepository.findMemberById(id)
+//                .stream()
+//                .map(MemberCouponResponse::fromEntity)
+//                .toList();
+//    }
+//    @Override
+//    public List<MemberCouponResponse> getAllMemberCoupons(Long memberId) {
+//        return memberCouponRepository.findMemberCouponByMemberId(memberId)
+//                .stream()
+//                .map(MemberCouponResponse::fromEntity)
+//                .toList();
+//
+////        memberRepository.findMemberById(memberId).stream().map(MemberCouponResponse::fromEntity)
+////                .toList();
+//    }
+    // 회원 소유 쿠폰 확인 (email)
 
-    // 회원 소유 쿠폰 전체조회
     @Override
-    public List<MemberCouponResponse> getAllMemberCoupons(Long id) {
-        return memberCouponRepository.findMemberById(id)
+    public List<MemberCouponResponse> getAllMemberCoupons(String email) {
+        return memberCouponRepository.findMemberCouponByMemberEmail(email)
                 .stream()
                 .map(MemberCouponResponse::fromEntity)
                 .toList();
     }
 
-    // 회원 소유 쿠폰 사용
     @Override
-    public MemberCouponUseResponse useCoupon(Long id) {
-        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponById(id).orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+    public MemberCouponResponse getMemberCouponId(Long id) {
+        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 쿠폰은 존재하지 않습니다."));
+        return MemberCouponResponse.fromEntity(memberCoupon);
+    }
+
+    // 회원 소유 쿠폰 사용 ( 우선 이메일과 사용하고자하는 쿠폰이름을 매개변수로 가져옴 )
+    // 그러면 우선적으로 회원이 있는지 확인부터 - > 아니지 회원자체는 발급쪽에서 검사를했으니
+    // 회원이 발급받은 쿠폰이 있는지부터 확인.
+    @Override
+    public MemberCouponUseResponse useCoupon(String email, Long memberCouponId) {
+        MemberCoupon memberCoupon = memberCouponRepository.findByMember_EmailAndId(email, memberCouponId)
+                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+//        memberCouponRepository.findMemberCouponByMemberEmail(email);
+//        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponByMemberEmail(id).orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
         // 쿠폰의 사용 시 해당 쿠폰을 삭제하는게 좋지 않나?
         // -> 그러면 DB내의 이미 발급한 쿠폰에 대해서 중복발급이 가능할지도
         // -> 삭제를 안시키고 boolean값으로 사용여부를 체크하면 쿠폰 발급내역 or 쿠폰 사용내역에 좀 도움이 될 듯

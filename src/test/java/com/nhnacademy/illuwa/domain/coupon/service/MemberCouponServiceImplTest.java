@@ -3,9 +3,11 @@ package com.nhnacademy.illuwa.domain.coupon.service;
 import com.nhnacademy.illuwa.domain.coupon.CouponPolicyTestUtils;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
+import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
@@ -152,8 +154,65 @@ class MemberCouponServiceImplTest {
                 .build();
         memberCouponService.issueCoupon(issueRequest);
 
-        memberCouponService.getMemberCouponId(member.getId());
+        memberCouponService.getAllMemberCoupons(member.getEmail());
 
         assertThat(memberCouponRepository.count()).isEqualTo(2);
     }
+
+    @Test
+    @DisplayName("회원 쿠폰 사용")
+    void useMemberCouponTest() {
+        // 위와 동일하게 setup 쪽에 미리 정의해놓은 로직으로 쿠폰 발행. -> 아직 사용전임
+        MemberCouponResponse beforeUse = memberCouponService.issueCoupon(request);
+
+        // 아직 사용여부가 false 인지 검증
+        assertThat(beforeUse.isUsed()).isFalse();
+
+        // 쿠폰 사용
+        memberCouponService.useCoupon(beforeUse.getMemberEmail(), beforeUse.getMemberCouponId());
+
+        MemberCouponResponse afterUse = memberCouponService.getMemberCouponId(beforeUse.getMemberCouponId());
+        // true로 변경되었는지 검정
+        assertThat(afterUse.isUsed()).isTrue();
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 사용 (중복사용 방지)")
+    void isUsedTest() {
+        // 위와 동일하게 setup 쪽에 미리 정의해놓은 로직으로 쿠폰 발행. -> 아직 사용전임
+        MemberCouponResponse beforeUse = memberCouponService.issueCoupon(request);
+
+        // 아직 사용여부가 false 인지 검증
+        assertThat(beforeUse.isUsed()).isFalse();
+
+        // 쿠폰 사용
+        memberCouponService.useCoupon(beforeUse.getMemberEmail(), beforeUse.getMemberCouponId());
+
+        // 한번 더 해당 쿠폰을 사용하려고 하면?
+        assertThatThrownBy(() -> memberCouponService.useCoupon(beforeUse.getMemberEmail(), beforeUse.getMemberCouponId()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 사용한 쿠폰입니다.");
+    }
+
+    @Test
+    @DisplayName("회원 쿠폰 사용 (유효기간 만료)")
+    void expiresTest() {
+        // 위와 동일하게 setup 쪽에 미리 정의해놓은 로직으로 쿠폰 발행. -> 아직 사용전임
+        MemberCouponResponse beforeUse = memberCouponService.issueCoupon(request);
+
+        // 아직 사용여부가 false 인지 검증
+        assertThat(beforeUse.isUsed()).isFalse();
+
+        // 유효기간 재설정
+        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponById(beforeUse.getMemberCouponId()).orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다."));
+        memberCoupon.setExpiresAt(LocalDate.now().minusDays(1));
+
+        // 유효 기간이 지났다면?
+        assertThatThrownBy(() -> memberCouponService.useCoupon(beforeUse.getMemberEmail(), beforeUse.getMemberCouponId()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("쿠폰의 유효기간이 만료되었습니다.");
+
+    }
+
+
 }

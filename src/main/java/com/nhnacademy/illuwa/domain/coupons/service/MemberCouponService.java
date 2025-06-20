@@ -11,12 +11,12 @@ public interface MemberCouponService {
     // 쿠폰 발급
     MemberCouponResponse issueCoupon(MemberCouponCreateRequest request);
 
-    // 발급 내역 조회
+    // 발급 내역 조회(테스트 용도)
     MemberCouponResponse getMemberCouponId(Long id);
 
     // 쿠폰 사용
-    MemberCouponUseResponse useCoupon(Long id);
+    MemberCouponUseResponse useCoupon(String email, Long memberCouponId);
 
     // 발급 내역 조회
-    List<MemberCouponResponse> getAllMemberCoupons(Long id);
+    List<MemberCouponResponse> getAllMemberCoupons(String email);
 }

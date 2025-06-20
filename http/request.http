@@ -21,7 +21,7 @@ GET http://localhost:8080/coupon-policies
 
 
 ### 쿠폰 정책 삭제 (= 비활성화)
-DELETE http://localhost:8080/coupon-policies/AMT15K_DC3K
+DELETE http://localhost:8080/coupon-policies/AMT15K_DC33K
 
 ### 쿠폰 정책 수정
 PUT http://localhost:8080/coupon-policies/AMT15K_DC3K
@@ -39,7 +39,7 @@ POST http://localhost:8080/coupons
 Content-Type: application/json
 
 {
-  "couponName": "일반쿠폰",
+  "couponName": "웰컴쿠폰",
   "policyCode": "AMT15K_DC3K",
   "validFrom": "2024-01-01",
   "validTo": "2025-01-01",
@@ -92,12 +92,12 @@ Content-Type: application/json
 
 {
   "memberEmail": "test@test.com",
-  "couponName": "일반쿠폰"
+  "couponName": "웰컴쿠폰"
 }
 
 ### (회원) -> 쿠폰 발급내역
-GET http://localhost:8080/member-coupons/1
+GET http://localhost:8080/member-coupons/test@test.com
 
 
 ### (회원) -> 쿠폰 사용
-PUT http://localhost:8080/member-coupons/1/use
+PUT http://localhost:8080/member-coupons/test@test.com/2/use

@@ -11,16 +11,17 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long
     // 특정 회원을 기준으로 모든 쿠폰을 조회 (회원이 존재할 때)
     List<MemberCoupon> findMemberById(Long memberId);
 
-    // 회원 소유 쿠폰을 가져옴 (ID 기준)
-    Optional<MemberCoupon> findMemberCouponById(Long memberCouponId);
+    Optional<MemberCoupon> findMemberCouponById(Long id);
+
+    // repo에서 명명규칙 에러도 있다는걸 첨앎 (= 회원 쿠폰 사용
+//    Optional<MemberCoupon> findByMember_EmailAndCoupon_(String email, Long memberId);
+    Optional<MemberCoupon> findByMember_EmailAndId(String email, Long memberId);
 
     // 회원 소유 쿠폰을 가져옴 (Email 기준)
-    Optional<MemberCoupon> findMemberCouponByMemberEmail(String memberEmail);
+    List<MemberCoupon> findMemberCouponByMemberEmail(String memberEmail);
 
     // 쿠폰 발급여부 Check
     boolean existsByMemberIdAndCouponId(Long memberId, Long couponId);
-
-
 
 //    List<MemberCoupon> findMemberByCouponId(Long couponId);
 //
