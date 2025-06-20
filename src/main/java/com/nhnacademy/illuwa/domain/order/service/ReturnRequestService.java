@@ -22,10 +22,10 @@ public interface ReturnRequestService {
     // 특정 회원의 모든 반품 요청 조회(ADMIN, MEMBERS)
     List<ReturnRequestListResponseDto> findReturnRequestsByMemberId(String memberId);
 
-//    // 반품 요청하기 (MEMBERS)
-//    ReturnRequest addReturnRequest(String memberId, String orderId, ReturnRequestCreateRequestDto returnRequestCreateDto);
+    // 반품 요청하기 (MEMBERS)
+    ReturnRequest addReturnRequest(String orderId, ReturnRequestCreateRequestDto returnRequestCreateDto);
 
     // 반품 취소하기 (MEMBERS)
-    int removeReturnRequest(String returnRequestId);
+    void removeReturnRequest(String returnRequestId);
 
 }
