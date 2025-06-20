@@ -12,9 +12,6 @@ public interface OrderItemService {
     // id로 주문 아이템 내역 조회(ADMIN, MEMBERS)
     OrderItemResponseDto getOrderItemById(String orderItemId);
 
-    // member 별 주문 아이템 내역 조회(ADMIN, MEMBERS)
-    List<OrderItemResponseDto> getOrderItemByMemberId(String memberId);
-
     // 주문별 주문 아이템 내역 조회 (MEMBERS, ADMIN)
     List<OrderItemResponseDto> getOrderItemByOrderId(String orderId);
 
