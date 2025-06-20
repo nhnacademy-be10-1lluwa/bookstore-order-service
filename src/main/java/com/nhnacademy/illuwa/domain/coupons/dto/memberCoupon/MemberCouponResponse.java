@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true) // 목록 조회 용도
 public class MemberCouponResponse {
     private Long memberCouponId;
     private String memberName;
