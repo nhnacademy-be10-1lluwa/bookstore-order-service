@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @Builder
 public class MemberCouponUseResponse {
     private String memberName;
+    private String email;
     private String couponName;
     private boolean used;
     private LocalDate usedAt;
@@ -21,6 +22,7 @@ public class MemberCouponUseResponse {
     public static MemberCouponUseResponse fromEntity(MemberCoupon memberCoupon) {
         return MemberCouponUseResponse.builder()
                 .memberName(memberCoupon.getMember().getName())
+                .email(memberCoupon.getMember().getEmail())
                 .couponName(memberCoupon.getCoupon().getCouponName())
                 .used(memberCoupon.isUsed())
                 .usedAt(memberCoupon.getUsedAt())

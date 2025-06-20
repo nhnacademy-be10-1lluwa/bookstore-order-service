@@ -28,7 +28,6 @@ public class CouponResponse {
 //    private Long bookId;
 //    private Long categoryId;
 
-
     public static CouponResponse fromEntity(Coupon coupon) {
         return CouponResponse.builder()
                 .id(coupon.getId())

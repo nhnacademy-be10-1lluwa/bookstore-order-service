@@ -16,6 +16,7 @@ import java.time.LocalDate;
 public class MemberCouponResponse {
     private Long memberCouponId;
     private String memberName;
+    private String memberEmail;
     private String couponName;
     private String couponCode;
     private boolean used;
@@ -27,6 +28,7 @@ public class MemberCouponResponse {
         return MemberCouponResponse.builder()
                 .memberCouponId(memberCoupon.getId())
                 .memberName(memberCoupon.getMember().getName())
+                .memberEmail(memberCoupon.getMember().getEmail())
                 .couponName(memberCoupon.getCoupon().getCouponName())
                 .couponCode(memberCoupon.getCoupon().getPolicy().getCode())
                 .used(memberCoupon.isUsed())
@@ -35,4 +37,5 @@ public class MemberCouponResponse {
                 .expiresAt(memberCoupon.getExpiresAt())
                 .build();
     }
+
 }

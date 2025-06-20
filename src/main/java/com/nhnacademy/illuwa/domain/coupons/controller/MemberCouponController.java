@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/member-coupons")
@@ -23,15 +25,23 @@ public class MemberCouponController {
         MemberCouponResponse response = memberCouponService.issueCoupon(request);
         return ResponseEntity.ok(response);
     }
+
     // 쿠폰 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<MemberCouponResponse> getMemberCoupon(@PathVariable Long id) {
-        return ResponseEntity.ok(memberCouponService.getMemberCouponId(id));
+    @GetMapping("/{email}")
+    public ResponseEntity<List<MemberCouponResponse>> getAllMemberCoupons(@PathVariable String email) {
+        List<MemberCouponResponse> responses = memberCouponService.getAllMemberCoupons(email);
+        return ResponseEntity.ok(responses);
     }
+
     // 쿠폰 사용
-    @PutMapping("/{id}/use")
-    public ResponseEntity<MemberCouponUseResponse> useCoupon(@PathVariable Long id) {
-        return ResponseEntity.ok(memberCouponService.useCoupon(id));
+    // 프론트 입장에서는 해당 url은 당연히 x
+    // PutMapping("/member-coupons/{id}/use)
+    // @AuthenticationPrincipal AuthUser authUser -> 이걸로 인증인가를 성공한 회원을 가져올꺼.
+    @PutMapping("/{email}/{memberCouponId}/use")
+    public ResponseEntity<MemberCouponUseResponse> useCoupon(@PathVariable String email,
+                                                             @PathVariable Long memberCouponId) {
+
+        return ResponseEntity.ok(memberCouponService.useCoupon(email,memberCouponId));
 
     }
 
