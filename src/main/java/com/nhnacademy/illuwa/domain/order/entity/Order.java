@@ -29,6 +29,10 @@ public class Order {
 
     private long memberId;
 
+    private Long guestId;
+
+    private BigDecimal shippingFee;
+
     @ManyToOne
     @JoinColumn(name = "shipping_policy_id", referencedColumnName = "shipping_policy_id")
     private ShippingPolicy shippingPolicy;
@@ -57,9 +61,12 @@ public class Order {
     private OrderStatus orderStatus;
 
     @Builder
-    public Order(long memberId, String orderNumber, ShippingPolicy shippingPolicy, LocalDateTime orderDate, LocalDateTime deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus) {
-        this.memberId = memberId;
+    public Order(long orderId, String orderNumber, long memberId, Long guestId, BigDecimal shippingFee, ShippingPolicy shippingPolicy, LocalDateTime orderDate, LocalDateTime deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus) {
+        this.orderId = orderId;
         this.orderNumber = orderNumber;
+        this.memberId = memberId;
+        this.guestId = guestId;
+        this.shippingFee = shippingFee;
         this.shippingPolicy = shippingPolicy;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
@@ -69,5 +76,4 @@ public class Order {
         this.finalPrice = finalPrice;
         this.orderStatus = orderStatus;
     }
-
 }

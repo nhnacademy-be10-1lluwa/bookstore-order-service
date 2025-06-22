@@ -91,11 +91,20 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal discountPrice = BigDecimal.ZERO; // todo 할인 될 가격 로직 추가
         BigDecimal usedPoint = BigDecimal.ZERO; // todo 사용될 포인트 로직 추가
         BigDecimal finalPrice = totalPrice.subtract(discountPrice).subtract(usedPoint);
+        BigDecimal shippingFee = null;
+
+        if (shippingPolicy.getMinAmount().compareTo(totalPrice) > 0) { // 최소 금액보다 총 금액이 크면 공짜, 작으면 요금 부여
+            shippingFee = shippingPolicy.getFee();
+        } else {
+            shippingFee = new BigDecimal("0");
+        }
+
 
         // fixme OrderItem 서비스 작성 후 코드 수정 and 쿠폰 작성 후 and 중복 예외 처리
         Order order = Order.builder()
                 .orderNumber(orderNumber)
                 .memberId(dto.getMemberId())
+                .guestId(dto.getGuestId())
                 .shippingPolicy(shippingPolicy)
                 .orderDate(LocalDateTime.now())
                 .deliveryDate(dto.getRequestedDeliveryDate())
@@ -104,6 +113,7 @@ public class OrderServiceImpl implements OrderService {
                 .usedPoint(usedPoint)
                 .finalPrice(finalPrice)
                 .orderStatus(OrderStatus.Pending)
+                .shippingFee(shippingFee)
                 .build();
 
 
@@ -114,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
                 .order(order)
                 .quantity(orderItem.getQuantity())
                 .price(bookPrice)
-                .memberCouponId(orderItem.getMemberCouponId())
+                .memberCouponId(1)
                 .discountPrice(bookDiscountPrice)
                 .itemTotalPrice(bookTotalPrice)
                 .packaging(packagingRepository.findByPackagingId(orderItem.getPackagingId()).orElseThrow(()

@@ -2,12 +2,15 @@ package com.nhnacademy.illuwa.domain.order.dto.orderItem;
 
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderItemRequestDto {
 
     @NotNull
