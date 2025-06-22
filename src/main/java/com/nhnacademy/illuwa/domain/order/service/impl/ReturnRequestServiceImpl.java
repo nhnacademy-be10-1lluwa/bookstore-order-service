@@ -63,13 +63,13 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
         Order order = orderRepository.findByOrderId(id).orElseThrow(() ->
                 new NotFoundException("해당 주문을 찾을 수 없습니다.", id));
 
-        BigDecimal feeDeducted = new BigDecimal("3000");
+        BigDecimal feeDeducted = orderRepository.findByOrderId(id).orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다.", id)).getShippingFee();
 
         return ReturnRequest.builder()
                 .memberId(returnRequestCreateDto.getMemberId())
                 .requestedAt(LocalDateTime.now())
                 .returnedAt(null)
-                .shippingFeeDeducted(feeDeducted) // todo 배송료 만들기
+                .shippingFeeDeducted(feeDeducted)
                 .returnReason(returnRequestCreateDto.getReason())
                 .status(ReturnStatus.Requested)
                 .order(order).build();
