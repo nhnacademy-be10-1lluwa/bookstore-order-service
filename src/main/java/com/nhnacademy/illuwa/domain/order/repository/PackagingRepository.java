@@ -32,6 +32,6 @@ public interface PackagingRepository extends JpaRepository<Packaging, Long>, Pac
     @Modifying
     @Transactional
     @Query("update Packaging p set p.active = :active where p.packagingId = :packagingId")
-    int updateActiveByPackagingId(@Param("packagingId") long packagingId, @Param("active") Boolean active);
+    int updateActiveByPackagingId(@Param("packagingId") Long packagingId, @Param("active") Boolean active);
 
 }

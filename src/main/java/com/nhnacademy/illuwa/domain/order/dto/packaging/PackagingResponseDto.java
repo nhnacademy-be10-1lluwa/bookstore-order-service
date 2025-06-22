@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.dto.packaging;
 
+import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.querydsl.core.annotations.QueryProjection;
 import jakarta.persistence.Entity;
@@ -23,6 +24,14 @@ public class PackagingResponseDto {
         this.packagingId = packagingId;
         this.packagingName = packagingName;
         this.packagingPrice = packagingPrice;
+    }
+
+    public static PackagingResponseDto fromEntity(Packaging packaging) {
+        return PackagingResponseDto.builder()
+                .packagingId(packaging.getPackagingId())
+                .packagingName(packaging.getPackagingName())
+                .packagingPrice(packaging.getPackagingPrice())
+                .build();
     }
 }
 
