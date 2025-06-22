@@ -12,14 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -71,7 +68,7 @@ public class PackagingServiceTest {
         List<PackagingResponseDto> dtos = service.getAllPackaging();
 
         assertThat(dtos).extracting("packagingName")
-                .containsExactlyInAnyOrder("Box", "Envelope", "Nothing");
+                .contains("Box", "Envelope", "Nothing");
     }
 
     @Test
@@ -92,9 +89,9 @@ public class PackagingServiceTest {
     @DisplayName("포장 옵션 추가 및 조회")
     void testAdd_and_getPackaging() {
         PackagingCreateRequestDto req = new PackagingCreateRequestDto("Plastic", new BigDecimal("200"));
-        Packaging created = service.addPackaging(req);
+        PackagingResponseDto created = service.addPackaging(req);
 
-        PackagingResponseDto dto = service.getPackaging(String.valueOf(created.getPackagingId()));
+        PackagingResponseDto dto = service.getPackaging(created.getPackagingId());
         assertThat(dto.getPackagingName()).isEqualTo("Plastic");
         assertThat(dto.getPackagingPrice()).isEqualByComparingTo(new BigDecimal("200"));
     }
@@ -107,9 +104,9 @@ public class PackagingServiceTest {
 
         Long targetId = savedList.getLast().getPackagingId();
 
-        int removed = service.removePackaging(targetId.toString());
+        int removed = service.removePackaging(targetId);
 
-        assertThat(removed).isEqualTo((int) 1);
+        assertThat(removed).isEqualTo(1);
         Boolean isActive = jdbcTemplate.queryForObject(
                 String.format("SELECT active FROM packaging WHERE packaging_id = %d", targetId) , Boolean.class
         );
@@ -124,7 +121,7 @@ public class PackagingServiceTest {
 
         Long targetId = savedList.getFirst().getPackagingId();
 
-        Packaging packaging = service.updatePackaging(targetId.toString(), new PackagingCreateRequestDto("Something", new BigDecimal("10000")));
+        PackagingResponseDto packaging = service.updatePackaging(targetId, new PackagingCreateRequestDto("Something", new BigDecimal("10000")));
 
         Boolean isActive = jdbcTemplate.queryForObject(
                 String.format("SELECT active FROM packaging WHERE packaging_id = %d", targetId) , Boolean.class

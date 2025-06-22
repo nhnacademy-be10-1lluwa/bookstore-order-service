@@ -37,34 +37,36 @@ public class PackagingServiceImpl implements PackagingService {
 
     @Override
     @Transactional(readOnly = true)
-    public PackagingResponseDto getPackaging(String packagingId) {
-        long id = parseId(packagingId);
-        return packagingRepository.findPackagingDtoById(id).orElseThrow(()
-                -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", id));
+    public PackagingResponseDto getPackaging(Long packagingId) {
+        return packagingRepository.findPackagingDtoById(packagingId).orElseThrow(()
+                -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", packagingId));
     }
 
     @Override
-    public Packaging addPackaging(PackagingCreateRequestDto packagingCreateDto) {
+    public PackagingResponseDto addPackaging(PackagingCreateRequestDto packagingCreateDto) {
         Packaging pkg = Packaging.builder()
                 .packagingName(packagingCreateDto.getPackagingName())
                 .packagingPrice(packagingCreateDto.getPackagingPrice())
                 .active(true)
                 .build();
-        return packagingRepository.save(pkg);
+
+        Packaging packaging = packagingRepository.save(pkg);
+
+        return PackagingResponseDto.fromEntity(packaging);
     }
 
     @Override
-    public int removePackaging(String packagingId) {
-        long id = parseId(packagingId);
-        return packagingRepository.updateActiveByPackagingId(id, false);
+    public int removePackaging(Long packagingId) {
+        return packagingRepository.updateActiveByPackagingId(packagingId, false);
     }
 
     // fixme 삭제 로직 고려 후 수정
     @Override
-    public Packaging updatePackaging(String packagingId, PackagingCreateRequestDto packagingCreateDto) {
+    public PackagingResponseDto updatePackaging(Long packagingId, PackagingCreateRequestDto packagingCreateDto) {
+
         removePackaging(packagingId);
-        Packaging pkg = addPackaging(packagingCreateDto);
-        return packagingRepository.save(pkg);
+
+        return addPackaging(packagingCreateDto);
     }
 
 

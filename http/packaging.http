@@ -1,0 +1,70 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+###
+
+POST http://localhost:8080/packaging
+Content-Type: application/json
+
+{
+  "packagingName": "아주 비싼 포장지",
+  "packagingPrice": 15000
+}
+###
+
+POST http://localhost:8080/packaging
+Content-Type: application/json
+
+{
+  "packagingName": "다이아 포장지",
+  "packagingPrice": 20000.00
+}
+
+
+###
+
+GET http://localhost:8080/packaging
+Accept: application/json
+
+###
+
+GET http://localhost:8080/packaging/15
+
+###
+
+PUT localhost:8080/packaging/2
+Content-Type: application/json
+
+{
+  "packagingName": "이게 뭐지",
+  "packagingPrice": 120
+}
+
+###
+
+DELETE localhost:8080/packaging/15
+
+###
+
+###오류
+
+GET http://localhost:8080/packaging/40
+
+###
+
+POST http://localhost:8080/packaging
+Content-Type: application/json
+
+{
+  "packagingName": "아주 비싼 포장지ㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴㄴ",
+  "packagingPrice": 1000
+}
+###
+POST http://localhost:8080/packaging
+Content-Type: application/json
+
+{
+  "packagingName": "아주 비싼 포장지",
+  "packagingPrice": -20000.00
+}

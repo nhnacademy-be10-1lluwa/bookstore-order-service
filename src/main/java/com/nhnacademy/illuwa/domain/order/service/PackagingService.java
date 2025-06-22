@@ -15,16 +15,16 @@ public interface PackagingService {
     List<PackagingResponseDto> getPackagingByActive(boolean active);
 
     // 단일 포장 옵션 조회
-    PackagingResponseDto getPackaging(String packagingId);
+    PackagingResponseDto getPackaging(Long packagingId);
 
     // 포장 옵션 추가
-    Packaging addPackaging(PackagingCreateRequestDto packagingCreateDto);
+    PackagingResponseDto addPackaging(PackagingCreateRequestDto packagingCreateDto);
 
     // 포장 옵션 삭제 (활성화 여부 false 로 변경)
-    int removePackaging(String packagingId);
+    int removePackaging(Long packagingId);
 
     // 포장 옵션 수정 (해당 id의 포장 옵션을 false 한 후, 새로운 행 추가)
-    Packaging updatePackaging(String packagingId, PackagingCreateRequestDto packagingCreateDto);
+    PackagingResponseDto updatePackaging(Long packagingId, PackagingCreateRequestDto packagingCreateDto);
 
 
 }
