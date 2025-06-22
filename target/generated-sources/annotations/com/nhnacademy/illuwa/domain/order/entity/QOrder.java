@@ -28,6 +28,8 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final NumberPath<java.math.BigDecimal> finalPrice = createNumber("finalPrice", java.math.BigDecimal.class);
 
+    public final NumberPath<Long> guestId = createNumber("guestId", Long.class);
+
     public final ListPath<OrderItem, QOrderItem> items = this.<OrderItem, QOrderItem>createList("items", OrderItem.class, QOrderItem.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
@@ -39,6 +41,8 @@ public class QOrder extends EntityPathBase<Order> {
     public final StringPath orderNumber = createString("orderNumber");
 
     public final EnumPath<com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus> orderStatus = createEnum("orderStatus", com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus.class);
+
+    public final NumberPath<java.math.BigDecimal> shippingFee = createNumber("shippingFee", java.math.BigDecimal.class);
 
     public final QShippingPolicy shippingPolicy;
 

@@ -29,6 +29,7 @@ public class OrderItem {
     @Setter
     private BigDecimal price;
 
+    @Column(name = "member_coupon_id", nullable = true)
     private long memberCouponId;
 
     private BigDecimal discountPrice;
