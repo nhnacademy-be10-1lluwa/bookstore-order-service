@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.repository;
 
+import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.ReturnRequest;
 import com.nhnacademy.illuwa.domain.order.repository.custom.ReturnRequestQuerydslRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +22,7 @@ public interface ReturnRequestRepository extends JpaRepository<ReturnRequest, Lo
 
     // 반품 요청 취소하기(MEMBERS)
     int removeReturnRequestByReturnId(Long returnId);
+
+    boolean existsByOrder(Order order);
 }
 

@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.repository.custom;
 
+import com.nhnacademy.illuwa.domain.order.dto.returnRequest.AdminReturnRequestRegisterDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.ReturnRequest;
@@ -19,5 +20,8 @@ public interface ReturnRequestQuerydslRepository {
 
     // 유저별 반품 내역 조회 (MEMBERS)
     List<ReturnRequestListResponseDto> findByMemberId(Long memberId);
+
+    // 반품 상태 변경하기 (ADMIN)
+    ReturnRequest updateStatusByReturnRequestId(Long returnRequestId, AdminReturnRequestRegisterDto adminReturnRequestRegisterDto);
 
 }

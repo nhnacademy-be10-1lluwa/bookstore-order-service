@@ -1,9 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.repository.impl;
 
-import com.nhnacademy.illuwa.domain.order.dto.returnRequest.QReturnRequestListResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.returnRequest.QReturnRequestResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestListResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.returnRequest.*;
 import com.nhnacademy.illuwa.domain.order.entity.QReturnRequest;
 import com.nhnacademy.illuwa.domain.order.entity.ReturnRequest;
 import com.nhnacademy.illuwa.domain.order.entity.types.ReturnStatus;
@@ -13,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,4 +91,14 @@ public class ReturnRequestRepositoryImpl extends QuerydslRepositorySupport imple
                 .where(returnRequest.memberId.eq(memberId))
                 .fetch();
     }
+
+    @Override
+    public void updateStatusByReturnRequestId(Long returnRequestId, AdminReturnRequestRegisterDto adminReturnRequestRegisterDto) {
+        queryFactory.update(returnRequest)
+                .set(returnRequest.status, adminReturnRequestRegisterDto.getReturnStatus())
+                .set(returnRequest.returnedAt, LocalDateTime.now())
+                .where(returnRequest.returnId.eq(returnRequestId))
+                .execute();
+    }
+
 }

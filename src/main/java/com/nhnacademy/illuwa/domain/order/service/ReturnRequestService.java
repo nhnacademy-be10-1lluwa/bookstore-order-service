@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.service;
 
+import com.nhnacademy.illuwa.domain.order.dto.returnRequest.AdminReturnRequestRegisterDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestResponseDto;
@@ -29,6 +30,6 @@ public interface ReturnRequestService {
     void removeReturnRequest(String returnRequestId);
 
     // 반품 수락하기 (ADMIN)
-
+    ReturnRequest updateReturnRequest(Long returnId, AdminReturnRequestRegisterDto returnRequestRegisterDto);
 
 }
