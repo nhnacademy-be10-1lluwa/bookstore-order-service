@@ -29,6 +29,7 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
     @Autowired
     private OrderRepository orderRepository;
 
+
     @Override
     @Transactional(readOnly = true)
     public List<ReturnRequestListResponseDto> getAllReturnRequest() {
@@ -57,11 +58,14 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
     }
 
     // fixme order service 만들고 확인하기
+    // 차감 배송비
+    // 출고일로 부터 10일 이내 미사용 시 반품 택배비 차감 후 가능
     @Override
     public ReturnRequest addReturnRequest(String orderId, ReturnRequestCreateRequestDto returnRequestCreateDto) {
         long id = parseId(orderId);
         Order order = orderRepository.findByOrderId(id).orElseThrow(() ->
                 new NotFoundException("해당 주문을 찾을 수 없습니다.", id));
+
 
         BigDecimal feeDeducted = orderRepository.findByOrderId(id).orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다.", id)).getShippingFee();
 

@@ -28,4 +28,7 @@ public interface ReturnRequestService {
     // 반품 취소하기 (MEMBERS)
     void removeReturnRequest(String returnRequestId);
 
+    // 반품 수락하기 (ADMIN)
+
+
 }

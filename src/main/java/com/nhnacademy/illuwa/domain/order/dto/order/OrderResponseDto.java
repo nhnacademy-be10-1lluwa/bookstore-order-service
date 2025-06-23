@@ -16,16 +16,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class OrderResponseDto {
 
-    private long orderId;
-    private long memberId;
-    private LocalDateTime orderDate;
+    private long orderId; // orderNumber
+    private String orderNumber;
+    private long memberId; // 회원 넘버
+    private LocalDateTime orderDate; //
     private LocalDateTime deliveryDate;
     private BigDecimal totalPrice;
     private OrderStatus orderStatus;
 
     @QueryProjection
-    public OrderResponseDto(long orderId, long memberId, LocalDateTime orderDate, LocalDateTime deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus) {
+    public OrderResponseDto(long orderId, String orderNumber, long memberId, LocalDateTime orderDate, LocalDateTime deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus) {
         this.orderId = orderId;
+        this.orderNumber = orderNumber;
         this.memberId = memberId;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
@@ -36,6 +38,7 @@ public class OrderResponseDto {
     public static OrderResponseDto orderResponseDto(Order order) {
          return OrderResponseDto.builder()
                  .orderId(order.getOrderId())
+                 .orderNumber(order.getOrderNumber())
                  .memberId(order.getMemberId())
                  .orderDate(order.getOrderDate())
                  .deliveryDate(order.getDeliveryDate())
