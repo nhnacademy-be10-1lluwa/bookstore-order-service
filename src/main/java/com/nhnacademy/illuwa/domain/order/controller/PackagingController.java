@@ -22,7 +22,6 @@ public class PackagingController {
     // 포장 옵션 생성
     @PostMapping
     public ResponseEntity<PackagingResponseDto> createPackaging(@RequestBody @Valid PackagingCreateRequestDto request) {
-        packagingService.addPackaging(request);
         PackagingResponseDto response = packagingService.addPackaging(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
