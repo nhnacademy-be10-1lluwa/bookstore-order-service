@@ -32,7 +32,7 @@ public class ReturnRequest {
     private LocalDateTime returnedAt;
 
     @Setter
-    private BigDecimal shippingFeeDeducted;
+    private BigDecimal shippingFeeDeducted; // 차감 배송비
 
     @Setter
     @Enumerated(EnumType.STRING)
