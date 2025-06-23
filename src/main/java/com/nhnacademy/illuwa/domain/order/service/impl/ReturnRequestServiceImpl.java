@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -67,9 +68,18 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
                 new NotFoundException("해당 주문을 찾을 수 없습니다.", id));
 
 
+        LocalDateTime shippedAt = order.getDeliveryDate();
+        if (shippedAt == null) {
+            throw new BadRequestException("출고일 정보가 없어 반품 가능 여부를 활인할 수 없습니다.");
+        }
+        long days = ChronoUnit.DAYS.between(shippedAt, LocalDateTime.now());
+        if (days > 10) {
+            throw new BadRequestException("출고일로부터 10일이 지나 반품이 불가합니다.");
+        }
+
         BigDecimal feeDeducted = orderRepository.findByOrderId(id).orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다.", id)).getShippingFee();
 
-        return ReturnRequest.builder()
+        ReturnRequest request = ReturnRequest.builder()
                 .memberId(returnRequestCreateDto.getMemberId())
                 .requestedAt(LocalDateTime.now())
                 .returnedAt(null)
@@ -77,6 +87,8 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
                 .returnReason(returnRequestCreateDto.getReason())
                 .status(ReturnStatus.Requested)
                 .order(order).build();
+
+        return repository.save(request);
     }
 
     @Override
