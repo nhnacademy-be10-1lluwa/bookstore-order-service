@@ -39,3 +39,5 @@ public class OrderListResponseDto {
 }
 
 // order 서버 -> 프론트 (Admin/ 주문 목록 응답(리스트용) )
+
+// 주문 list 반환용
