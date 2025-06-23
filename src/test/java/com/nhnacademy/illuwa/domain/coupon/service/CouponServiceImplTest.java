@@ -5,6 +5,9 @@ import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.impl.CouponServiceImpl;
@@ -105,7 +108,7 @@ class CouponServiceImplTest {
                 .build();
 
         assertThatThrownBy(() -> couponService.createCoupon(notCodeRequest))
-                .isInstanceOf(IllegalCharsetNameException.class)
+                .isInstanceOf(CouponPolicyNotFoundException.class)
                 .hasMessageContaining("해당 정책코드는 존재하지 않습니다.");
     }
 
@@ -134,7 +137,7 @@ class CouponServiceImplTest {
                 .build();
 
         assertThatThrownBy(() -> couponService.createCoupon(request))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(CouponPolicyInactiveException.class)
                 .hasMessageContaining("쿠폰 정책 상태가 비활성화이므로 생성 불가합니다.");
     }
 
@@ -142,8 +145,8 @@ class CouponServiceImplTest {
     @DisplayName("정책기반 쿠폰 단건 조회 실패 -> 존재하지 않는 ID")
     void getCouponByInvalidIdTest() {
         assertThatThrownBy(() -> couponService.getCouponById(999L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("존재하지 않는 쿠폰입니다");
+                .isInstanceOf(CouponNotFoundException.class)
+                .hasMessageContaining("존재하지 않는 쿠폰입니다.");
     }
 
     @Test
@@ -217,7 +220,7 @@ class CouponServiceImplTest {
         couponService.deleteCoupon(id);
 
         assertThatThrownBy(() -> couponService.getCouponById(id))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(CouponNotFoundException.class)
                 .hasMessageContaining("존재하지 않는 쿠폰");
     }
 

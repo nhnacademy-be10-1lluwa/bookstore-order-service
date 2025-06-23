@@ -18,7 +18,7 @@ public class Coupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String couponName; // 쿠폰 이름
 
     @ManyToOne
