@@ -1,9 +1,0 @@
-/Users/chosun-nhn31/Documents/bookstore-order-service/src/test/java/com/nhnacademy/illuwa/DatabaseConnectionTest.java
-/Users/chosun-nhn31/Documents/bookstore-order-service/src/test/java/com/nhnacademy/illuwa/IlluwaApplicationTests.java
-/Users/chosun-nhn31/Documents/bookstore-order-service/src/test/java/com/nhnacademy/illuwa/domain/coupon/CouponPolicyTestUtils.java
-/Users/chosun-nhn31/Documents/bookstore-order-service/src/test/java/com/nhnacademy/illuwa/domain/coupon/controller/CouponControllerTest.java
-/Users/chosun-nhn31/Documents/bookstore-order-service/src/test/java/com/nhnacademy/illuwa/domain/coupon/controller/CouponPolicyControllerTest.java
-/Users/chosun-nhn31/Documents/bookstore-order-service/src/test/java/com/nhnacademy/illuwa/domain/coupon/service/CouponPolicyServiceImplTest.java
-/Users/chosun-nhn31/Documents/bookstore-order-service/src/test/java/com/nhnacademy/illuwa/domain/coupon/service/CouponServiceImplTest.java
-/Users/chosun-nhn31/Documents/bookstore-order-service/src/test/java/com/nhnacademy/illuwa/domain/order/service/impl/PackagingServiceTest.java
-/Users/chosun-nhn31/Documents/bookstore-order-service/src/test/java/com/nhnacademy/illuwa/domain/order/service/impl/ShippingPolicyServiceTest.java

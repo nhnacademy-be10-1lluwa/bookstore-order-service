@@ -151,10 +151,5 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,gradle,java
 
-target
-
-
-!target/generated-sources
-
 # jacoco coverage report 디렉토리 무시
-target/site/jacoco/
+target/
