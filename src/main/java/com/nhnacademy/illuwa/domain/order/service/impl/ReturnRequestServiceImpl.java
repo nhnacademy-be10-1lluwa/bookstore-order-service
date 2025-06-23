@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
+import com.nhnacademy.illuwa.domain.order.dto.returnRequest.AdminReturnRequestRegisterDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestResponseDto;
@@ -63,7 +64,6 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
         return repository.findByMemberId(id);
     }
 
-    // fixme order service 만들고 확인하기
     // 차감 배송비
     // 출고일로 부터 10일 이내 미사용 시 반품 택배비 차감 후 가능
     @Override
@@ -110,6 +110,14 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
                 -> new NotFoundException("해당 반품 요청 내역을 찾을 수 없습니다.", id));
 
         repository.removeReturnRequestByReturnId(id);
+    }
+
+    @Override
+    public ReturnRequest updateReturnRequest(Long returnId, AdminReturnRequestRegisterDto returnRequestRegisterDto) {
+
+        ReturnRequest returnRequest = repository.updateStatusByReturnRequestId(returnId, returnRequestRegisterDto);
+
+        return repository.save(returnRequest);
     }
 
     // ID 파싱 오류(잘못된 숫자 포맷)
