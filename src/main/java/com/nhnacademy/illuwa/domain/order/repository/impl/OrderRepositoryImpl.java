@@ -50,6 +50,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
         OrderResponseDto result =  queryFactory
                 .select(new QOrderResponseDto(
                         order.orderId,
+                        order.orderNumber,
                         order.memberId,
                         order.orderDate,
                         order.deliveryDate,
