@@ -1,11 +1,10 @@
-package com.nhnacademy.illuwa.domain.order.service.impl;
+package com.nhnacademy.illuwa.domain.order.service;
 
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.AllShippingPolicyDto;
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
-import com.nhnacademy.illuwa.domain.order.service.ShippingPolicyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,10 +86,10 @@ public class ShippingPolicyServiceTest {
     @Test
     @DisplayName("정책 주가 및 조회")
     void testAdd_and_getShippingPolicy() {
-        ShippingPolicyCreateRequestDto req = new ShippingPolicyCreateRequestDto(new BigDecimal("10000"), new BigDecimal("5000"), true);
-        ShippingPolicy created = service.addShippingPolicy(req);
+        ShippingPolicyCreateRequestDto req = new ShippingPolicyCreateRequestDto(new BigDecimal("10000"), new BigDecimal("5000"));
+        ShippingPolicyResponseDto created = service.addShippingPolicy(req);
 
-        ShippingPolicyResponseDto dto = service.getShippingPolicy( String.valueOf(created.getShippingPolicyId()));
+        ShippingPolicyResponseDto dto = service.getShippingPolicy(created.getShippingPolicyId());
         assertThat(dto.getMinAmount()).isEqualTo(new BigDecimal("10000.00"));
         assertThat(dto.getFee()).isEqualTo(new BigDecimal("5000.00"));
 
@@ -104,7 +103,7 @@ public class ShippingPolicyServiceTest {
 
         Long targetId = savedList.getLast().getShippingPolicyId();
 
-        int removed = service.removeShippingPolicy(targetId.toString());
+        int removed = service.removeShippingPolicy(targetId);
 
         assertThat(removed).isEqualTo(1);
         Boolean isActive = jdbcTemplate.queryForObject(
