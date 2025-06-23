@@ -1,0 +1,37 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+###
+
+POST http://localhost:8080/shipping-policy
+Content-Type: application/json
+
+{
+  "minAmount": 20000.00,
+  "fee": 4000.00
+}
+
+###
+
+GET localhost:8080/shipping-policy
+
+###
+
+GET localhost:8080/shipping-policy/2
+
+###
+
+PUT localhost:8080/shipping-policy/1
+Content-Type: application/json
+
+{
+  "minAmount": 50000,
+  "fee": 1000.00
+}
+
+###
+
+DELETE localhost:8080/shipping-policy/4
+
+###

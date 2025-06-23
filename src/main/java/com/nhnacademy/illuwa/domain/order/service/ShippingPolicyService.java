@@ -16,14 +16,14 @@ public interface ShippingPolicyService {
     List<ShippingPolicyResponseDto> getShippingPolicyByActive(boolean active);
 
     // 단일 정책 조회
-    ShippingPolicyResponseDto getShippingPolicy(String shippingPolicyId);
+    ShippingPolicyResponseDto getShippingPolicy(Long shippingPolicyId);
 
     // 정책 추가
-    ShippingPolicy addShippingPolicy(ShippingPolicyCreateRequestDto shippingPolicyCreateDto);
+    ShippingPolicyResponseDto addShippingPolicy(ShippingPolicyCreateRequestDto shippingPolicyCreateDto);
 
     // 정책 삭제 (활성화 여부 false 로 변경)
-    int removeShippingPolicy(String shippingPolicyId);
+    int removeShippingPolicy(Long shippingPolicyId);
 
     // 정책 수정 (해당 옵션은 active = false 로 처리, 새로운 포장 옵션 추가)
-    ShippingPolicy updateShippingPolicy(String shippingPolicyId, ShippingPolicyCreateRequestDto shippingPolicyCreateDto);
+    ShippingPolicyResponseDto updateShippingPolicy(Long shippingPolicyId, ShippingPolicyCreateRequestDto shippingPolicyCreateDto);
 }

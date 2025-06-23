@@ -1,10 +1,11 @@
 // src/test/java/com/nhnacademy/illuwa/domain/order/service/impl/PackagingServiceIntegrationTest.java
-package com.nhnacademy.illuwa.domain.order.service.impl;
+package com.nhnacademy.illuwa.domain.order.service;
 
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
+import com.nhnacademy.illuwa.domain.order.service.impl.PackagingServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -39,32 +39,32 @@ public class ShippingPolicyServiceImpl implements ShippingPolicyService {
 
     @Override
     @Transactional(readOnly = true)
-    public ShippingPolicyResponseDto getShippingPolicy(String shippingPolicyId) {
-        long id = parseId(shippingPolicyId);
-        return shippingPolicyRepository.findSHippingPolicyDtoByShippingPolicyId(id)
-                .orElseThrow(() -> new NotFoundException("해당 배송 정책을 찾을 수 없습니다.", id));
+    public ShippingPolicyResponseDto getShippingPolicy(Long shippingPolicyId) {
+        return shippingPolicyRepository.findSHippingPolicyDtoByShippingPolicyId(shippingPolicyId)
+                .orElseThrow(() -> new NotFoundException("해당 배송 정책을 찾을 수 없습니다.", shippingPolicyId));
     }
 
     @Override
-    public ShippingPolicy addShippingPolicy(ShippingPolicyCreateRequestDto shippingPolicyCreateDto) {
+    public ShippingPolicyResponseDto addShippingPolicy(ShippingPolicyCreateRequestDto shippingPolicyCreateDto) {
         ShippingPolicy sp = ShippingPolicy.builder()
                 .minAmount(shippingPolicyCreateDto.getMinAmount())
                 .fee(shippingPolicyCreateDto.getFee())
                 .active(true)
                 .build();
-        return shippingPolicyRepository.save(sp);
+
+        ShippingPolicy shippingPolicy = shippingPolicyRepository.save(sp);
+
+        return ShippingPolicyResponseDto.fromEntity(shippingPolicy);
     }
 
     @Override
-    public int removeShippingPolicy(String shippingPolicyId) {
-        long id = parseId(shippingPolicyId);
-        return shippingPolicyRepository.updateActiveByPackagingId(id, false);
+    public int removeShippingPolicy(Long shippingPolicyId) {
+        return shippingPolicyRepository.updateActiveByPackagingId(shippingPolicyId, false);
     }
 
     @Override
-    public ShippingPolicy updateShippingPolicy(String shippingPolicyId, ShippingPolicyCreateRequestDto shippingPolicyCreateDto) {
-        long id = parseId(shippingPolicyId);
-        shippingPolicyRepository.updateActiveByPackagingId(id, false);
+    public ShippingPolicyResponseDto updateShippingPolicy(Long shippingPolicyId, ShippingPolicyCreateRequestDto shippingPolicyCreateDto) {
+        shippingPolicyRepository.updateActiveByPackagingId(shippingPolicyId, false);
         return addShippingPolicy(shippingPolicyCreateDto);
     }
 
