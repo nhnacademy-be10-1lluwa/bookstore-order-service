@@ -29,6 +29,7 @@ public interface ReturnRequestService {
     void removeReturnRequest(String returnRequestId);
 
     // 반품 수락하기 (ADMIN)
+
     void updateReturnRequest(Long returnId, AdminReturnRequestRegisterDto returnRequestRegisterDto);
 
 }

@@ -21,6 +21,7 @@ public interface ReturnRequestQuerydslRepository {
     List<ReturnRequestListResponseDto> findByMemberId(Long memberId);
 
     // 반품 상태 변경하기 (ADMIN)
+
     void updateStatusByReturnRequestId(Long returnRequestId, AdminReturnRequestRegisterDto adminReturnRequestRegisterDto);
 
 }
