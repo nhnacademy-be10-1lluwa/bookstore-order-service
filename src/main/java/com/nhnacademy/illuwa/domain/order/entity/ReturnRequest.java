@@ -23,15 +23,19 @@ public class ReturnRequest {
     private long returnId;
 
     @Setter
+    @Column(name = "member_id")
     private Long memberId;
 
     @Setter
+    @Column(name = "requested_at")
     private LocalDateTime requestedAt;
 
     @Setter
+    @Column(name = "returned_at")
     private LocalDateTime returnedAt;
 
     @Setter
+    @Column(name = "shipping_fee_deducted")
     private BigDecimal shippingFeeDeducted; // 차감 배송비
 
     @Setter
@@ -43,7 +47,7 @@ public class ReturnRequest {
     private ReturnStatus status;
 
     @OneToOne
-    @JoinColumn(name = "order_order_id", referencedColumnName = "order_id")
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     private Order order;
 
     @Builder
