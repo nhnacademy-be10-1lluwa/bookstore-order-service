@@ -1,12 +1,12 @@
-name: Deploy Order-Service to Server
+name: Deploy Product-Service to Server
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
 
 jobs:
   deploy:
+    name: Build & Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -19,11 +19,8 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
-      - name: Build with Maven
+      - name: Build with Maven (skip tests)
         run: mvn clean package -DskipTests
-
-      - name: Run SonarQube
-        run: mvn sonar:sonar -Dsonar.projectKey=1lluwa-order-service -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.login=${{secrets.SONAR_TOKEN}}
 
       - name: Upload jar to server
         uses: appleboy/scp-action@v0.1.7
