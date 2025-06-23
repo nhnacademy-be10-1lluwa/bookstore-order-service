@@ -8,6 +8,7 @@ import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderItemService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,63 +19,42 @@ import java.util.List;
 public class OrderItemServiceImpl implements OrderItemService {
 
     private final OrderItemRepository orderItemRepository;
-    private final OrderRepository orderRepository;
-    private final PackagingRepository packagingRepository;
 
-<span class="fc" id="L24">    public OrderItemServiceImpl(OrderItemRepository orderItemRepository, OrderRepository orderRepository, PackagingRepository packagingRepository) {</span>
-<span class="fc" id="L25">        this.orderItemRepository = orderItemRepository;</span>
-<span class="fc" id="L26">        this.orderRepository = orderRepository;</span>
-<span class="fc" id="L27">        this.packagingRepository = packagingRepository;</span>
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L23">    public OrderItemServiceImpl(OrderItemRepository orderItemRepository) {</span>
+<span class="fc" id="L24">        this.orderItemRepository = orderItemRepository;</span>
+<span class="fc" id="L25">    }</span>
+
 
     @Override
     @Transactional(readOnly = true)
     public List&lt;OrderItemResponseDto&gt; getAllOrderItem() {
-<span class="nc" id="L33">        return orderItemRepository.findAll().stream().map(this::toResponseDto).toList();</span>
+<span class="nc" id="L31">        return orderItemRepository.findAllOrderItemDtos();</span>
     }
 
     @Override
     @Transactional(readOnly = true)
     public OrderItemResponseDto getOrderItemById(String orderItemId) {
-<span class="nc" id="L39">        long id = parseId(orderItemId);</span>
+<span class="nc" id="L37">        long id = parseId(orderItemId);</span>
 
-<span class="nc" id="L41">        OrderItem orderItem = orderItemRepository.findByOrderItemId(id).orElseThrow(()</span>
-<span class="nc" id="L42">                -&gt; new NotFoundException(&quot;해당 주문 상품을 찾을 수 없습니다.&quot;, id));</span>
+<span class="nc" id="L39">        return orderItemRepository.findOrderItemDtoByOrderItemId(id).orElseThrow(()</span>
+<span class="nc" id="L40">                -&gt; new NotFoundException(&quot;해당 주문 상품을 찾을 수 없습니다.&quot;, id));</span>
 
-<span class="nc" id="L44">        return toResponseDto(orderItem);</span>
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List&lt;OrderItemResponseDto&gt; getOrderItemByMemberId(String memberId) {
-<span class="nc" id="L50">        long id = parseId(memberId);</span>
-
-<span class="nc" id="L52">        return orderItemRepository.findByMemberId(id).stream().map(this::toResponseDto).toList();</span>
     }
 
     @Override
     @Transactional(readOnly = true)
     public List&lt;OrderItemResponseDto&gt; getOrderItemByOrderId(String orderId) {
-<span class="nc" id="L58">        long id = parseId(orderId);</span>
+<span class="nc" id="L47">        long id = parseId(orderId);</span>
 
-<span class="nc" id="L60">        return orderItemRepository.findByOrderOrderId(id).stream().map(this::toResponseDto).toList();</span>
-    }
-
-    // entity -&gt; Dto
-    private OrderItemResponseDto toResponseDto(OrderItem item) {
-<span class="nc" id="L65">        return new OrderItemResponseDto(item.getOrderItemId(),</span>
-<span class="nc" id="L66">                item.getBookId(),</span>
-<span class="nc" id="L67">                item.getQuantity(),</span>
-<span class="nc" id="L68">                item.getPrice(),</span>
-<span class="nc" id="L69">                item.getPackaging().getPackagingId());</span>
+<span class="nc" id="L49">        return orderItemRepository.findOrderItemDtosByOrderId(id);</span>
     }
 
     // ID 파싱 오류 (잘못된 숫자 포맷)
     private Long parseId(String orderId) {
         try {
-<span class="nc" id="L75">            return Long.parseLong(orderId);</span>
-<span class="nc" id="L76">        } catch (NumberFormatException e) {</span>
-<span class="nc" id="L77">            throw new BadRequestException(&quot;유효하지 않은 주문 ID: &quot; + orderId);</span>
+<span class="nc" id="L55">            return Long.parseLong(orderId);</span>
+<span class="nc" id="L56">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L57">            throw new BadRequestException(&quot;유효하지 않은 주문 ID: &quot; + orderId);</span>
         }
     }
 

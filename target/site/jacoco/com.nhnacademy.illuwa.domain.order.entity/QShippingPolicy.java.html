@@ -17,27 +17,27 @@ public class QShippingPolicy extends EntityPathBase&lt;ShippingPolicy&gt; {
 
     private static final long serialVersionUID = -552659248L;
 
-<span class="nc" id="L20">    public static final QShippingPolicy shippingPolicy = new QShippingPolicy(&quot;shippingPolicy&quot;);</span>
+<span class="fc" id="L20">    public static final QShippingPolicy shippingPolicy = new QShippingPolicy(&quot;shippingPolicy&quot;);</span>
 
-<span class="nc" id="L22">    public final BooleanPath active = createBoolean(&quot;active&quot;);</span>
+<span class="pc" id="L22">    public final BooleanPath active = createBoolean(&quot;active&quot;);</span>
 
-<span class="nc" id="L24">    public final NumberPath&lt;java.math.BigDecimal&gt; fee = createNumber(&quot;fee&quot;, java.math.BigDecimal.class);</span>
+<span class="pc" id="L24">    public final NumberPath&lt;java.math.BigDecimal&gt; fee = createNumber(&quot;fee&quot;, java.math.BigDecimal.class);</span>
 
-<span class="nc" id="L26">    public final NumberPath&lt;java.math.BigDecimal&gt; minAmount = createNumber(&quot;minAmount&quot;, java.math.BigDecimal.class);</span>
+<span class="pc" id="L26">    public final NumberPath&lt;java.math.BigDecimal&gt; minAmount = createNumber(&quot;minAmount&quot;, java.math.BigDecimal.class);</span>
 
-<span class="nc" id="L28">    public final NumberPath&lt;Long&gt; shippingPolicyId = createNumber(&quot;shippingPolicyId&quot;, Long.class);</span>
+<span class="pc" id="L28">    public final NumberPath&lt;Long&gt; shippingPolicyId = createNumber(&quot;shippingPolicyId&quot;, Long.class);</span>
 
     public QShippingPolicy(String variable) {
-<span class="nc" id="L31">        super(ShippingPolicy.class, forVariable(variable));</span>
-<span class="nc" id="L32">    }</span>
+<span class="fc" id="L31">        super(ShippingPolicy.class, forVariable(variable));</span>
+<span class="fc" id="L32">    }</span>
 
     public QShippingPolicy(Path&lt;? extends ShippingPolicy&gt; path) {
 <span class="nc" id="L35">        super(path.getType(), path.getMetadata());</span>
 <span class="nc" id="L36">    }</span>
 
     public QShippingPolicy(PathMetadata metadata) {
-<span class="nc" id="L39">        super(ShippingPolicy.class, metadata);</span>
-<span class="nc" id="L40">    }</span>
+<span class="fc" id="L39">        super(ShippingPolicy.class, metadata);</span>
+<span class="fc" id="L40">    }</span>
 
 }
 

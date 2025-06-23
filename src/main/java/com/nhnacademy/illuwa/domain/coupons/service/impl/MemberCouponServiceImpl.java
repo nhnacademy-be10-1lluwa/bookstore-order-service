@@ -6,6 +6,8 @@ import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResp
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
+import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.*;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberRepository;
@@ -36,12 +38,17 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 
         // 고려사항 1 -> 쿠폰의 수량이 없을 시.
         if (coupon.getIssueCount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("발급 가능한 쿠폰 수량이 마감 되었습니다.");
+            throw new MemberCouponQuantityFinishException("발급 가능한 쿠폰 수량이 마감 되었습니다.");
         }
+
+        // Quantity finish
+        // CouponPolicyInactiveException
+        // isUsed
+        // Expiration
 
         // 고려사항 2 -> 이미 발급받은 쿠폰일때
         if (memberCouponRepository.existsByMemberIdAndCouponId(member.getId(), coupon.getId())) {
-            throw new IllegalArgumentException("이미 쿠폰을 발급받으셨습니다.");
+            throw new MemberCouponInactiveException("이미 쿠폰을 발급받으셨습니다. -> " + coupon.getCouponName());
         }
 
         // 고려사항 3 -> 만약 정책쪽에서 (=비활성화) or 쿠폰쪽에서 (삭제)라면?
@@ -103,9 +110,11 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     @Override
     public MemberCouponResponse getMemberCouponId(Long id) {
         MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 쿠폰은 존재하지 않습니다."));
+                .orElseThrow(() -> new MemberCouponNotFoundException("해당 쿠폰은 존재하지 않습니다."));
         return MemberCouponResponse.fromEntity(memberCoupon);
     }
+
+    // 특정 도서에 적용 -> 주문 + ()
 
     // 회원 소유 쿠폰 사용 ( 우선 이메일과 사용하고자하는 쿠폰이름을 매개변수로 가져옴 )
     // 그러면 우선적으로 회원이 있는지 확인부터 - > 아니지 회원자체는 발급쪽에서 검사를했으니
@@ -113,7 +122,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     @Override
     public MemberCouponUseResponse useCoupon(String email, Long memberCouponId) {
         MemberCoupon memberCoupon = memberCouponRepository.findByMember_EmailAndId(email, memberCouponId)
-                .orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
+                .orElseThrow(() -> new CouponNotFoundException("쿠폰이 존재하지 않습니다."));
 //        memberCouponRepository.findMemberCouponByMemberEmail(email);
 //        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponByMemberEmail(id).orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
         // 쿠폰의 사용 시 해당 쿠폰을 삭제하는게 좋지 않나?
@@ -121,11 +130,14 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         // -> 삭제를 안시키고 boolean값으로 사용여부를 체크하면 쿠폰 발급내역 or 쿠폰 사용내역에 좀 도움이 될 듯
         // 아니면 MemberCoupon(회원쿠폰)쪽에 필드로 상태(enum)를 추가해서
         // status("사용가능","사용완료","사용불가","기간만료")도 좋을것 같긴한데 == 나중에 사용가능한 쿠폰만 볼수있도록 처리도 가능
+
+
+        // 여러 상품 ->
         if (memberCoupon.isUsed()) {
-            throw new IllegalArgumentException("이미 사용한 쿠폰입니다.");
+            throw new MemberCouponIsUsed("이미 사용한 쿠폰입니다.");
         }
         if (memberCoupon.getExpiresAt().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("쿠폰의 유효기간이 만료되었습니다.");
+            throw new MemberCouponExpiredException("쿠폰의 유효기간이 만료되었습니다.");
         }
         memberCoupon.setUsed(true);
         memberCoupon.setUsedAt(LocalDate.now());

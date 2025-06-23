@@ -9,10 +9,10 @@ import java.util.Objects;
 import static java.math.BigDecimal.ONE;
 
 @Entity
-<span class="nc" id="L12">@Getter @Setter</span>
+<span class="pc" id="L12">@Getter @Setter</span>
 <span class="fc" id="L13">@NoArgsConstructor</span>
-<span class="nc" id="L14">@AllArgsConstructor</span>
-<span class="nc" id="L15">@Builder</span>
+<span class="fc" id="L14">@AllArgsConstructor</span>
+<span class="pc" id="L15">@Builder</span>
 // 현재 회원 쿠폰이라는 엔티티는
 // 1. 회원이라는 테이블이 존재해야함
 // 2. 쿠폰 정책에 의해 파생된 쿠폰이 존재해야함.
@@ -22,37 +22,37 @@ import static java.math.BigDecimal.ONE;
 public class MemberCoupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-<span class="nc" id="L25">    private Long id;</span>
+<span class="fc" id="L25">    private Long id;</span>
 
     // 쿠폰을 가진 사용자
     @ManyToOne
     @JoinColumn(name = &quot;member_id&quot;)
-<span class="nc" id="L30">    private Member member;</span>
+<span class="fc" id="L30">    private Member member;</span>
 
     // 어떠한 쿠폰을 가지고 있는지 판별
     @ManyToOne
     @JoinColumn(name = &quot;coupon_id&quot;)
-<span class="nc" id="L35">    private Coupon coupon;</span>
+<span class="fc" id="L35">    private Coupon coupon;</span>
 
-<span class="nc" id="L37">    private boolean used; // 사용여부</span>
-<span class="nc" id="L38">    private LocalDate usedAt; // 사용 일자</span>
-<span class="nc" id="L39">    private LocalDate issuedAt; // 발급 일자</span>
-<span class="nc" id="L40">    private LocalDate expiresAt; // 실제 유효기간</span>
+<span class="fc" id="L37">    private boolean used; // 사용여부</span>
+<span class="fc" id="L38">    private LocalDate usedAt; // 사용 일자</span>
+<span class="fc" id="L39">    private LocalDate issuedAt; // 발급 일자</span>
+<span class="fc" id="L40">    private LocalDate expiresAt; // 실제 유효기간</span>
 
     // 발급과 동시에 유효기간 설정
     @PrePersist
     public void prePersist() {
-<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (Objects.nonNull(issuedAt)) {</span>
-<span class="nc" id="L46">            this.expiresAt = this.issuedAt.plusDays(30);</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        if (Objects.nonNull(issuedAt)) {</span>
+<span class="fc" id="L46">            this.expiresAt = this.issuedAt.plusDays(30);</span>
         }
-<span class="nc" id="L48">    }</span>
+<span class="fc" id="L48">    }</span>
 
 //     사용여부가 true 일 경우 현재 날짜로 사용일자 업데이트
     @PreUpdate
     public void preUpdate() {
-<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (!used) {</span>
-<span class="nc" id="L54">            this.usedAt = LocalDate.now();</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (!used) {</span>
+<span class="fc" id="L54">            this.usedAt = LocalDate.now();</span>
         }
-<span class="nc" id="L56">    }</span>
+<span class="fc" id="L56">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

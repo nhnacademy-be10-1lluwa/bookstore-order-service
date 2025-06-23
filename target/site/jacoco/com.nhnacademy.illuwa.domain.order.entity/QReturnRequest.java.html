@@ -18,29 +18,29 @@ public class QReturnRequest extends EntityPathBase&lt;ReturnRequest&gt; {
 
     private static final long serialVersionUID = 787376879L;
 
-<span class="nc" id="L21">    private static final PathInits INITS = PathInits.DIRECT2;</span>
+<span class="fc" id="L21">    private static final PathInits INITS = PathInits.DIRECT2;</span>
 
-<span class="nc" id="L23">    public static final QReturnRequest returnRequest = new QReturnRequest(&quot;returnRequest&quot;);</span>
+<span class="fc" id="L23">    public static final QReturnRequest returnRequest = new QReturnRequest(&quot;returnRequest&quot;);</span>
 
-<span class="nc" id="L25">    public final StringPath memberId = createString(&quot;memberId&quot;);</span>
+<span class="fc" id="L25">    public final NumberPath&lt;Long&gt; memberId = createNumber(&quot;memberId&quot;, Long.class);</span>
 
     public final QOrder order;
 
-<span class="nc" id="L29">    public final DateTimePath&lt;java.time.ZonedDateTime&gt; requestedAt = createDateTime(&quot;requestedAt&quot;, java.time.ZonedDateTime.class);</span>
+<span class="fc" id="L29">    public final DateTimePath&lt;java.time.LocalDateTime&gt; requestedAt = createDateTime(&quot;requestedAt&quot;, java.time.LocalDateTime.class);</span>
 
-<span class="nc" id="L31">    public final DateTimePath&lt;java.time.ZonedDateTime&gt; returnedAt = createDateTime(&quot;returnedAt&quot;, java.time.ZonedDateTime.class);</span>
+<span class="fc" id="L31">    public final DateTimePath&lt;java.time.LocalDateTime&gt; returnedAt = createDateTime(&quot;returnedAt&quot;, java.time.LocalDateTime.class);</span>
 
-<span class="nc" id="L33">    public final NumberPath&lt;Long&gt; returnId = createNumber(&quot;returnId&quot;, Long.class);</span>
+<span class="fc" id="L33">    public final NumberPath&lt;Long&gt; returnId = createNumber(&quot;returnId&quot;, Long.class);</span>
 
-<span class="nc" id="L35">    public final EnumPath&lt;com.nhnacademy.illuwa.domain.order.entity.types.ReturnReason&gt; returnReason = createEnum(&quot;returnReason&quot;, com.nhnacademy.illuwa.domain.order.entity.types.ReturnReason.class);</span>
+<span class="fc" id="L35">    public final EnumPath&lt;com.nhnacademy.illuwa.domain.order.entity.types.ReturnReason&gt; returnReason = createEnum(&quot;returnReason&quot;, com.nhnacademy.illuwa.domain.order.entity.types.ReturnReason.class);</span>
 
-<span class="nc" id="L37">    public final NumberPath&lt;java.math.BigDecimal&gt; shippingFeeDeducted = createNumber(&quot;shippingFeeDeducted&quot;, java.math.BigDecimal.class);</span>
+<span class="fc" id="L37">    public final NumberPath&lt;java.math.BigDecimal&gt; shippingFeeDeducted = createNumber(&quot;shippingFeeDeducted&quot;, java.math.BigDecimal.class);</span>
 
-<span class="nc" id="L39">    public final EnumPath&lt;com.nhnacademy.illuwa.domain.order.entity.types.ReturnStatus&gt; status = createEnum(&quot;status&quot;, com.nhnacademy.illuwa.domain.order.entity.types.ReturnStatus.class);</span>
+<span class="fc" id="L39">    public final EnumPath&lt;com.nhnacademy.illuwa.domain.order.entity.types.ReturnStatus&gt; status = createEnum(&quot;status&quot;, com.nhnacademy.illuwa.domain.order.entity.types.ReturnStatus.class);</span>
 
     public QReturnRequest(String variable) {
-<span class="nc" id="L42">        this(ReturnRequest.class, forVariable(variable), INITS);</span>
-<span class="nc" id="L43">    }</span>
+<span class="fc" id="L42">        this(ReturnRequest.class, forVariable(variable), INITS);</span>
+<span class="fc" id="L43">    }</span>
 
     public QReturnRequest(Path&lt;? extends ReturnRequest&gt; path) {
 <span class="nc" id="L46">        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));</span>
@@ -55,9 +55,9 @@ public class QReturnRequest extends EntityPathBase&lt;ReturnRequest&gt; {
 <span class="nc" id="L55">    }</span>
 
     public QReturnRequest(Class&lt;? extends ReturnRequest&gt; type, PathMetadata metadata, PathInits inits) {
-<span class="nc" id="L58">        super(type, metadata, inits);</span>
-<span class="nc bnc" id="L59" title="All 2 branches missed.">        this.order = inits.isInitialized(&quot;order&quot;) ? new QOrder(forProperty(&quot;order&quot;), inits.get(&quot;order&quot;)) : null;</span>
-<span class="nc" id="L60">    }</span>
+<span class="fc" id="L58">        super(type, metadata, inits);</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        this.order = inits.isInitialized(&quot;order&quot;) ? new QOrder(forProperty(&quot;order&quot;), inits.get(&quot;order&quot;)) : null;</span>
+<span class="fc" id="L60">    }</span>
 
 }
 

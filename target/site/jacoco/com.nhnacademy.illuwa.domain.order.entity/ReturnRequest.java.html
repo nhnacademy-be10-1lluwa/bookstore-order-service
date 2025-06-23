@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,13 +23,13 @@ public class ReturnRequest {
 <span class="nc" id="L23">    private long returnId;</span>
 
 <span class="nc" id="L25">    @Setter</span>
-<span class="nc" id="L26">    private String memberId;</span>
+<span class="nc" id="L26">    private Long memberId;</span>
 
 <span class="nc" id="L28">    @Setter</span>
-<span class="nc" id="L29">    private ZonedDateTime requestedAt;</span>
+<span class="nc" id="L29">    private LocalDateTime requestedAt;</span>
 
 <span class="nc" id="L31">    @Setter</span>
-<span class="nc" id="L32">    private ZonedDateTime returnedAt;</span>
+<span class="nc" id="L32">    private LocalDateTime returnedAt;</span>
 
 <span class="nc" id="L34">    @Setter</span>
 <span class="nc" id="L35">    private BigDecimal shippingFeeDeducted;</span>
@@ -47,7 +47,7 @@ public class ReturnRequest {
 <span class="nc" id="L47">    private Order order;</span>
 
 <span class="nc" id="L49">    @Builder</span>
-<span class="nc" id="L50">    public ReturnRequest(String memberId, ZonedDateTime requestedAt, ZonedDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason returnReason, ReturnStatus status, Order order) {</span>
+<span class="nc" id="L50">    public ReturnRequest(Long memberId, LocalDateTime requestedAt, LocalDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason returnReason, ReturnStatus status, Order order) {</span>
 <span class="nc" id="L51">        this.memberId = memberId;</span>
 <span class="nc" id="L52">        this.requestedAt = requestedAt;</span>
 <span class="nc" id="L53">        this.returnedAt = returnedAt;</span>
@@ -56,5 +56,6 @@ public class ReturnRequest {
 <span class="nc" id="L56">        this.status = status;</span>
 <span class="nc" id="L57">        this.order = order;</span>
 <span class="nc" id="L58">    }</span>
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

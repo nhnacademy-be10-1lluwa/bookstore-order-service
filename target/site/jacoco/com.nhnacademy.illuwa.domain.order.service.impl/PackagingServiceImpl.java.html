@@ -26,60 +26,59 @@ public class PackagingServiceImpl implements PackagingService {
     @Override
     @Transactional(readOnly = true)
     public List&lt;PackagingResponseDto&gt; getAllPackaging() {
-<span class="fc" id="L29">        return packagingRepository.findAll().stream().map(this::toResponseDto).collect(Collectors.toList());</span>
+<span class="fc" id="L29">        return packagingRepository.findPackagingDtos();</span>
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List&lt;PackagingResponseDto&gt; getPackagingByActive() {
-<span class="fc" id="L35">        return packagingRepository.findByActive(true).stream().map(this::toResponseDto).collect(Collectors.toList());</span>
+    public List&lt;PackagingResponseDto&gt; getPackagingByActive(boolean active) {
+<span class="fc" id="L35">        return packagingRepository.findPackagingDtosByActive(active);</span>
     }
 
     @Override
     @Transactional(readOnly = true)
     public PackagingResponseDto getPackaging(String packagingId) {
 <span class="fc" id="L41">        long id = parseId(packagingId);</span>
-<span class="fc" id="L42">        Packaging packaging = packagingRepository.findByPackagingId(id).orElseThrow(()</span>
+<span class="fc" id="L42">        return packagingRepository.findPackagingDtoById(id).orElseThrow(()</span>
 <span class="nc" id="L43">                -&gt; new NotFoundException(&quot;해당 포장 옵션을 찾을 수 없습니다.&quot;, id));</span>
-<span class="fc" id="L44">        return toResponseDto(packaging);</span>
     }
 
     @Override
     public Packaging addPackaging(PackagingCreateRequestDto packagingCreateDto) {
-<span class="fc" id="L49">        Packaging pkg = Packaging.builder()</span>
-<span class="fc" id="L50">                .packagingName(packagingCreateDto.getPackagingName())</span>
-<span class="fc" id="L51">                .packagingPrice(packagingCreateDto.getPackagingPrice())</span>
-<span class="fc" id="L52">                .active(true)</span>
-<span class="fc" id="L53">                .build();</span>
-<span class="fc" id="L54">        return packagingRepository.save(pkg);</span>
+<span class="fc" id="L48">        Packaging pkg = Packaging.builder()</span>
+<span class="fc" id="L49">                .packagingName(packagingCreateDto.getPackagingName())</span>
+<span class="fc" id="L50">                .packagingPrice(packagingCreateDto.getPackagingPrice())</span>
+<span class="fc" id="L51">                .active(true)</span>
+<span class="fc" id="L52">                .build();</span>
+<span class="fc" id="L53">        return packagingRepository.save(pkg);</span>
     }
 
     @Override
     public int removePackaging(String packagingId) {
-<span class="fc" id="L59">        long id = parseId(packagingId);</span>
-<span class="fc" id="L60">        return packagingRepository.updateActiveByPackagingId(id, false);</span>
+<span class="fc" id="L58">        long id = parseId(packagingId);</span>
+<span class="fc" id="L59">        return packagingRepository.updateActiveByPackagingId(id, false);</span>
     }
 
     // fixme 삭제 로직 고려 후 수정
     @Override
     public Packaging updatePackaging(String packagingId, PackagingCreateRequestDto packagingCreateDto) {
-<span class="fc" id="L66">        removePackaging(packagingId);</span>
-<span class="fc" id="L67">        Packaging pkg = addPackaging(packagingCreateDto);</span>
-<span class="fc" id="L68">        return packagingRepository.save(pkg);</span>
+<span class="fc" id="L65">        removePackaging(packagingId);</span>
+<span class="fc" id="L66">        Packaging pkg = addPackaging(packagingCreateDto);</span>
+<span class="fc" id="L67">        return packagingRepository.save(pkg);</span>
     }
 
 
     // Entity -&gt; Dto
     private PackagingResponseDto toResponseDto(Packaging pkg) {
-<span class="fc" id="L74">        return new PackagingResponseDto(pkg.getPackagingId(), pkg.getPackagingName(), pkg.getPackagingPrice());</span>
+<span class="nc" id="L73">        return new PackagingResponseDto(pkg.getPackagingId(), pkg.getPackagingName(), pkg.getPackagingPrice());</span>
     }
 
     // ID 파싱 오류(잘못된 숫자 포맷)
     private long parseId(String packagingId) {
         try {
-<span class="fc" id="L80">            return Long.parseLong(packagingId);</span>
-<span class="nc" id="L81">        } catch (NumberFormatException ex) {</span>
-<span class="nc" id="L82">            throw new BadRequestException(&quot;유효하지 않은 포장 옵션 ID: &quot; + packagingId);</span>
+<span class="fc" id="L79">            return Long.parseLong(packagingId);</span>
+<span class="nc" id="L80">        } catch (NumberFormatException ex) {</span>
+<span class="nc" id="L81">            throw new BadRequestException(&quot;유효하지 않은 포장 옵션 ID: &quot; + packagingId);</span>
         }
     }
 }

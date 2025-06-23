@@ -4,25 +4,27 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
-<span class="nc" id="L12">@Getter @Setter</span>
-<span class="fc" id="L13">@NoArgsConstructor</span>
-<span class="nc" id="L14">@AllArgsConstructor</span>
-<span class="nc" id="L15">@Builder</span>
+<span class="nc" id="L13">@Getter @Setter</span>
+<span class="fc" id="L14">@NoArgsConstructor</span>
+<span class="fc" id="L15">@AllArgsConstructor</span>
+<span class="pc" id="L16">@Builder</span>
 // 회원 임시테이블
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-<span class="nc" id="L20">    private Long id;</span>
+<span class="fc" id="L21">    private Long id;</span>
 
-<span class="nc" id="L22">    private LocalDate birth;</span>
+<span class="nc" id="L23">    private LocalDate birth;</span>
 
-<span class="nc" id="L24">    private String email;</span>
+    @Email
+<span class="fc" id="L26">    private String email;</span>
 
-<span class="nc" id="L26">    private String name;</span>
+<span class="fc" id="L28">    private String name;</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

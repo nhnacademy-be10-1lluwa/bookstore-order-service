@@ -9,8 +9,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-<span class="fc" id="L13">@AllArgsConstructor</span>
+<span class="fc" id="L15">@AllArgsConstructor</span>
 @RequestMapping(&quot;/member-coupons&quot;)
 public class MemberCouponController {
 
@@ -20,18 +22,26 @@ public class MemberCouponController {
     @PostMapping
     public ResponseEntity&lt;MemberCouponResponse&gt; issueCoupon(
             @RequestBody @Valid MemberCouponCreateRequest request) {
-<span class="nc" id="L23">        MemberCouponResponse response = memberCouponService.issueCoupon(request);</span>
-<span class="nc" id="L24">        return ResponseEntity.ok(response);</span>
+<span class="fc" id="L25">        MemberCouponResponse response = memberCouponService.issueCoupon(request);</span>
+<span class="fc" id="L26">        return ResponseEntity.ok(response);</span>
     }
+
     // 쿠폰 조회
-    @GetMapping(&quot;/{id}&quot;)
-    public ResponseEntity&lt;MemberCouponResponse&gt; getMemberCoupon(@PathVariable Long id) {
-<span class="nc" id="L29">        return ResponseEntity.ok(memberCouponService.getMemberCouponId(id));</span>
+    @GetMapping(&quot;/{email}&quot;)
+    public ResponseEntity&lt;List&lt;MemberCouponResponse&gt;&gt; getAllMemberCoupons(@PathVariable String email) {
+<span class="fc" id="L32">        List&lt;MemberCouponResponse&gt; responses = memberCouponService.getAllMemberCoupons(email);</span>
+<span class="fc" id="L33">        return ResponseEntity.ok(responses);</span>
     }
+
     // 쿠폰 사용
-    @PutMapping(&quot;/{id}/use&quot;)
-    public ResponseEntity&lt;MemberCouponUseResponse&gt; useCoupon(@PathVariable Long id) {
-<span class="nc" id="L34">        return ResponseEntity.ok(memberCouponService.useCoupon(id));</span>
+    // 프론트 입장에서는 해당 url은 당연히 x
+    // PutMapping(&quot;/member-coupons/{id}/use)
+    // @AuthenticationPrincipal AuthUser authUser -&gt; 이걸로 인증인가를 성공한 회원을 가져올꺼.
+    @PutMapping(&quot;/{email}/{memberCouponId}/use&quot;)
+    public ResponseEntity&lt;MemberCouponUseResponse&gt; useCoupon(@PathVariable String email,
+                                                             @PathVariable Long memberCouponId) {
+
+<span class="fc" id="L44">        return ResponseEntity.ok(memberCouponService.useCoupon(email,memberCouponId));</span>
 
     }
 

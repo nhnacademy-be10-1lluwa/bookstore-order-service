@@ -17,27 +17,27 @@ public class QPackaging extends EntityPathBase&lt;Packaging&gt; {
 
     private static final long serialVersionUID = 1351746355L;
 
-<span class="nc" id="L20">    public static final QPackaging packaging = new QPackaging(&quot;packaging&quot;);</span>
+<span class="fc" id="L20">    public static final QPackaging packaging = new QPackaging(&quot;packaging&quot;);</span>
 
-<span class="nc" id="L22">    public final BooleanPath active = createBoolean(&quot;active&quot;);</span>
+<span class="pc" id="L22">    public final BooleanPath active = createBoolean(&quot;active&quot;);</span>
 
-<span class="nc" id="L24">    public final NumberPath&lt;Long&gt; packagingId = createNumber(&quot;packagingId&quot;, Long.class);</span>
+<span class="pc" id="L24">    public final NumberPath&lt;Long&gt; packagingId = createNumber(&quot;packagingId&quot;, Long.class);</span>
 
-<span class="nc" id="L26">    public final StringPath packagingName = createString(&quot;packagingName&quot;);</span>
+<span class="pc" id="L26">    public final StringPath packagingName = createString(&quot;packagingName&quot;);</span>
 
-<span class="nc" id="L28">    public final NumberPath&lt;java.math.BigDecimal&gt; packagingPrice = createNumber(&quot;packagingPrice&quot;, java.math.BigDecimal.class);</span>
+<span class="pc" id="L28">    public final NumberPath&lt;java.math.BigDecimal&gt; packagingPrice = createNumber(&quot;packagingPrice&quot;, java.math.BigDecimal.class);</span>
 
     public QPackaging(String variable) {
-<span class="nc" id="L31">        super(Packaging.class, forVariable(variable));</span>
-<span class="nc" id="L32">    }</span>
+<span class="fc" id="L31">        super(Packaging.class, forVariable(variable));</span>
+<span class="fc" id="L32">    }</span>
 
     public QPackaging(Path&lt;? extends Packaging&gt; path) {
 <span class="nc" id="L35">        super(path.getType(), path.getMetadata());</span>
 <span class="nc" id="L36">    }</span>
 
     public QPackaging(PathMetadata metadata) {
-<span class="nc" id="L39">        super(Packaging.class, metadata);</span>
-<span class="nc" id="L40">    }</span>
+<span class="fc" id="L39">        super(Packaging.class, metadata);</span>
+<span class="fc" id="L40">    }</span>
 
 }
 

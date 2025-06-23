@@ -30,25 +30,28 @@ public class CouponPolicy {
     @Column(nullable = false)
 <span class="fc" id="L31">    private BigDecimal minOrderAmount; // 최소 주문 금액</span>
 
-<span class="fc" id="L33">    private BigDecimal discountAmount; // 할인 금액</span>
-<span class="fc" id="L34">    private BigDecimal discountPercent; // 할인 퍼센트</span>
-<span class="fc" id="L35">    private BigDecimal maxDiscountAmount; // 최대 할인 금액</span>
+    // 이부분을 둘다 기본적으로 Null로 놔두는것보다
+    // enum으로 (금액, 퍼센트)로 설정하여서 하는게 더 좋긴할듯
+<span class="fc" id="L35">    private BigDecimal discountAmount; // 할인 금액</span>
+<span class="fc" id="L36">    private BigDecimal discountPercent; // 할인 퍼센트</span>
+<span class="fc" id="L37">    private BigDecimal maxDiscountAmount; // 최대 할인 금액</span>
 
-<span class="fc" id="L37">    private LocalDateTime createAt;</span>
-<span class="fc" id="L38">    private LocalDateTime updateAt;</span>
+    // 정책의 수정 여부를 확인 (솔직히 해당사항이 꼭 필요한건 아니지만 있으면 좋을것 같은 기능이라서 넣음)
+<span class="fc" id="L40">    private LocalDateTime createAt;</span>
+<span class="fc" id="L41">    private LocalDateTime updateAt;</span>
 
     @PrePersist // DB 저장하기전 자동 호출
     public void prePersist() {
-<span class="fc" id="L42">        this.createAt = LocalDateTime.now();</span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (Objects.isNull(this.status)) {</span>
-<span class="fc" id="L44">            this.status = CouponStatus.ACTIVE; // 기본상태 활성</span>
+<span class="fc" id="L45">        this.createAt = LocalDateTime.now();</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (Objects.isNull(this.status)) {</span>
+<span class="fc" id="L47">            this.status = CouponStatus.ACTIVE; // 기본상태 활성</span>
         }
-<span class="fc" id="L46">    }</span>
+<span class="fc" id="L49">    }</span>
 
     @PreUpdate // DB 반영하기 직전에 자동 호출
     public void preUpdate() {
-<span class="nc" id="L50">        this.updateAt = LocalDateTime.now();</span>
-<span class="nc" id="L51">    }</span>
+<span class="nc" id="L53">        this.updateAt = LocalDateTime.now();</span>
+<span class="nc" id="L54">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

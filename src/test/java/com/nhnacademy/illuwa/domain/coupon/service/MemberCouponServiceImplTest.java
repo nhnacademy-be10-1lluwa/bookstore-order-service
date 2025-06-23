@@ -9,6 +9,10 @@ import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponExpiredException;
+import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponInactiveException;
+import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponIsUsed;
+import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponQuantityFinishException;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
@@ -115,7 +119,7 @@ class MemberCouponServiceImplTest {
 
         // when & then
         assertThatThrownBy(() -> memberCouponService.issueCoupon(request))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(MemberCouponQuantityFinishException.class)
                 .hasMessage("발급 가능한 쿠폰 수량이 마감 되었습니다.");
     }
 
@@ -128,8 +132,8 @@ class MemberCouponServiceImplTest {
 
         // when & then
         assertThatThrownBy(() -> memberCouponService.issueCoupon(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 쿠폰을 발급받으셨습니다.");
+                .isInstanceOf(MemberCouponInactiveException.class)
+                .hasMessage("이미 쿠폰을 발급받으셨습니다. -> 테 스 트 쿠 폰 이 름 임");
     }
 
     @Test
@@ -190,7 +194,7 @@ class MemberCouponServiceImplTest {
 
         // 한번 더 해당 쿠폰을 사용하려고 하면?
         assertThatThrownBy(() -> memberCouponService.useCoupon(beforeUse.getMemberEmail(), beforeUse.getMemberCouponId()))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(MemberCouponIsUsed.class)
                 .hasMessage("이미 사용한 쿠폰입니다.");
     }
 
@@ -209,7 +213,7 @@ class MemberCouponServiceImplTest {
 
         // 유효 기간이 지났다면?
         assertThatThrownBy(() -> memberCouponService.useCoupon(beforeUse.getMemberEmail(), beforeUse.getMemberCouponId()))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(MemberCouponExpiredException.class)
                 .hasMessage("쿠폰의 유효기간이 만료되었습니다.");
 
     }

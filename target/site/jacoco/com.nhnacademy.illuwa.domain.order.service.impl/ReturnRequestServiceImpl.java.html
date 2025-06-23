@@ -3,99 +3,94 @@
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestResponseDto;
+import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.ReturnRequest;
+import com.nhnacademy.illuwa.domain.order.entity.types.ReturnStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
+import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ReturnRequestRepository;
 import com.nhnacademy.illuwa.domain.order.service.ReturnRequestService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @Transactional
-public class ReturnRequestServiceImpl implements ReturnRequestService {
+<span class="fc" id="L24">public class ReturnRequestServiceImpl implements ReturnRequestService {</span>
 
-    private final ReturnRequestRepository repository;
+    @Autowired
+    private ReturnRequestRepository repository;
 
-<span class="fc" id="L23">    public ReturnRequestServiceImpl(ReturnRequestRepository repository) {</span>
-<span class="fc" id="L24">        this.repository = repository;</span>
-<span class="fc" id="L25">    }</span>
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List&lt;ReturnRequestListResponseDto&gt; getAllReturnRequest() {
-<span class="nc" id="L30">        return repository.findAll().stream().map(this::toListResponseDto).toList();</span>
+<span class="nc" id="L35">        return repository.findAllDtos();</span>
     }
 
     @Override
     @Transactional(readOnly = true)
     public List&lt;ReturnRequestListResponseDto&gt; findPendingReturnRequests() {
-<span class="nc" id="L36">        return repository.findByReturnedAtIsNull().stream().map(this::toListResponseDto).toList();</span>
+<span class="nc" id="L41">        return repository.findReturnRequestDtosByIsNull();</span>
     }
 
     @Override
     @Transactional(readOnly = true)
     public ReturnRequestResponseDto getReturnRequest(String returnRequestId) {
-<span class="nc" id="L42">        long id = parseId(returnRequestId);</span>
-<span class="nc" id="L43">        ReturnRequest returnRequest = repository.findByReturnId(id).orElseThrow(()</span>
-<span class="nc" id="L44">                -&gt; new NotFoundException(&quot;해당 반품 내역을 찾을 수 없습니다.&quot;, id));</span>
-<span class="nc" id="L45">        return toResponseDto(returnRequest);</span>
+<span class="nc" id="L47">        long id = parseId(returnRequestId);</span>
+<span class="nc" id="L48">        return repository.findByReturnRequestId(id).orElseThrow(()</span>
+<span class="nc" id="L49">                -&gt; new NotFoundException(&quot;해당 반품 내역을 찾을 수 없습니다.&quot;, id));</span>
     }
 
     @Override
     @Transactional(readOnly = true)
     public List&lt;ReturnRequestListResponseDto&gt; findReturnRequestsByMemberId(String memberId) {
-<span class="nc" id="L51">        return repository.findByMemberId(memberId).stream().map(this::toListResponseDto).toList();</span>
+<span class="nc" id="L55">        long id = parseId(memberId);</span>
+<span class="nc" id="L56">        return repository.findByMemberId(id);</span>
     }
 
     // fixme order service 만들고 확인하기
-    /*@Override
-    public ReturnRequest addReturnRequest(String memberId, String orderId, ReturnRequestCreateRequestDto returnRequestCreateDto) {
-        ReturnRequest rr = ReturnRequest.builder()
-                .memberId(memberId)
-                .order()
-                .requestedAt(ZonedDateTime.now())
-                .returnedAt(null)
-                .shippingFeeDeducted(returnRequestCreateDto)
-        return null;
-    }*/
+    @Override
+    public ReturnRequest addReturnRequest(String orderId, ReturnRequestCreateRequestDto returnRequestCreateDto) {
+<span class="nc" id="L62">        long id = parseId(orderId);</span>
+<span class="nc" id="L63">        Order order = orderRepository.findByOrderId(id).orElseThrow(() -&gt;</span>
+<span class="nc" id="L64">                new NotFoundException(&quot;해당 주문을 찾을 수 없습니다.&quot;, id));</span>
+
+<span class="nc" id="L66">        BigDecimal feeDeducted = new BigDecimal(&quot;3000&quot;);</span>
+
+<span class="nc" id="L68">        return ReturnRequest.builder()</span>
+<span class="nc" id="L69">                .memberId(returnRequestCreateDto.getMemberId())</span>
+<span class="nc" id="L70">                .requestedAt(LocalDateTime.now())</span>
+<span class="nc" id="L71">                .returnedAt(null)</span>
+<span class="nc" id="L72">                .shippingFeeDeducted(feeDeducted) // todo 배송료 만들기</span>
+<span class="nc" id="L73">                .returnReason(returnRequestCreateDto.getReason())</span>
+<span class="nc" id="L74">                .status(ReturnStatus.Requested)</span>
+<span class="nc" id="L75">                .order(order).build();</span>
+    }
 
     @Override
-    public int removeReturnRequest(String returnRequestId) {
-<span class="nc" id="L68">        long id = parseId(returnRequestId);</span>
-<span class="nc" id="L69">        return repository.removeReturnRequestByReturnId(id);</span>
-    }
+    public void removeReturnRequest(String returnRequestId) {
+<span class="nc" id="L80">        long id = parseId(returnRequestId);</span>
 
-    // Entity -&gt; Dto 리스트용 dto
-    private ReturnRequestListResponseDto toListResponseDto(ReturnRequest rr) {
-<span class="nc" id="L74">        return new ReturnRequestListResponseDto(rr.getReturnId(),</span>
-<span class="nc" id="L75">                rr.getRequestedAt(),</span>
-<span class="nc" id="L76">                rr.getReturnedAt(),</span>
-<span class="nc" id="L77">                rr.getReturnReason(),</span>
-<span class="nc" id="L78">                rr.getStatus(),</span>
-<span class="nc" id="L79">                rr.getOrder().getOrderId());</span>
-    }
+<span class="nc" id="L82">        repository.findByReturnId(id).orElseThrow(()</span>
+<span class="nc" id="L83">                -&gt; new NotFoundException(&quot;해당 반품 요청 내역을 찾을 수 없습니다.&quot;, id));</span>
 
-    // Entity -&gt; Dto 상세정보용 dto
-    private ReturnRequestResponseDto toResponseDto(ReturnRequest rr) {
-<span class="nc" id="L84">        return new ReturnRequestResponseDto(rr.getMemberId(),</span>
-<span class="nc" id="L85">                rr.getRequestedAt(),</span>
-<span class="nc" id="L86">                rr.getReturnedAt(),</span>
-<span class="nc" id="L87">                rr.getShippingFeeDeducted(),</span>
-<span class="nc" id="L88">                rr.getReturnReason(),</span>
-<span class="nc" id="L89">                rr.getStatus(),</span>
-<span class="nc" id="L90">                rr.getOrder().getOrderId());</span>
-    }
+<span class="nc" id="L85">        repository.removeReturnRequestByReturnId(id);</span>
+<span class="nc" id="L86">    }</span>
 
     // ID 파싱 오류(잘못된 숫자 포맷)
     private long parseId(String returnRequestId) {
         try {
-<span class="nc" id="L96">            return Long.parseLong(returnRequestId);</span>
-<span class="nc" id="L97">        } catch (NumberFormatException e) {</span>
-<span class="nc" id="L98">            throw new BadRequestException(&quot;유효하지 않은 반품 ID: &quot; + returnRequestId);</span>
+<span class="nc" id="L91">            return Long.parseLong(returnRequestId);</span>
+<span class="nc" id="L92">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L93">            throw new BadRequestException(&quot;유효하지 않은 반품 ID: &quot; + returnRequestId);</span>
         }
     }
 }
