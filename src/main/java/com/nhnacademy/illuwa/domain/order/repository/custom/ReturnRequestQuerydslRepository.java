@@ -3,7 +3,6 @@ package com.nhnacademy.illuwa.domain.order.repository.custom;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.AdminReturnRequestRegisterDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestResponseDto;
-import com.nhnacademy.illuwa.domain.order.entity.ReturnRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +21,7 @@ public interface ReturnRequestQuerydslRepository {
     List<ReturnRequestListResponseDto> findByMemberId(Long memberId);
 
     // 반품 상태 변경하기 (ADMIN)
-    ReturnRequest updateStatusByReturnRequestId(Long returnRequestId, AdminReturnRequestRegisterDto adminReturnRequestRegisterDto);
+
+    void updateStatusByReturnRequestId(Long returnRequestId, AdminReturnRequestRegisterDto adminReturnRequestRegisterDto);
 
 }

@@ -7,7 +7,6 @@ import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestRespons
 import com.nhnacademy.illuwa.domain.order.entity.ReturnRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ReturnRequestService {
 
@@ -30,6 +29,7 @@ public interface ReturnRequestService {
     void removeReturnRequest(String returnRequestId);
 
     // 반품 수락하기 (ADMIN)
-    ReturnRequest updateReturnRequest(Long returnId, AdminReturnRequestRegisterDto returnRequestRegisterDto);
+
+    void updateReturnRequest(Long returnId, AdminReturnRequestRegisterDto returnRequestRegisterDto);
 
 }

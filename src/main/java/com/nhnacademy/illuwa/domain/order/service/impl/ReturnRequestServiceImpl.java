@@ -113,11 +113,11 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
     }
 
     @Override
-    public ReturnRequest updateReturnRequest(Long returnId, AdminReturnRequestRegisterDto returnRequestRegisterDto) {
+    public void updateReturnRequest(Long returnId, AdminReturnRequestRegisterDto returnRequestRegisterDto) {
 
-        ReturnRequest returnRequest = repository.updateStatusByReturnRequestId(returnId, returnRequestRegisterDto);
+        repository.updateStatusByReturnRequestId(returnId, returnRequestRegisterDto);
 
-        return repository.save(returnRequest);
+
     }
 
     // ID 파싱 오류(잘못된 숫자 포맷)
