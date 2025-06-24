@@ -143,7 +143,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         memberCoupon.setUsedAt(LocalDate.now());
 
         return MemberCouponUseResponse.fromEntity(memberCoupon);
-
     }
 
 

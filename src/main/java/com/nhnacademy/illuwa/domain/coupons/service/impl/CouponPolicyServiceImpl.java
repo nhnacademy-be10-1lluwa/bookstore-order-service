@@ -3,6 +3,7 @@ package com.nhnacademy.illuwa.domain.coupons.service.impl;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponPolicyService;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,21 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
 
     @Override
     public CouponPolicyCreateResponse createPolicy(CouponPolicyCreateRequest request) {
+        if (request.getDiscountType() == DiscountType.AMOUNT) {
+            if (Objects.isNull(request.getDiscountAmount())) {
+                throw new IllegalArgumentException("금액 할인 정책은 discountAmount 값이 필요합니다.");
+            }
+            if (request.getDiscountPercent() != null) {
+                throw new IllegalArgumentException("금액 할인 정책은 discountPercent 값을 입력하면 안됩니다.");
+            }
+        } else {
+            if (Objects.isNull(request.getDiscountPercent())) {
+                throw new IllegalArgumentException("퍼센트 할인 정책은 discountPercent 값이 필요합니다.");
+            }
+            if (Objects.nonNull(request.getDiscountAmount())) {
+                throw new IllegalArgumentException("퍼센트 할인 정책은 discountAmount 값을 입력하면 안됩니다.");
+            }
+        }
         CouponPolicy couponPolicy = CouponPolicy.builder()
                 .code(request.getCode())
                 .minOrderAmount(request.getMinOrderAmount())

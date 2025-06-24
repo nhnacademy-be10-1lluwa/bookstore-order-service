@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.coupons.entity;
 
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,10 +31,14 @@ public class CouponPolicy {
     @Column(nullable = false)
     private BigDecimal minOrderAmount; // 최소 주문 금액
 
+    private DiscountType discountType; // 할인타입 선정
+
     // 이부분을 둘다 기본적으로 Null로 놔두는것보다
     // enum으로 (금액, 퍼센트)로 설정하여서 하는게 더 좋긴할듯
     private BigDecimal discountAmount; // 할인 금액
     private BigDecimal discountPercent; // 할인 퍼센트
+
+
     private BigDecimal maxDiscountAmount; // 최대 할인 금액
 
     // 정책의 수정 여부를 확인 (솔직히 해당사항이 꼭 필요한건 아니지만 있으면 좋을것 같은 기능이라서 넣음)

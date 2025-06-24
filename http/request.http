@@ -3,10 +3,11 @@ POST http://localhost:8080/coupon-policies
 Content-Type: application/json
 
 {
-  "code": "AMT15K_DC3K",
+  "code": "AMT15K_DC333K",
   "minOrderAmount": 20000,
-  "discountAmount": 3000,
-  "discountPercent": null,
+  "discountType": "PERCENT",
+  "discountAmount": null,
+  "discountPercent": 30,
   "maxDiscountAmount": null
 }
 
