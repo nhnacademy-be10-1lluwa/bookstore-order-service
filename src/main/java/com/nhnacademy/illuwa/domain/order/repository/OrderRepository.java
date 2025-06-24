@@ -29,6 +29,9 @@ public interface OrderRepository extends JpaRepository<Order, Long>, OrderQueryd
     // 모든 주문 내역 조회
     // findAll
 
+    // 최신 주문 조회
+    Optional<Order> findTopByOrderByOrderIdDesc();
+
     @Query("update Order o set o.orderStatus = :orderStatus where o.orderId = :orderId")
     @Modifying
     @Transactional

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ReturnRequestService {
 
-    // 배송 전체 조회 (ADMIN)
+    // 반품 전체 조회 (ADMIN)
     List<ReturnRequestListResponseDto> getAllReturnRequest();
 
     // 처리 대기 중인(미확인) 반품 요청 전체 조회
