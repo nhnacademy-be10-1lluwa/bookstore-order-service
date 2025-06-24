@@ -1,13 +1,13 @@
 package com.nhnacademy.illuwa.domain.order.dto.returnRequest;
 
 import com.nhnacademy.illuwa.domain.order.entity.types.ReturnReason;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+
+import java.time.LocalDateTime;
+
 
 @Data
 @NoArgsConstructor
@@ -15,7 +15,7 @@ import java.time.ZonedDateTime;
 public class ReturnRequestCreateRequestDto {
 
     private Long memberId;
-    private ZonedDateTime requestedAt;
+    private LocalDateTime requestedAt;
     private ReturnReason reason;
 }
 

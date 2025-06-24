@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
+import com.nhnacademy.illuwa.domain.coupons.repository.MemberRepository;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.AdminReturnRequestRegisterDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestListResponseDto;
@@ -35,6 +36,8 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
 
     @Override
@@ -115,9 +118,17 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
     @Override
     public void updateReturnRequest(Long returnId, AdminReturnRequestRegisterDto returnRequestRegisterDto) {
 
-        repository.updateStatusByReturnRequestId(returnId, returnRequestRegisterDto);
+        ReturnRequest request = repository.findByReturnId(returnId).orElseThrow(()
+                -> new NotFoundException("해당 반품 요청은 찾을 수 없습니다.", returnId));
 
+        ReturnStatus newStatus = returnRequestRegisterDto.getReturnStatus();
+        request.setStatus(newStatus);
 
+        if (newStatus == ReturnStatus.Approved || newStatus == ReturnStatus.Rejected) {
+            request.setRequestedAt(LocalDateTime.now());
+        }
+
+        repository.save(request);
     }
 
     // ID 파싱 오류(잘못된 숫자 포맷)
