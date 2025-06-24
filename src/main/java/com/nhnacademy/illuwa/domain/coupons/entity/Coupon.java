@@ -41,11 +41,13 @@ public class Coupon {
     // 특정 도서에만 적용되는 경우
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "book_id")
-//    private Book bookTarget;
+    @Column(name = "book_id")
+    private Long bookId;
 
     // 특정 카테고리에만 적용되는 경우
 //    @ManyToOne
 //    @JoinColumn(name = "category_id")
-//    private Category categoryTarget;
+    @Column(name = "category_id")
+    private Long categoryId;
 
 }

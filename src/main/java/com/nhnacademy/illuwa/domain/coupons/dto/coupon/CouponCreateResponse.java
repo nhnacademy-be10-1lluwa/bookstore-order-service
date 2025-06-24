@@ -35,6 +35,10 @@ public class CouponCreateResponse {
 
     private BigDecimal issueCount;
 
+    private Long booksId;
+
+    private Long categoryId;
+
     // 연동 시 주석해제
 //    private Long bookId;
 //    private Long categoryId;
@@ -50,7 +54,8 @@ public class CouponCreateResponse {
                 .couponType(coupon.getCouponType())
                 .comment(coupon.getComment())
                 .issueCount(coupon.getIssueCount())
+                .booksId(coupon.getBookId())
+                .categoryId(coupon.getCategoryId())
                 .build();
     }
-
 }
