@@ -31,6 +31,7 @@ public class Order {
 
     private Long guestId;
 
+    @Setter
     private BigDecimal shippingFee;
 
     @ManyToOne
@@ -43,16 +44,16 @@ public class Order {
 
     private LocalDateTime deliveryDate;
 
-
+    @Setter
     private BigDecimal totalPrice;
 
-
+    @Setter
     private BigDecimal discountPrice;
 
-
+    @Setter
     private BigDecimal usedPoint;
 
-
+    @Setter
     private BigDecimal finalPrice;
 
     // enum 주문 상태
