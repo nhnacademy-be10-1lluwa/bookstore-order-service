@@ -48,7 +48,7 @@ class PackagingControllerTest {
         Mockito.when(packagingService.addPackaging(Mockito.any(PackagingCreateRequestDto.class)))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(post("/packaging")
+        mockMvc.perform(post("/api/packaging")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andDo(print())
@@ -64,7 +64,7 @@ class PackagingControllerTest {
     void getPackaging() throws Exception {
         Mockito.when(packagingService.getPackaging(1L)).thenReturn(responseDto);
 
-        mockMvc.perform(get("/packaging/{id}", 1L))
+        mockMvc.perform(get("/api/packaging/{id}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.packagingId").value(1L))
@@ -78,7 +78,7 @@ class PackagingControllerTest {
         Mockito.when(packagingService.getPackagingByActive(true))
                 .thenReturn(List.of(responseDto));
 
-        mockMvc.perform(get("/packaging"))
+        mockMvc.perform(get("/api/packaging"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].packagingId").value(1L));
@@ -96,7 +96,7 @@ class PackagingControllerTest {
                         Mockito.any(PackagingCreateRequestDto.class)))
                 .thenReturn(updatedResponse);
 
-        mockMvc.perform(put("/packaging/{id}", 1L)
+        mockMvc.perform(put("/api/packaging/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andDo(print())
@@ -110,7 +110,7 @@ class PackagingControllerTest {
     void deletePackaging() throws Exception {
         Mockito.when(packagingService.removePackaging(1L)).thenReturn(1);
 
-        mockMvc.perform(delete("/packaging/{id}", 1L))
+        mockMvc.perform(delete("/api/packaging/{id}", 1L))
                 .andExpect(status().isNoContent());
 
     }
