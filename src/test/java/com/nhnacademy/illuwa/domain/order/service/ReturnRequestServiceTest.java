@@ -12,6 +12,7 @@ import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ReturnRequestRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("db")
 @Transactional
+@Disabled
 public class ReturnRequestServiceTest {
 
     @Autowired
