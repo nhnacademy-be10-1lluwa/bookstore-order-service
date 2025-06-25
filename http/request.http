@@ -3,12 +3,10 @@ POST http://localhost:8080/coupon-policies
 Content-Type: application/json
 
 {
-  "code": "AMT15K_DC333K",
-  "minOrderAmount": 20000,
-  "discountType": "PERCENT",
-  "discountAmount": null,
-  "discountPercent": 30,
-  "maxDiscountAmount": null
+  "code": "AMT15K_DC3K",
+  "minOrderAmount": 15000,
+  "discountType": "AMOUNT",
+  "discountAmount": 3000
 }
 
 ### 쿠폰 정책 단건 조회 {id}
@@ -40,21 +38,21 @@ POST http://localhost:8080/coupons
 Content-Type: application/json
 
 {
-  "couponName": "진짜마짐가쿠폰",
+  "couponName": "도서 할인 쿠폰",
   "policyCode": "AMT15K_DC3K",
-  "validFrom": "2024-01-01",
-  "validTo": "2025-01-01",
-  "couponType": "GENERAL",
-  "comment": "도서전용쿠폰",
+  "validFrom": "2025-01-01",
+  "validTo": "2026-01-01",
+  "couponType": "BOOKS",
+  "comment": "특정 도서 할인쿠폰 단 10장",
   "issueCount": 10,
   "bookName": "자바"
 }
 
 ### (정책기반) -> 쿠폰 단건 조회 {id} // id ->
-GET http://localhost:8080/coupons/1
+GET http://localhost:8080/coupons/14
 
 ### (정책기반) -> 쿠폰 (policyCode)목록 조회 {policyCode}
-GET http://localhost:8080/coupons?policyCode=AMT15K_DC3K
+GET http://localhost:8080/coupons?policyCode=AMT15K_DC333K
 
 ### (정책기반) -> 쿠폰 (type)목록 조회 {type} || WELCOME, BIRTHDAY, GENERAL
 GET http://localhost:8080/coupons?type=BIRTHDAY
@@ -94,7 +92,7 @@ Content-Type: application/json
 
 {
   "memberEmail": "test@test.com",
-  "couponName": "웰컴쿠폰"
+  "couponName": "도서 할인 쿠폰"
 }
 
 ### (회원) -> 쿠폰 발급내역
@@ -102,4 +100,4 @@ GET http://localhost:8080/member-coupons/test@test.com
 
 
 ### (회원) -> 쿠폰 사용
-PUT http://localhost:8080/member-coupons/test@test.com/10/use
+PUT http://localhost:8080/member-coupons/test@test.com/2/use

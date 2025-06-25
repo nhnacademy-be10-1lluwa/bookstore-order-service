@@ -22,13 +22,15 @@ public class CouponController {
     // (정책기반) 쿠폰 생성
     @PostMapping
     public ResponseEntity<CouponCreateResponse> createCoupon(@RequestBody @Valid CouponCreateRequest request) {
-        if (Objects.isNull(request.getBookName())) {
-            CouponCreateResponse response = couponService.createCoupon(request);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } else {
-            CouponCreateResponse response = couponService.createCouponByBookTitle(request.getBookName(), request);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        }
+//        if (Objects.isNull(request.getBookName())) {
+//            CouponCreateResponse response = couponService.createCoupon(request);
+//            return new ResponseEntity<>(response, HttpStatus.CREATED);
+//        } else {
+//            CouponCreateResponse response = couponService.createCouponByBookTitle(request.getBookName(), request);
+//            return new ResponseEntity<>(response, HttpStatus.CREATED);
+//        }
+        CouponCreateResponse response = couponService.createCoupon(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 //
 //    @PostMapping

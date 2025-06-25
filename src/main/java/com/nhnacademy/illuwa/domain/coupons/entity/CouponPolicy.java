@@ -31,6 +31,8 @@ public class CouponPolicy {
     @Column(nullable = false)
     private BigDecimal minOrderAmount; // 최소 주문 금액
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
     private DiscountType discountType; // 할인타입 선정
 
     // 이부분을 둘다 기본적으로 Null로 놔두는것보다

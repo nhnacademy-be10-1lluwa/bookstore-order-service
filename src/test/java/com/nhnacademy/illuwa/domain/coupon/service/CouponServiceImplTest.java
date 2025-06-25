@@ -5,6 +5,7 @@ import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
@@ -56,11 +57,13 @@ class CouponServiceImplTest {
         couponPolicyRepository.save(CouponPolicy.builder()
                 .code("testCode1")
                 .minOrderAmount(BigDecimal.valueOf(10_000))
+                .discountType(DiscountType.AMOUNT)
                 .discountAmount(BigDecimal.valueOf(3_000))
                 .build());
         couponPolicyRepository.save(CouponPolicy.builder()
                 .code("testCode2")
                 .minOrderAmount(BigDecimal.valueOf(20_000))
+                .discountType(DiscountType.PERCENT)
                 .discountPercent(BigDecimal.valueOf(20))
                 .build());
 
@@ -120,6 +123,7 @@ class CouponServiceImplTest {
         CouponPolicy inactivePolicy = CouponPolicy.builder()
                 .code("inactiveCode")
                 .minOrderAmount(BigDecimal.valueOf(10_000))
+                .discountType(DiscountType.AMOUNT)
                 .discountAmount(BigDecimal.valueOf(3_000))
                 .status(CouponStatus.INACTIVE) // 비활성화
                 .build();
