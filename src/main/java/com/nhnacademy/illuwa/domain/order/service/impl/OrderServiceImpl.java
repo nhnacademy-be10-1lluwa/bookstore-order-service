@@ -10,14 +10,13 @@ import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
+import com.nhnacademy.illuwa.domain.order.factory.OrderFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
-import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,12 +28,13 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final ShippingPolicyRepository shippingPolicyRepository;
-    private final PackagingRepository packagingRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, ShippingPolicyRepository shippingPolicyRepository, PackagingRepository packagingRepository) {
+    private final OrderFactory orderFactory;
+
+    public OrderServiceImpl(OrderRepository orderRepository, ShippingPolicyRepository shippingPolicyRepository, OrderFactory orderFactory) {
         this.orderRepository = orderRepository;
         this.shippingPolicyRepository = shippingPolicyRepository;
-        this.packagingRepository = packagingRepository;
+        this.orderFactory = orderFactory;
     }
 
     @Override
@@ -67,73 +67,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrderWithItems(OrderCreateRequestDto dto) {
+        // 1. 배송 정책 조회
+        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(dto.getShippingPolicyId())
+                .orElseThrow(() -> new NotFoundException("해당 배송정책을 찾을 수 없습니다.", dto.getShippingPolicyId()));
 
-        // 주문 번호 생성
-        String orderNumber = generateOrderNumber(LocalDateTime.now());
+        // 2. 주문 기본 정보 세팅
+        Order order = orderFactory.buildOrderSkeleton(dto, shippingPolicy);
 
-        // todo 책 가격 가져오기
-        BigDecimal bookPrice = new BigDecimal("20000");
-        BigDecimal bookDiscountPrice = new BigDecimal("10000");
-        BigDecimal bookTotalPrice = bookPrice.subtract(bookDiscountPrice);
+        // 3. 주문 아이템 생성
+        List<OrderItem> orderItems = orderFactory.buildOrderItems(dto, order);
 
-        // 배송 정책 조회
-        long shippingPolicyId = dto.getShippingPolicyId();
-        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(shippingPolicyId).orElseThrow(()
-                -> new NotFoundException("해당 배송정책을 찾을 수 없습니다.", shippingPolicyId));
+        order.getItems().addAll(orderItems);
 
-        // 포장 옵션 조회
+        // 4. 금액(총액·할인·배송비 등) 계산
+        orderFactory.applyPriceSummary(order, shippingPolicy, orderItems);
 
-
-        BigDecimal totalPrice = dto.getItems().stream()
-                .map(item -> bookPrice.multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal discountPrice = BigDecimal.ZERO; // todo 할인 될 가격 로직 추가
-        BigDecimal usedPoint = BigDecimal.ZERO; // todo 사용될 포인트 로직 추가
-        BigDecimal finalPrice = totalPrice.subtract(discountPrice).subtract(usedPoint);
-        BigDecimal shippingFee = null;
-
-        if (shippingPolicy.getMinAmount().compareTo(totalPrice) > 0) { // 최소 금액보다 총 금액이 크면 공짜, 작으면 요금 부여
-            shippingFee = shippingPolicy.getFee();
-        } else {
-            shippingFee = new BigDecimal("0");
-        }
-
-
-        // fixme OrderItem 서비스 작성 후 코드 수정 and 쿠폰 작성 후 and 중복 예외 처리
-        Order order = Order.builder()
-                .orderNumber(orderNumber)
-                .memberId(dto.getMemberId())
-                .guestId(dto.getGuestId())
-                .shippingPolicy(shippingPolicy)
-                .orderDate(LocalDateTime.now())
-                .deliveryDate(dto.getRequestedDeliveryDate())
-                .totalPrice(totalPrice)
-                .discountPrice(discountPrice)
-                .usedPoint(usedPoint)
-                .finalPrice(finalPrice)
-                .orderStatus(OrderStatus.Pending)
-                .shippingFee(shippingFee)
-                .build();
-
-
-        // todo 가격 가져오기
-        List<OrderItem> items = dto.getItems().stream().map(orderItem
-                -> OrderItem.builder()
-                .bookId(orderItem.getBookId())
-                .order(order)
-                .quantity(orderItem.getQuantity())
-                .price(bookPrice)
-                .memberCouponId(1)
-                .discountPrice(bookDiscountPrice)
-                .itemTotalPrice(bookTotalPrice)
-                .packaging(packagingRepository.findByPackagingId(orderItem.getPackagingId()).orElseThrow(()
-                        -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", orderItem.getPackagingId())))
-                .build()).toList();
-
-        order.getItems().addAll(items);
-
+        // 5. 저장 후 반환
         return orderRepository.save(order);
+
     }
 
     @Override
@@ -165,26 +116,5 @@ public class OrderServiceImpl implements OrderService {
         } catch (NumberFormatException e) {
             throw new BadRequestException("유효하지 않은 주문 ID: " + orderId);
         }
-    }
-
-    // 주문 번호 생성 메서드
-    private static String generateOrderNumber(LocalDateTime time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String currentTime = time.format(formatter);
-        String randomNumber = generateRandomNumber();
-
-        return currentTime + "-" + randomNumber;
-    }
-
-    private static String generateRandomNumber() {
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 6; i++) {
-            int randomNumber = random.nextInt(10);
-            sb.append(randomNumber);
-        }
-
-        return sb.toString();
     }
 }
