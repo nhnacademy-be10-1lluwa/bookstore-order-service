@@ -48,12 +48,12 @@ class MemberCouponControllerTest {
     }
 
     @Test
-    @DisplayName("POST /member-coupons || (회원 쿠폰 발급 테스트)")
+    @DisplayName("POST /members/member-coupons || (회원 쿠폰 발급 테스트)")
     void issueCouponTest() throws Exception {
         Mockito.when(memberCouponService.issueCoupon(Mockito.any()))
                 .thenReturn(memberCouponResponse());
 
-        mockMvc.perform(post("/member-coupons")
+        mockMvc.perform(post("/members/member-coupons")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(jsonPath("$.memberCouponId").value(1L))
@@ -69,7 +69,7 @@ class MemberCouponControllerTest {
     }
 
     @Test
-    @DisplayName("GET /member-coupons{email} || (회원 쿠폰 발급내역 조회)")
+    @DisplayName("GET /members/member-coupons{email} || (회원 쿠폰 발급내역 조회)")
     void gettAllMemberCouponsTest() throws Exception {
         List<MemberCouponResponse> memberCoupons = List.of(
                 memberCouponResponse(),
@@ -82,7 +82,7 @@ class MemberCouponControllerTest {
         Mockito.when(memberCouponService.getAllMemberCoupons("test@test.com"))
                 .thenReturn(memberCoupons);
 
-        mockMvc.perform(get("/member-coupons/{email}", "test@test.com"))
+        mockMvc.perform(get("/members/member-coupons/{email}", "test@test.com"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].memberCouponId").value(1L))
                 .andExpect(jsonPath("$[0].couponName").value("테 스 트 쿠 폰 이 름 임"))
@@ -92,7 +92,7 @@ class MemberCouponControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /member-coupons/{email}/{memberCouponId}/use || (회원 쿠폰 사용)")
+    @DisplayName("PUT /members/member-coupons/{email}/{memberCouponId}/use || (회원 쿠폰 사용)")
     void useCouponTest() throws Exception {
         MemberCouponUseResponse response = MemberCouponUseResponse.builder()
                 .memberName("testName")
@@ -105,7 +105,7 @@ class MemberCouponControllerTest {
         Mockito.when(memberCouponService.useCoupon("test@test.com", 1L))
                 .thenReturn(response);
 
-        mockMvc.perform(put("/member-coupons/{email}/{memberCouponId}/use", "test@test.com", 1))
+        mockMvc.perform(put("/members/member-coupons/{email}/{memberCouponId}/use", "test@test.com", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.memberName").value("testName"))
                 .andExpect(jsonPath("$.used").value(true))

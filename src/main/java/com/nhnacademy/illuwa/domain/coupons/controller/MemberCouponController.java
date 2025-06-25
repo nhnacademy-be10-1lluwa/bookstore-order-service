@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/member-coupons")
+@RequestMapping("/members/member-coupons")
 public class MemberCouponController {
 
     private final MemberCouponService memberCouponService;
