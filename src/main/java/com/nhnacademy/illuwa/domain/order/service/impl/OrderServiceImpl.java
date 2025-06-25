@@ -1,29 +1,24 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
-import com.nhnacademy.illuwa.domain.coupons.external.book.BookApiClient;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
-import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.external.book.BookPriceApiClient;
-import com.nhnacademy.illuwa.domain.order.external.book.BookPriceDto;
 import com.nhnacademy.illuwa.domain.order.factory.OrderFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -35,20 +30,12 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final ShippingPolicyRepository shippingPolicyRepository;
-    private final PackagingRepository packagingRepository;
-    private final BookPriceApiClient bookPriceApiClient;
 
     private final OrderFactory orderFactory;
 
-    public OrderServiceImpl(OrderRepository orderRepository,
-                            ShippingPolicyRepository shippingPolicyRepository,
-                            PackagingRepository packagingRepository,
-                            BookPriceApiClient bookPriceApiClient,
-                            OrderFactory orderFactory) {
+    public OrderServiceImpl(OrderRepository orderRepository, ShippingPolicyRepository shippingPolicyRepository, OrderFactory orderFactory) {
         this.orderRepository = orderRepository;
         this.shippingPolicyRepository = shippingPolicyRepository;
-        this.packagingRepository = packagingRepository;
-        this.bookPriceApiClient = bookPriceApiClient;
         this.orderFactory = orderFactory;
     }
 

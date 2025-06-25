@@ -1,6 +1,5 @@
 package com.nhnacademy.illuwa.domain.order.factory;
 
-import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
@@ -10,13 +9,9 @@ import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.external.book.BookPriceApiClient;
 import com.nhnacademy.illuwa.domain.order.external.book.BookPriceDto;
-import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
-import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
-import com.nhnacademy.illuwa.domain.order.service.PackagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

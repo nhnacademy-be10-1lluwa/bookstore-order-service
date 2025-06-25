@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Getter
 public class BookPriceDto {
     @JsonProperty("id")
-    private Long booKId;
+    private Long bookId;
     private BigDecimal priceStandard;
     private BigDecimal priceSales;
 }
