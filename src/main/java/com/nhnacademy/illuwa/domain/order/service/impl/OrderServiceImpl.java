@@ -10,10 +10,8 @@ import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
-import com.nhnacademy.illuwa.domain.order.external.book.BookPriceApiClient;
 import com.nhnacademy.illuwa.domain.order.factory.OrderFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
-import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import org.springframework.stereotype.Service;
@@ -118,26 +116,5 @@ public class OrderServiceImpl implements OrderService {
         } catch (NumberFormatException e) {
             throw new BadRequestException("유효하지 않은 주문 ID: " + orderId);
         }
-    }
-
-    // 주문 번호 생성 메서드
-    private static String generateOrderNumber(LocalDateTime time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String currentTime = time.format(formatter);
-        String randomNumber = generateRandomNumber();
-
-        return currentTime + "-" + randomNumber;
-    }
-
-    private static String generateRandomNumber() {
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 6; i++) {
-            int randomNumber = random.nextInt(10);
-            sb.append(randomNumber);
-        }
-
-        return sb.toString();
     }
 }

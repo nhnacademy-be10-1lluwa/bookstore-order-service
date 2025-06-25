@@ -84,7 +84,7 @@ public class OrderFactory {
                 .map(OrderItem::getItemTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        /**
+        /*
          * todo
          * discountPrice -> 할인할 금액
          * usedPoint -> 사용할 포인트
