@@ -121,6 +121,7 @@ public class CouponPolicyTestUtils {
         return CouponPolicy.builder()
                 .code("testCode")
                 .minOrderAmount(BigDecimal.valueOf(20_000))
+                .discountType(DiscountType.AMOUNT)
                 .discountAmount(BigDecimal.valueOf(3_000))
                 .build();
 
@@ -142,6 +143,7 @@ public class CouponPolicyTestUtils {
                 .code(createPolicyRequest().getCode())
                 .minOrderAmount(createPolicyRequest().getMinOrderAmount())
                 .discountAmount(createPolicyRequest().getDiscountAmount())
+                .discountType(createPolicyRequest().getDiscountType())
                 .build();
     }
 

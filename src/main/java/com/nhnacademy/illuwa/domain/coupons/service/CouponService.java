@@ -9,6 +9,9 @@ public interface CouponService {
     // 쿠폰 생성
     CouponCreateResponse createCoupon(CouponCreateRequest request);
 
+    // 특정 도서 쿠폰 생성
+//    CouponCreateResponse createCouponByBookTitle(String bookTitle, CouponCreateRequest request);
+
     // 쿠폰 단건 조회 {id}
     CouponResponse getCouponById(Long id);
 

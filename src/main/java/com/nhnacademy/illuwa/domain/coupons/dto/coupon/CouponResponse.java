@@ -23,6 +23,8 @@ public class CouponResponse {
     private CouponType couponType;
     private String comment;
     private BigDecimal issueCount;
+    private Long bookId;
+
 
     // 도서와 카테고리 연동시 주석해제
 //    private Long bookId;
@@ -38,6 +40,7 @@ public class CouponResponse {
                 .couponType(coupon.getCouponType())
                 .comment(coupon.getComment())
                 .issueCount(coupon.getIssueCount())
+                .bookId(coupon.getBookId())
                 .build();
     }
 

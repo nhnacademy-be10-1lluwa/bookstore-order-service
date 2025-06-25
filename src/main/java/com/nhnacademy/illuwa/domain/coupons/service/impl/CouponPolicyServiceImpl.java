@@ -44,6 +44,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
                 .discountAmount(request.getDiscountAmount())
                 .discountPercent(request.getDiscountPercent())
                 .maxDiscountAmount(request.getMaxDiscountAmount())
+                .discountType(request.getDiscountType())
                 .build();
 
         CouponPolicy save = couponPolicyRepository.save(couponPolicy);

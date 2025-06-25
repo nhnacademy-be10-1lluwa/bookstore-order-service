@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @AllArgsConstructor
@@ -21,9 +22,22 @@ public class CouponController {
     // (정책기반) 쿠폰 생성
     @PostMapping
     public ResponseEntity<CouponCreateResponse> createCoupon(@RequestBody @Valid CouponCreateRequest request) {
+//        if (Objects.isNull(request.getBookName())) {
+//            CouponCreateResponse response = couponService.createCoupon(request);
+//            return new ResponseEntity<>(response, HttpStatus.CREATED);
+//        } else {
+//            CouponCreateResponse response = couponService.createCouponByBookTitle(request.getBookName(), request);
+//            return new ResponseEntity<>(response, HttpStatus.CREATED);
+//        }
         CouponCreateResponse response = couponService.createCoupon(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+//
+//    @PostMapping
+//    public ResponseEntity<CouponCreateResponse> createCouponWithBook(@RequestBody @Valid CouponCreateRequest request) {
+//        CouponCreateResponse response = couponService.createCouponByBookTitle(request.getBookName(), request);
+//        return new ResponseEntity<>(response, HttpStatus.CREATED);
+//    }
 
     // (정책기반) 쿠폰 단건 조회 {id}
     @GetMapping("/{id}")

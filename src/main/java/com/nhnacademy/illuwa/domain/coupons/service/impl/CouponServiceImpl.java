@@ -8,15 +8,18 @@ import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.external.book.BookApiClient;
+import com.nhnacademy.illuwa.domain.coupons.external.book.BookDto;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.IllegalCharsetNameException;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,11 +28,29 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponRepository couponRepository;
     private final CouponPolicyRepository couponPolicyRepository;
+    private final BookApiClient bookApiClient;
 
     @Override
     public CouponCreateResponse createCoupon(CouponCreateRequest request) {
+        Long bookId; // 도서 ID
+
+        // 1 -> 정책 코드 확인
         CouponPolicy policy = couponPolicyRepository.findByCode(request.getPolicyCode())
                 .orElseThrow(() -> new CouponPolicyNotFoundException("해당 정책코드는 존재하지 않습니다."));
+
+        // 2 -> 도서에 대한 쿠폰인지 확인
+        if (request.getCouponType() == CouponType.BOOKS) {
+            if (Objects.isNull(request.getBookName())) {
+                throw new IllegalArgumentException("도서 할인 쿠폰은 bookName 필드의 값이 필요합니다.");
+            } else {
+                List<BookDto> book = bookApiClient.getBookByTitle(request.getBookName());
+                bookId = book.getFirst().getBookId();
+            }
+        } else{
+            bookId = request.getBooksId();
+        }
+
+        // 3 -> 정책이 활성화인지 비활성인지 체크
         if (!policy.getStatus().equals(CouponStatus.INACTIVE)) {
             Coupon coupon = Coupon.builder()
                     .couponName(request.getCouponName())
@@ -39,14 +60,18 @@ public class CouponServiceImpl implements CouponService {
                     .couponType(request.getCouponType())
                     .comment(request.getComment())
                     .issueCount(request.getIssueCount())
+                    .bookId(bookId)
+                    .categoryId(request.getCategoryId())
                     .build();
             Coupon save = couponRepository.save(coupon);
             return CouponCreateResponse.fromEntity(save);
-        } else {
+        } else { // 비활성일시 에러 발생
             throw new CouponPolicyInactiveException("쿠폰 정책 상태가 비활성화이므로 생성 불가합니다.");
         }
 
     }
+
+
 
     @Override
     public CouponResponse getCouponById(Long id) {

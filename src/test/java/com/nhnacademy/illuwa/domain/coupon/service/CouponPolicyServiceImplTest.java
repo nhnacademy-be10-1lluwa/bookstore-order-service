@@ -4,6 +4,7 @@ import com.nhnacademy.illuwa.domain.coupon.CouponPolicyTestUtils;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.impl.CouponPolicyServiceImpl;
@@ -45,15 +46,15 @@ class CouponPolicyServiceImplTest {
         CouponPolicyCreateRequest testRequest1 = CouponPolicyCreateRequest.builder()
                 .code("AMT15K_DC3K")
                 .minOrderAmount(BigDecimal.valueOf(15000))
+                .discountType(DiscountType.AMOUNT)
                 .discountAmount(BigDecimal.valueOf(3000))
-                .discountPercent(null)
                 .maxDiscountAmount(BigDecimal.valueOf(10000))
                 .build();
 
         CouponPolicyCreateRequest testRequest2 = CouponPolicyCreateRequest.builder()
                 .code("AMT20K_DC20P")
                 .minOrderAmount(BigDecimal.valueOf(20000))
-                .discountAmount(null)
+                .discountType(DiscountType.PERCENT)
                 .discountPercent(BigDecimal.valueOf(20))
                 .maxDiscountAmount(BigDecimal.valueOf(10000))
                 .build();
@@ -61,15 +62,15 @@ class CouponPolicyServiceImplTest {
         couponPolicyRepository.save(CouponPolicy.builder()
                 .code(testRequest1.getCode())
                 .minOrderAmount(testRequest1.getMinOrderAmount())
+                .discountType(testRequest1.getDiscountType())
                 .discountAmount(testRequest1.getDiscountAmount())
-                .discountPercent(testRequest1.getDiscountPercent())
                 .maxDiscountAmount(testRequest1.getMaxDiscountAmount())
                 .build());
 
         couponPolicyRepository.save(CouponPolicy.builder()
                 .code(testRequest2.getCode())
                 .minOrderAmount(testRequest2.getMinOrderAmount())
-                .discountAmount(testRequest2.getDiscountAmount())
+                .discountType(DiscountType.PERCENT)
                 .discountPercent(testRequest2.getDiscountPercent())
                 .maxDiscountAmount(testRequest2.getMaxDiscountAmount())
                 .build());
@@ -82,7 +83,7 @@ class CouponPolicyServiceImplTest {
         CouponPolicyCreateRequest request = CouponPolicyCreateRequest.builder()
                 .code("AMT30K_DC20P")
                 .minOrderAmount(BigDecimal.valueOf(30000))
-                .discountAmount(null)
+                .discountType(DiscountType.PERCENT)
                 .discountPercent(BigDecimal.valueOf(20))
                 .maxDiscountAmount(BigDecimal.valueOf(10000))
                 .build();
