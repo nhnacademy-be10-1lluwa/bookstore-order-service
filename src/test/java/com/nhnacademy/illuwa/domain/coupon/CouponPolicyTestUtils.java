@@ -14,6 +14,7 @@ import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -131,6 +132,7 @@ public class CouponPolicyTestUtils {
                 .code("testCode")
                 .minOrderAmount(BigDecimal.valueOf(20_000))
                 .discountAmount(BigDecimal.valueOf(3_000))
+                .discountType(DiscountType.AMOUNT)
                 .build();
     }
 
