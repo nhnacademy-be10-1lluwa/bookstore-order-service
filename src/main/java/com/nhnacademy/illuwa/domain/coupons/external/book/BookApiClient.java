@@ -24,18 +24,30 @@ public class BookApiClient {
         this.restTemplate = builder.build();
     }
 
-    public List<BookDto> getBookByTitle(String bookName) {
-        String url = bookApiUrl + "admin/books?title=" + bookName;
+    //    public List<BookDto> getBookByTitle(String bookName) {
+//        String url = bookApiUrl + "admin/books?title=" + bookName;
+//        try {
+//            ResponseEntity<BookDto[]> response = restTemplate.getForEntity(url, BookDto[].class);
+//            BookDto[] body = response.getBody();
+//            if (Objects.isNull(body)) {
+//                return List.of(); // 빈 리스트 반환
+//            }
+//            return Arrays.asList(body);
+//        } catch (Exception e) {
+//            throw new IllegalArgumentException("도서 정보 조회 실패 -> " + e.getMessage());
+//            }
+//        }
+    public BookDto getBookById(Long bookId) {
+        String url = bookApiUrl + "admin/books?id=" + bookId;
         try {
-            ResponseEntity<BookDto[]> response = restTemplate.getForEntity(url, BookDto[].class);
-            BookDto[] body = response.getBody();
+            ResponseEntity<BookDto> response = restTemplate.getForEntity(url, BookDto.class);
+            BookDto body = response.getBody();
             if (Objects.isNull(body)) {
-                return List.of(); // 빈 리스트 반환
+                return null; // null 반환
             }
-            return Arrays.asList(body);
+            return body;
         } catch (Exception e) {
             throw new IllegalArgumentException("도서 정보 조회 실패 -> " + e.getMessage());
-//            log.error("도서 정보 조회 실패 -> " + e.getMessage());
-            }
         }
+    }
 }

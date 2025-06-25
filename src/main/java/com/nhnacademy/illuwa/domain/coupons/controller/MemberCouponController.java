@@ -18,6 +18,12 @@ public class MemberCouponController {
 
     private final MemberCouponService memberCouponService;
 
+    // 웰컴 쿠폰 발급
+    @PostMapping(value = "/welcome", params = "email")
+    public ResponseEntity<MemberCouponResponse> issueWelcomeCoupon(@RequestParam String email) {
+        return ResponseEntity.ok(memberCouponService.issueWelcomeCoupon(email));
+    }
+
     // 쿠폰 발급
     @PostMapping
     public ResponseEntity<MemberCouponResponse> issueCoupon(

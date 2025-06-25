@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.coupons.repository;
 
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -20,8 +21,11 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long
     // 회원 소유 쿠폰을 가져옴 (Email 기준)
     List<MemberCoupon> findMemberCouponByMemberEmail(String memberEmail);
 
-    // 쿠폰 발급여부 Check
+    // 쿠폰 발급여부 Check(=일반 쿠폰 기준)
     boolean existsByMemberIdAndCouponId(Long memberId, Long couponId);
+
+    // 쿠폰 발급여부 (= 웰컴 쿠폰)
+    boolean existsByMemberIdAndCoupon_CouponType(Long memberId, CouponType couponCouponType);
 
 //    List<MemberCoupon> findMemberByCouponId(Long couponId);
 //

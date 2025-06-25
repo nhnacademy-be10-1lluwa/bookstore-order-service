@@ -38,12 +38,13 @@ POST http://localhost:8080/admin/coupons
 Content-Type: application/json
 
 {
-  "couponName": "일반 쿠폰",
+  "couponName": "테스트2",
   "policyCode": "AMT15K_DC3K",
-  "couponType": "GENERAL",
+  "couponType": "BOOKS",
   "validFrom": "2025-01-01",
+  "booksId": 1,
   "validTo": "2026-01-01",
-  "comment": "최소주문 금액 15,000 이상 시 3000원 할인",
+  "comment": "(회원가입 축하쿠폰)최소주문 금액 15,000 이상 시 5,000원 할인",
   "issueCount": 10
 }
 
@@ -84,6 +85,9 @@ Content-Type: application/json
   "email": "test@test.com",
   "name": "testName"
 }
+
+### (회원) -> 쿠폰 발급 (WELCOME 쿠폰)
+POST http://localhost:8080/members/member-coupons/welcome?email=test@test.com
 
 
 ### (회원) -> 쿠폰 발급

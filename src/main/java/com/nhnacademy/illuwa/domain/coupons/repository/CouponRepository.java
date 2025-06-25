@@ -13,8 +13,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     // 쿠폰명으로 조회
     // 해당 문제점 -> 중복된 쿠폰명이 포함될수있음
     List<Coupon> findByCouponName(String couponName);
-    // 쿠폰타입으로 조회
-    List<Coupon> findByCouponType(CouponType couponType);
 
+    List<Coupon> findCouponByCouponType(CouponType couponType);
+    Optional<Coupon> findByCouponType(CouponType couponType);
     Optional<Coupon> findCouponByCouponName(String couponName);
 }
