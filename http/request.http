@@ -1,4 +1,4 @@
-### 쿠폰 정책 생성 -> * 관리자용 *
+### 쿠폰 정책 생성 -> * 관리자용 * (= 회원가입시 제공되는 쿠폰 정책)
 POST http://localhost:8080/admin/coupon-policies
 Content-Type: application/json
 
@@ -7,6 +7,13 @@ Content-Type: application/json
   "minOrderAmount": 10000,
   "discountType": "PERCENT",
   "discountPercent": 50
+}
+### 쿠폰 정책 생성 -> * 관리자용 * (= 특정 도서에 대한 쿠폰 정책)
+POST http://localhost:8080/admin/coupon-policies
+Content-Type: application/json
+
+{
+  "code": "BOOK_DC"
 }
 
 ### 쿠폰 정책 단건 조회 {id} -> * 관리자용 *
