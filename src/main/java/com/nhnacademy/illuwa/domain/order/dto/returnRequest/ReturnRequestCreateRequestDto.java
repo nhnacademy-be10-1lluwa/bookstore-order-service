@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReturnRequestCreateRequestDto {
 
-    private Long memberId;
     private LocalDateTime requestedAt;
     private ReturnReason reason;
 }
