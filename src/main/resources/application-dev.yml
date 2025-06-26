@@ -17,3 +17,6 @@ spring:
     # 외부 서비스 API
 book-api:
   url: http://localhost:10304/
+
+user-api:
+  url: http://localhost:10303/

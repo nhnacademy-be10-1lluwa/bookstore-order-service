@@ -16,3 +16,6 @@ spring:
 
 book-api:
   url: http://localhost:10304/
+
+user-api:
+  url: http://localho:10303/
