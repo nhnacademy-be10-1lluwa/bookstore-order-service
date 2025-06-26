@@ -22,6 +22,7 @@ public class CouponResponse {
     private LocalDate validTo;
     private CouponType couponType;
     private String comment;
+    private String conditions;
     private BigDecimal issueCount;
     private Long bookId;
 
@@ -39,6 +40,7 @@ public class CouponResponse {
                 .validTo(coupon.getValidTo())
                 .couponType(coupon.getCouponType())
                 .comment(coupon.getComment())
+                .conditions(coupon.getConditions())
                 .issueCount(coupon.getIssueCount())
                 .bookId(coupon.getBookId())
                 .build();

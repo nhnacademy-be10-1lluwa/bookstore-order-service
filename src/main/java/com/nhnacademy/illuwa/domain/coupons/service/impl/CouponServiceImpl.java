@@ -33,22 +33,35 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public CouponCreateResponse createCoupon(CouponCreateRequest request) {
         Long bookId; // 도서 ID
+        String auth = null;
 
         // 1 -> 정책 코드 확인
         CouponPolicy policy = couponPolicyRepository.findByCode(request.getPolicyCode())
                 .orElseThrow(() -> new CouponPolicyNotFoundException("해당 정책코드는 존재하지 않습니다."));
 
         // 2 -> 도서에 대한 쿠폰인지 확인
+//        if (request.getCouponType() == CouponType.BOOKS) {
+//            if (Objects.isNull(request.getBookName())) {
+//                throw new IllegalArgumentException("도서 할인 쿠폰은 bookName 필드의 값이 필요합니다.");
+//            } else {
+//                List<BookDto> book = bookApiClient.getBookByTitle(request.getBookName());
+//                bookId = book.getFirst().getBookId();
+//            }
+//        } else{
+//            bookId = request.getBooksId();
+//        }
+
         if (request.getCouponType() == CouponType.BOOKS) {
-            if (Objects.isNull(request.getBookName())) {
-                throw new IllegalArgumentException("도서 할인 쿠폰은 bookName 필드의 값이 필요합니다.");
+            if (Objects.isNull(request.getBooksId())) {
+                throw new IllegalArgumentException("도서 할인 쿠폰은 bookId 필드의 값이 필요합니다.");
             } else {
-                List<BookDto> book = bookApiClient.getBookByTitle(request.getBookName());
-                bookId = book.getFirst().getBookId();
+                bookId = bookApiClient.getBookById(request.getBooksId()).getBookId();
+                auth = bookApiClient.getBookById(request.getBooksId()).getAuthor();
             }
-        } else{
+        }else {
             bookId = request.getBooksId();
         }
+        System.out.println(auth); // 김희선 저자 잘나옴
 
         // 3 -> 정책이 활성화인지 비활성인지 체크
         if (!policy.getStatus().equals(CouponStatus.INACTIVE)) {
@@ -59,6 +72,7 @@ public class CouponServiceImpl implements CouponService {
                     .validTo(request.getValidTo())
                     .couponType(request.getCouponType())
                     .comment(request.getComment())
+                    .conditions(request.getConditions())
                     .issueCount(request.getIssueCount())
                     .bookId(bookId)
                     .categoryId(request.getCategoryId())
@@ -90,7 +104,7 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public List<CouponResponse> getCouponsByType(CouponType type) {
-        return couponRepository.findByCouponType(type).stream()
+        return couponRepository.findCouponByCouponType(type).stream()
                 .map(CouponResponse::fromEntity)
                 .toList();
     }

@@ -2,10 +2,12 @@ package com.nhnacademy.illuwa.domain.coupons.service.impl;
 
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.*;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
@@ -29,6 +31,30 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     private final MemberCouponRepository memberCouponRepository;
     private final MemberRepository memberRepository;
     private final CouponRepository couponRepository;
+
+    // welcome 쿠폰 발급
+    @Override
+    public MemberCouponResponse issueWelcomeCoupon(String email) {
+        Member member = memberRepository.findMemberByEmail(email).orElseThrow
+                (() -> new IllegalArgumentException("해당 회원은 존재하지 않습니다."));
+
+        boolean bool = memberCouponRepository.existsByMemberIdAndCoupon_CouponType(member.getId(), CouponType.WELCOME);
+        if (bool) {
+            throw new IllegalArgumentException("해당 회원은 이미 웰컴 쿠폰을 지급받으셨습니다.");
+        }
+
+        Coupon coupon = couponRepository.findByCouponType(CouponType.WELCOME).orElseThrow
+                (() -> new IllegalArgumentException("WELCOME 쿠폰이 존재하지 않습니다."));
+
+        MemberCoupon memberCoupon = MemberCoupon.builder()
+                .member(member)
+                .coupon(coupon)
+                .issuedAt(LocalDate.now())
+                .build();
+
+        MemberCoupon save = memberCouponRepository.save(memberCoupon);
+        return MemberCouponResponse.fromEntity(save);
+    }
 
     // 쿠폰 발급
     @Override
@@ -97,8 +123,8 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 ////        memberRepository.findMemberById(memberId).stream().map(MemberCouponResponse::fromEntity)
 ////                .toList();
 //    }
-    // 회원 소유 쿠폰 확인 (email)
 
+    // 회원 소유 쿠폰 확인 (email)
     @Override
     public List<MemberCouponResponse> getAllMemberCoupons(String email) {
         return memberCouponRepository.findMemberCouponByMemberEmail(email)
@@ -112,6 +138,14 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponById(id)
                 .orElseThrow(() -> new MemberCouponNotFoundException("해당 쿠폰은 존재하지 않습니다."));
         return MemberCouponResponse.fromEntity(memberCoupon);
+    }
+
+    @Override
+    public List<MemberCouponResponseTest> getAllMemberCouponsTest(Long id) {
+        return memberCouponRepository.findMemberById(id)
+                .stream()
+                .map(MemberCouponResponseTest::fromEntity)
+                .toList();
     }
 
     // 특정 도서에 적용 -> 주문 + ()
