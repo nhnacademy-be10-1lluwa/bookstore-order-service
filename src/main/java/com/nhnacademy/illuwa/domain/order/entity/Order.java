@@ -49,15 +49,19 @@ public class Order {
     @Column(name = "delivery_date", nullable = false)
     private LocalDateTime deliveryDate;
 
+    @Setter
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
 
+    @Setter
     @Column(name = "discount_price")
     private BigDecimal discountPrice;
 
+    @Setter
     @Column(name = "used_point")
     private BigDecimal usedPoint;
 
+    @Setter
     @Column(name = "final_price", nullable = false)
     private BigDecimal finalPrice;
 
