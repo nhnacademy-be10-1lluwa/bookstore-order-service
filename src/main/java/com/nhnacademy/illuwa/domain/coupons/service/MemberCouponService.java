@@ -13,6 +13,8 @@ public interface MemberCouponService {
     // 회원가입 쿠폰 발급
     MemberCouponResponse issueWelcomeCoupon(String email);
 
+    // 생일 쿠폰 발급
+    void issueBirthDayCoupon();
     // 쿠폰 발급
     MemberCouponResponse issueCoupon(MemberCouponCreateRequest request);
 

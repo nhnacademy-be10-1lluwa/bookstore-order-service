@@ -22,6 +22,9 @@ import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+
+import static com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType.BIRTHDAY;
 
 @Service
 @RequiredArgsConstructor
@@ -46,14 +49,54 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         Coupon coupon = couponRepository.findByCouponType(CouponType.WELCOME).orElseThrow
                 (() -> new IllegalArgumentException("WELCOME 쿠폰이 존재하지 않습니다."));
 
+        if (coupon.getIssueCount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new MemberCouponQuantityFinishException("발급 가능한 쿠폰 수량이 마감 되었습니다.");
+        }
+
         MemberCoupon memberCoupon = MemberCoupon.builder()
                 .member(member)
                 .coupon(coupon)
                 .issuedAt(LocalDate.now())
                 .build();
 
+        coupon.setIssueCount(coupon.getIssueCount().subtract(BigDecimal.ONE));
+
         MemberCoupon save = memberCouponRepository.save(memberCoupon);
         return MemberCouponResponse.fromEntity(save);
+    }
+
+    @Override
+    public void issueBirthDayCoupon() {
+        LocalDate today = LocalDate.now();
+        int monthValue = today.getMonthValue();
+
+        List<Member> birthDayMembers = memberRepository.findMemberByBirthMonth(monthValue);
+
+        if (birthDayMembers.isEmpty()) {
+            throw new IllegalArgumentException("당월 생일자에게만 발급되는 쿠폰입니다.");
+        }
+
+        Coupon birthDayCoupon = couponRepository.findCouponByCouponName("생일쿠폰")
+                .orElseThrow(() -> new IllegalArgumentException("생일 쿠폰이 존재하지 않습니다."));
+
+        if (birthDayCoupon.getIssueCount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new MemberCouponQuantityFinishException("발급 가능한 쿠폰 수량이 마감 되었습니다.");
+        }
+
+        for (Member birthDayMember : birthDayMembers) {
+            boolean bool = memberCouponRepository.existsByMemberIdAndCouponId(birthDayMember.getId(), birthDayCoupon.getId());
+
+            if (!bool) {
+                MemberCoupon updateMember = MemberCoupon.builder()
+                        .member(birthDayMember)
+                        .coupon(birthDayCoupon)
+                        .issuedAt(today)
+                        .build();
+
+                birthDayCoupon.setIssueCount(birthDayCoupon.getIssueCount().subtract(BigDecimal.ONE));
+                memberCouponRepository.save(updateMember);
+            }
+        }
     }
 
     // 쿠폰 발급
@@ -81,6 +124,11 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         // 정책쪽의 repo로 상태 비교후 생성? -> 이러면 회원 쿠폰이라는 엔티티가 정책쪽으로 직접 접근하게됌
         // 쿠폰쪽의 상태로 비교후 생성?
         // 그럼 쿠폰쪽의 상태를 무엇으로 관리할꺼냐 ? -> 정책(=비활성화) = 쿠폰(사용불가) || 정책(활성화) = 쿠폰(사용가능)
+
+        // 고려사항 4 -> 생일 쿠폰
+        if (coupon.getCouponType() == BIRTHDAY) {
+            issueBirthDayCoupon();
+        }
 
         MemberCoupon memberCoupon = MemberCoupon.builder()
                 .member(member)

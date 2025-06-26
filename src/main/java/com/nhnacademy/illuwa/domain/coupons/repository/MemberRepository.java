@@ -12,7 +12,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findMemberByEmail(String email);
 
     @Query("SELECT m FROM Member m WHERE MONTH(m.birth) = :month")
-    List<Member> findMemberByBirthDay(short birthDay);
+    List<Member> findMemberByBirthMonth(int month);
 
     Optional<Member> findMemberById(Long id);
 }
