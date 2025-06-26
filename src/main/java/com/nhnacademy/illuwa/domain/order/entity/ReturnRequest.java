@@ -23,10 +23,6 @@ public class ReturnRequest {
     private long returnId;
 
     @Setter
-    @Column(name = "member_id")
-    private Long memberId;
-
-    @Setter
     @Column(name = "requested_at")
     private LocalDateTime requestedAt;
 
@@ -40,10 +36,12 @@ public class ReturnRequest {
 
     @Setter
     @Enumerated(EnumType.STRING)
+    @Column(name = "return_reason")
     private ReturnReason returnReason;
 
     @Setter
     @Enumerated(EnumType.STRING)
+    @Column(name = "return_status")
     private ReturnStatus status;
 
     @OneToOne
@@ -51,8 +49,7 @@ public class ReturnRequest {
     private Order order;
 
     @Builder
-    public ReturnRequest(Long memberId, LocalDateTime requestedAt, LocalDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason returnReason, ReturnStatus status, Order order) {
-        this.memberId = memberId;
+    public ReturnRequest(LocalDateTime requestedAt, LocalDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason returnReason, ReturnStatus status, Order order) {
         this.requestedAt = requestedAt;
         this.returnedAt = returnedAt;
         this.shippingFeeDeducted = shippingFeeDeducted;

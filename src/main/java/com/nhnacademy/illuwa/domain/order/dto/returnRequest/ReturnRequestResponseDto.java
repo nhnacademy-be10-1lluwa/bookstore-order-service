@@ -16,7 +16,6 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 public class ReturnRequestResponseDto {
 
-    private long memberId;
     private LocalDateTime requestedAt;
     private LocalDateTime returnedAt;
     private BigDecimal shippingFeeDeducted;
@@ -25,8 +24,7 @@ public class ReturnRequestResponseDto {
     private long orderId;
 
     @QueryProjection
-    public ReturnRequestResponseDto(long memberId, LocalDateTime requestedAt, LocalDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason reason, ReturnStatus status, long orderId) {
-        this.memberId = memberId;
+    public ReturnRequestResponseDto(LocalDateTime requestedAt, LocalDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason reason, ReturnStatus status, long orderId) {
         this.requestedAt = requestedAt;
         this.returnedAt = returnedAt;
         this.shippingFeeDeducted = shippingFeeDeducted;

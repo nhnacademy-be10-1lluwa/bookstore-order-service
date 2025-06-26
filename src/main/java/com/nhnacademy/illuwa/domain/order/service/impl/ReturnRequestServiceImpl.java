@@ -95,7 +95,6 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
 
         ReturnRequest returnRequest = ReturnRequest.builder()
                 .order(order)
-                .memberId(returnRequestCreateDto.getMemberId())
                 .returnReason(returnRequestCreateDto.getReason())
                 .shippingFeeDeducted(feeDeducted)
                 .requestedAt(LocalDateTime.now())

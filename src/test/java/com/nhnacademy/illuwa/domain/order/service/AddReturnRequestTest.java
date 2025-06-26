@@ -109,7 +109,6 @@ public class AddReturnRequestTest {
         String orderId = createOrder(LocalDateTime.now());
 
         ReturnRequestCreateRequestDto dto = new ReturnRequestCreateRequestDto(
-                1L,
                 LocalDateTime.now(),
                 ReturnReason.Change_Mind
         );
@@ -127,7 +126,6 @@ public class AddReturnRequestTest {
         String orderId = createOrder(LocalDateTime.now());
 
         ReturnRequestCreateRequestDto dto = new ReturnRequestCreateRequestDto(
-                1L,
                 LocalDateTime.now().minusDays(15),
                 ReturnReason.Change_Mind
         );
@@ -146,7 +144,6 @@ public class AddReturnRequestTest {
         String orderId = createOrder(LocalDateTime.now());
 
         ReturnRequestCreateRequestDto dto = new ReturnRequestCreateRequestDto(
-                1L,
                 LocalDateTime.now().minusDays(20),
                 ReturnReason.Defective_Item
         );
@@ -164,7 +161,6 @@ public class AddReturnRequestTest {
         String orderId = createOrder(LocalDateTime.now());
 
         ReturnRequestCreateRequestDto dto = new ReturnRequestCreateRequestDto(
-                1L,
                 LocalDateTime.now().minusDays(31),
                 ReturnReason.Change_Mind
         );

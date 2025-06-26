@@ -102,9 +102,9 @@ public class ReturnRequestServiceTest {
                 shippingPolicy.getShippingPolicyId(), items, LocalDateTime.now()));
 
 
-        returnRequestService.addReturnRequest(parseId(order1.getOrderId()), new ReturnRequestCreateRequestDto(1L, LocalDateTime.now(), ReturnReason.Change_Mind));
-        returnRequestService.addReturnRequest(parseId(order2.getOrderId()), new ReturnRequestCreateRequestDto(2L, LocalDateTime.now(), ReturnReason.Item_Damaged));
-        returnRequestService.addReturnRequest(parseId(order3.getOrderId()), new ReturnRequestCreateRequestDto(3L, LocalDateTime.now(), ReturnReason.Other));
+        returnRequestService.addReturnRequest(parseId(order1.getOrderId()), new ReturnRequestCreateRequestDto(LocalDateTime.now(), ReturnReason.Change_Mind));
+        returnRequestService.addReturnRequest(parseId(order2.getOrderId()), new ReturnRequestCreateRequestDto(LocalDateTime.now(), ReturnReason.Item_Damaged));
+        returnRequestService.addReturnRequest(parseId(order3.getOrderId()), new ReturnRequestCreateRequestDto(LocalDateTime.now(), ReturnReason.Other));
     }
 
     @Test
@@ -118,13 +118,12 @@ public class ReturnRequestServiceTest {
     @Test
     @DisplayName("반품 요청 추가 및 조회")
     void testAll_and_getReturnRequest() {
-        ReturnRequestCreateRequestDto req = new ReturnRequestCreateRequestDto(1L, LocalDateTime.now(), ReturnReason.Defective_Item);
+        ReturnRequestCreateRequestDto req = new ReturnRequestCreateRequestDto(LocalDateTime.now(), ReturnReason.Defective_Item);
 
         ReturnRequest created = returnRequestService.addReturnRequest(parseId(order4.getOrderId()), req);
 
         ReturnRequestResponseDto dto =  returnRequestService.getReturnRequest(parseId(created.getReturnId()));
 
-        assertThat(dto.getMemberId()).isEqualTo(1L);
         assertThat(dto.getReturnedAt()).isEqualTo(created.getReturnedAt());
         assertThat(dto.getStatus()).isEqualTo(created.getStatus());
     }
