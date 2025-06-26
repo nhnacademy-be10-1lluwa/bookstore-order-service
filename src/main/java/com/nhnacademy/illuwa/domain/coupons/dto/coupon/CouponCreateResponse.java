@@ -33,6 +33,8 @@ public class CouponCreateResponse {
 
     private String comment;
 
+    private String conditions;
+
     private BigDecimal issueCount;
 
     private Long booksId;
@@ -51,6 +53,7 @@ public class CouponCreateResponse {
                 .comment(coupon.getComment())
                 .issueCount(coupon.getIssueCount())
                 .booksId(coupon.getBookId())
+                .conditions(coupon.getConditions())
                 .categoryId(coupon.getCategoryId())
                 .build();
     }

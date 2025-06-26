@@ -2,6 +2,7 @@ package com.nhnacademy.illuwa.domain.coupons.service.impl;
 
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
@@ -137,6 +138,14 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponById(id)
                 .orElseThrow(() -> new MemberCouponNotFoundException("해당 쿠폰은 존재하지 않습니다."));
         return MemberCouponResponse.fromEntity(memberCoupon);
+    }
+
+    @Override
+    public List<MemberCouponResponseTest> getAllMemberCouponsTest(Long id) {
+        return memberCouponRepository.findMemberById(id)
+                .stream()
+                .map(MemberCouponResponseTest::fromEntity)
+                .toList();
     }
 
     // 특정 도서에 적용 -> 주문 + ()

@@ -2,6 +2,7 @@ package com.nhnacademy.illuwa.domain.coupons.controller;
 
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResponse;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import jakarta.validation.Valid;
@@ -18,7 +19,7 @@ public class MemberCouponController {
 
     private final MemberCouponService memberCouponService;
 
-    // 웰컴 쿠폰 발급
+    // 웰컴 쿠폰 발급 (회원 서비스에서 해당 컨트롤러를 호출)
     @PostMapping(value = "/welcome", params = "email")
     public ResponseEntity<MemberCouponResponse> issueWelcomeCoupon(@RequestParam String email) {
         return ResponseEntity.ok(memberCouponService.issueWelcomeCoupon(email));
@@ -37,6 +38,13 @@ public class MemberCouponController {
     public ResponseEntity<List<MemberCouponResponse>> getAllMemberCoupons(@PathVariable String email) {
         List<MemberCouponResponse> responses = memberCouponService.getAllMemberCoupons(email);
         return ResponseEntity.ok(responses);
+    }
+
+    // 쿠폰 조회
+    @GetMapping(params = "id")
+    public ResponseEntity<List<MemberCouponResponseTest>> getAllMemberCouponsTest(@RequestParam Long id) {
+        List<MemberCouponResponseTest> response = memberCouponService.getAllMemberCouponsTest(id);
+        return ResponseEntity.ok(response);
     }
 
     // 쿠폰 사용

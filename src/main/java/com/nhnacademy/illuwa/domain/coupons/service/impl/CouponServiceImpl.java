@@ -72,6 +72,7 @@ public class CouponServiceImpl implements CouponService {
                     .validTo(request.getValidTo())
                     .couponType(request.getCouponType())
                     .comment(request.getComment())
+                    .conditions(request.getConditions())
                     .issueCount(request.getIssueCount())
                     .bookId(bookId)
                     .categoryId(request.getCategoryId())

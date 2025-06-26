@@ -8,8 +8,10 @@ import com.nhnacademy.illuwa.domain.coupons.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -17,18 +19,19 @@ import java.time.LocalDate;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+
     @Override
     public MemberResponse createMember(MemberCreateRequest createRequest) {
-
+        // 여기서 req를 통해 사용자가 입력한 값을 토대로 엔티티를 생성
         Member member = Member.builder()
                 .birth(createRequest.getBirth())
                 .email(createRequest.getEmail())
                 .name(createRequest.getName())
                 .build();
 
+        // 그 엔티티를 repo(=DB에 저장)
         Member save = memberRepository.save(member);
         return MemberResponse.fromEntity(save);
-
     }
 
 }

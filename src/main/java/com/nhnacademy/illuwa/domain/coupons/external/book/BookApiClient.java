@@ -38,7 +38,7 @@ public class BookApiClient {
 //            }
 //        }
     public BookDto getBookById(Long bookId) {
-        String url = bookApiUrl + "admin/books?id=" + bookId;
+        String url = bookApiUrl + "admin/books/" + bookId;
         try {
             ResponseEntity<BookDto> response = restTemplate.getForEntity(url, BookDto.class);
             BookDto body = response.getBody();

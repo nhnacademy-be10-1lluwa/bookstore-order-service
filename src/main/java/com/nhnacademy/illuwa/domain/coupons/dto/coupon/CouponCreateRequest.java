@@ -36,6 +36,8 @@ public class CouponCreateRequest {
 
     private String comment;
 
+    private String conditions;
+
     private String bookName;
 
     private Long booksId;
