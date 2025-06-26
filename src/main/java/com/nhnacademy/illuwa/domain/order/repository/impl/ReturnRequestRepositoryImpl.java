@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.repository.impl;
 
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.*;
+import com.nhnacademy.illuwa.domain.order.entity.QOrder;
 import com.nhnacademy.illuwa.domain.order.entity.QReturnRequest;
 import com.nhnacademy.illuwa.domain.order.entity.ReturnRequest;
 import com.nhnacademy.illuwa.domain.order.entity.types.ReturnStatus;
@@ -63,7 +64,6 @@ public class ReturnRequestRepositoryImpl extends QuerydslRepositorySupport imple
 
         ReturnRequestResponseDto result = queryFactory
                 .select(new QReturnRequestResponseDto(
-                        returnRequest.memberId,
                         returnRequest.requestedAt,
                         returnRequest.returnedAt,
                         returnRequest.shippingFeeDeducted,
@@ -79,16 +79,18 @@ public class ReturnRequestRepositoryImpl extends QuerydslRepositorySupport imple
 
     @Override
     public List<ReturnRequestListResponseDto> findByMemberId(Long memberId) {
+        QOrder order = QOrder.order;
+
         return queryFactory
                 .select(new QReturnRequestListResponseDto(
-                        returnRequest.memberId,
+                        returnRequest.returnId,
                         returnRequest.requestedAt,
                         returnRequest.returnedAt,
                         returnRequest.returnReason,
                         returnRequest.status,
                         returnRequest.order.orderId))
                 .from(returnRequest)
-                .where(returnRequest.memberId.eq(memberId))
+                .where(returnRequest.order.memberId.eq(memberId))
                 .fetch();
     }
 
