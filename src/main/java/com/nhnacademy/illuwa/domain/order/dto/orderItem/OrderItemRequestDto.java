@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class OrderItemRequestDto {
 
     @NotNull
@@ -23,4 +22,7 @@ public class OrderItemRequestDto {
 
     @NotNull
     private Long packagingId;
+
+
+
 }

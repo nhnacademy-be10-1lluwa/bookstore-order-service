@@ -2,6 +2,7 @@ package com.nhnacademy.illuwa.domain.order.dto.order;
 
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemRequestDto;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
+import com.nhnacademy.illuwa.domain.order.external.cart.dto.CartDto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,6 @@ public class OrderCreateRequestDto {
     private List<OrderItemRequestDto> items;
 
     private LocalDateTime requestedDeliveryDate;
-
 
 }
 
