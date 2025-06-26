@@ -35,6 +35,7 @@ public class Order {
     @Column(name = "guest_id")
     private Long guestId;
 
+    @Setter
     @Column(name = "shipping_fee", nullable = false)
     private BigDecimal shippingFee;
 

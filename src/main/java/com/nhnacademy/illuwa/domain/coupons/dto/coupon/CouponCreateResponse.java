@@ -39,10 +39,6 @@ public class CouponCreateResponse {
 
     private Long categoryId;
 
-    // 연동 시 주석해제
-//    private Long bookId;
-//    private Long categoryId;
-
 
 
     public static CouponCreateResponse fromEntity(Coupon coupon) {
