@@ -63,6 +63,11 @@ class MemberCouponServiceImplTest {
 
     @BeforeEach
     void setup() {
+        memberCouponRepository.deleteAll();
+        couponRepository.deleteAll();
+        couponPolicyRepository.deleteAll();
+        memberRepository.deleteAll();
+
         // 정책 설정
         couponPolicy = couponPolicyRepository.save(CouponPolicyTestUtils.createPolicy());
 
