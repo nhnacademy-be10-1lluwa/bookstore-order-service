@@ -91,7 +91,7 @@ public class OrderFactory {
         * */
 
         BigDecimal discountPrice = BigDecimal.ZERO; // TODO 할인 로직
-        BigDecimal usedPoint = BigDecimal.ZERO; // TODO 포인트 사용
+        BigDecimal usedPoint = order.getUsedPoint(); // TODO 포인트 사용
 
         BigDecimal finalPrice = totalPrice.subtract(discountPrice).subtract(usedPoint);
 
@@ -115,6 +115,8 @@ public class OrderFactory {
         return currentTime + "-" + randomNumber;
     }
 
+
+    // todo UUID 로 변경하기
     private static String generateRandomNumber() {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
