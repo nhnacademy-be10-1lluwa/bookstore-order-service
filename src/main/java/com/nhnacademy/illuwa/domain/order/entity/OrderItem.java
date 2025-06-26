@@ -17,6 +17,7 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long orderItemId;
 
+    @Column(name = "book_id", nullable = false)
     private long bookId;
 
     @ManyToOne
@@ -24,16 +25,20 @@ public class OrderItem {
     private Order order;
 
     @Setter
+    @Column(name = "quantity", nullable = false)
     private int quantity;
 
     @Setter
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "member_coupon_id", nullable = true)
+    @Column(name = "member_coupon_id")
     private long memberCouponId; // erd X
 
+    @Column(name = "discount_price")
     private BigDecimal discountPrice;
 
+    @Column(name = "item_total_price", nullable = false)
     private BigDecimal itemTotalPrice;
 
     @ManyToOne

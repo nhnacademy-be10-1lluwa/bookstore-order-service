@@ -17,12 +17,15 @@ public class ShippingPolicy {
     private long shippingPolicyId;
 
     @Setter
+    @Column(name = "min_amount", nullable = false)
     private BigDecimal minAmount; // 무료 배송 기준
 
     @Setter
+    @Column(name = "fee", nullable = false)
     private BigDecimal fee; // 기본 배송비
 
     @Setter
+    @Column(name = "active", nullable = false)
     private boolean active; // 활성화 여부
 
     @Builder
