@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupons.service.impl;
 
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
@@ -23,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType.BIRTHDAY;
 
@@ -180,6 +182,29 @@ public class MemberCouponServiceImpl implements MemberCouponService {
                 .map(MemberCouponResponse::fromEntity)
                 .toList();
     }
+
+    // 회원 소유 쿠폰 확인 (ID)
+    @Override
+    public List<MemberCouponResponse> getAllMemberCoupons(Long memberId) {
+        return memberCouponRepository.findMemberCouponsByMemberId(memberId)
+                .stream()
+                .map(MemberCouponResponse::fromEntity)
+                .toList();
+    }
+
+    @Override
+    public Optional<CouponResponse> getCoupon(Long couponId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public CouponResponse getCouponInfoFromMemberCoupon(Long memberCouponId) {
+        MemberCoupon membercoupon = memberCouponRepository.findById(memberCouponId)
+                .orElseThrow(() -> new CouponNotFoundException("쿠폰이 존재하지 않습니다."));
+        Coupon coupon = membercoupon.getCoupon();
+        return CouponResponse.fromEntity(coupon);
+    }
+
 
     @Override
     public MemberCouponResponse getMemberCouponId(Long id) {

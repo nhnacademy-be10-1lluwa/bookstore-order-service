@@ -98,7 +98,7 @@ GET http://localhost:8080/coupons?policyCode=AMT15K_DC3K
 GET http://localhost:8080/coupons?type=BOOKS
 
 ### (정책기반=) 쿠폰 (name)목록 조회 {name}
-GET http://localhost:8080/coupons?name=김영한 강사님의 JPA 할인 쿠폰
+GET http://localhost:8080/coupons?name=웰컴쿠폰
 
 ### (정책기반=) 쿠폰 전체조회
 GET http://localhost:8080/coupons
@@ -121,7 +121,7 @@ POST http://localhost:8080/members
 Content-Type: application/json
 
 {
-  "birth": "1999-08-12",
+  "birth": "1999-06-12",
   "email": "test@test.com",
   "name": "testName"
 }
@@ -143,8 +143,10 @@ Content-Type: application/json
 GET http://localhost:8080/members/member-coupons/test@test.com
 
 ### (회원) -> 쿠폰 발급내역 (클라이언트 마이 쿠폰 확인용)
-GET http://localhost:8080/members/member-coupons?id=2
+GET http://localhost:8080/members/member-coupons?memberId=1
 
+### (회원) -> 쿠폰 정보 조회 (memberCouponId 조회)
+GET http://localhost:8080/members/member-coupons/1/coupon
 
 ### (회원) -> 쿠폰 사용
 PUT http://localhost:8080/members/member-coupons/test@test.com/1/use
