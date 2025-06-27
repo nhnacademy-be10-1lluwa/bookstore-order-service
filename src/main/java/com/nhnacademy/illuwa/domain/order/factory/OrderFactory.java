@@ -1,5 +1,8 @@
 package com.nhnacademy.illuwa.domain.order.factory;
 
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
+import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
+import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
@@ -9,7 +12,9 @@ import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.external.book.BookPriceApiClient;
 import com.nhnacademy.illuwa.domain.order.external.book.BookPriceDto;
+import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
+import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,18 +22,35 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class OrderFactory {
     private final PackagingRepository packagingRepository;
     private final BookPriceApiClient bookPriceApiClient;
+    private final ShippingPolicyRepository shippingPolicyRepository;
+    private final OrderRepository orderRepository;
+    private final MemberCouponRepository memberCouponRepository;
 
 
-    /* ============== private helpers ============== */
+    public Order createOrder(OrderCreateRequestDto dto) {
+        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(dto.getShippingPolicyId())
+                .orElseThrow(() -> new NotFoundException("해당 배송정책을 찾을 수 없습니다.", dto.getShippingPolicyId()));
 
-    public Order buildOrderSkeleton(OrderCreateRequestDto dto,
+        Order order = buildOrderSkeleton(dto, shippingPolicy);
+
+        List<OrderItem> orderItems = buildOrderItems(dto, order);
+
+        order.getItems().addAll(orderItems);
+
+        applyPriceSummary(order, shippingPolicy, orderItems);
+
+        return orderRepository.save(order);
+    }
+
+
+    private Order buildOrderSkeleton(OrderCreateRequestDto dto,
                                     ShippingPolicy shippingPolicy) {
 
         return Order.builder()
@@ -42,7 +64,7 @@ public class OrderFactory {
                 .build();
     }
 
-    public List<OrderItem> buildOrderItems(OrderCreateRequestDto dto, Order order) {
+    private List<OrderItem> buildOrderItems(OrderCreateRequestDto dto, Order order) {
 
         return dto.getItems().stream().map(req -> {
 
@@ -54,8 +76,17 @@ public class OrderFactory {
                     ? priceDto.getPriceSales()
                     : priceDto.getPriceStandard();          // 판매가 null → 정가 사용
 
+
+            MemberCoupon coupon = memberCouponRepository.findMemberCouponById(req.getMemberCouponId()).orElseThrow(()
+            -> new NotFoundException("해당 쿠폰 정보를 찾을 수 없습니다.", req.getMemberCouponId()));
+
+            // todo 할인율인지, 힐인 금액인지 확인하는 로직 추가하기
+
+            // todo 할인금액이면 할인 금액을 discount에 추가, 할인율이면 책 가격 * 할인율 = 할인금액을 discount에 추가
+
+
             // (2) 할인·총액
-            BigDecimal discount = BigDecimal.ZERO;      // TODO 쿠폰 로직
+            BigDecimal discount = BigDecimal.ZERO;
             BigDecimal itemTotal = unitPrice.multiply(BigDecimal.valueOf(req.getQuantity()))
                     .subtract(discount);
 
@@ -76,7 +107,7 @@ public class OrderFactory {
         }).toList();
     }
 
-    public void applyPriceSummary(Order order,
+    private void applyPriceSummary(Order order,
                                   ShippingPolicy shippingPolicy,
                                   List<OrderItem> items) {
 
@@ -89,6 +120,13 @@ public class OrderFactory {
          * discountPrice -> 할인할 금액
          * usedPoint -> 사용할 포인트
         * */
+
+        Long memberCouponId = order.getMemberCouponId();
+
+        // todo 할인율인지, 힐인 금액인지 확인하는 로직 추가하기
+
+        // todo 할인금액이면 할인 금액을 discount에 추가, 할인율이면 totalPrice * 할인율 = 할인금액을 discount에 추가
+
 
         BigDecimal discountPrice = BigDecimal.ZERO; // TODO 할인 로직
         BigDecimal usedPoint = order.getUsedPoint(); // TODO 포인트 사용
@@ -118,15 +156,7 @@ public class OrderFactory {
 
     // todo UUID 로 변경하기
     private static String generateRandomNumber() {
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 6; i++) {
-            int randomNumber = random.nextInt(10);
-            sb.append(randomNumber);
-        }
-
-        return sb.toString();
+        return UUID.randomUUID().toString();
     }
 
 }

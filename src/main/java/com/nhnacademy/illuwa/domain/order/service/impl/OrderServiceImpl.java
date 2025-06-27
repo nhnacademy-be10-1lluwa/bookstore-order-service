@@ -12,28 +12,22 @@ import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.factory.OrderFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
-import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final ShippingPolicyRepository shippingPolicyRepository;
 
     private final OrderFactory orderFactory;
 
-    public OrderServiceImpl(OrderRepository orderRepository, ShippingPolicyRepository shippingPolicyRepository, OrderFactory orderFactory) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderFactory orderFactory) {
         this.orderRepository = orderRepository;
-        this.shippingPolicyRepository = shippingPolicyRepository;
         this.orderFactory = orderFactory;
     }
 
@@ -67,24 +61,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrderWithItems(OrderCreateRequestDto dto) {
-        // 1. 배송 정책 조회
-        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(dto.getShippingPolicyId())
-                .orElseThrow(() -> new NotFoundException("해당 배송정책을 찾을 수 없습니다.", dto.getShippingPolicyId()));
 
-        // 2. 주문 기본 정보 세팅
-        Order order = orderFactory.buildOrderSkeleton(dto, shippingPolicy);
-
-        // 3. 주문 아이템 생성
-        List<OrderItem> orderItems = orderFactory.buildOrderItems(dto, order);
-
-        order.getItems().addAll(orderItems);
-
-        // 4. 금액(총액·할인·배송비 등) 계산
-        orderFactory.applyPriceSummary(order, shippingPolicy, orderItems);
-
-        // 5. 저장 후 반환
-        return orderRepository.save(order);
-
+        return orderFactory.createOrder(dto);
     }
 
     @Override
