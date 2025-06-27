@@ -33,7 +33,7 @@ public class OrderItem {
     private BigDecimal price;
 
     @Column(name = "member_coupon_id")
-    private long memberCouponId; // erd X
+    private long memberCouponId;
 
     @Column(name = "discount_price")
     private BigDecimal discountPrice;
