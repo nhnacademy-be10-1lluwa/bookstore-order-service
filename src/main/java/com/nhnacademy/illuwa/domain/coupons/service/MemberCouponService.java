@@ -34,7 +34,6 @@ public interface MemberCouponService {
 
     List<MemberCouponResponse> getAllMemberCoupons(Long memberId);
 
-    Optional<CouponResponse> getCoupon(Long couponId);
 
     CouponInfoResponse getCouponInfoFromMemberCoupon(Long memberCouponId);
 
