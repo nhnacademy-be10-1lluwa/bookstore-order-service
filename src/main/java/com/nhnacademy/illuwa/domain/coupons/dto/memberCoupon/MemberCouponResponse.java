@@ -18,6 +18,7 @@ public class MemberCouponResponse {
     private String memberName;
     private String memberEmail;
     private String couponName;
+    private Long couponId;
     private String couponCode;
     private boolean used;
     private LocalDate usedAt;
@@ -30,6 +31,7 @@ public class MemberCouponResponse {
                 .memberName(memberCoupon.getMember().getName())
                 .memberEmail(memberCoupon.getMember().getEmail())
                 .couponName(memberCoupon.getCoupon().getCouponName())
+                .couponId(memberCoupon.getCoupon().getId())
                 .couponCode(memberCoupon.getCoupon().getPolicy().getCode())
                 .used(memberCoupon.isUsed())
                 .usedAt(memberCoupon.getUsedAt())

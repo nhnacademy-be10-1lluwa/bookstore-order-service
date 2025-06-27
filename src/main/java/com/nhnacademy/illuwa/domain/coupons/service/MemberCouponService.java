@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupons.service;
 
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
@@ -7,6 +8,7 @@ import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResp
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberCouponService {
 
@@ -28,4 +30,12 @@ public interface MemberCouponService {
 
     // 발급 내역 조회
     List<MemberCouponResponse> getAllMemberCoupons(String email);
+
+    List<MemberCouponResponse> getAllMemberCoupons(Long memberId);
+
+    Optional<CouponResponse> getCoupon(Long couponId);
+
+    CouponResponse getCouponInfoFromMemberCoupon(Long memberCouponId);
+
+
 }

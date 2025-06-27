@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupons.controller;
 
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
@@ -41,10 +42,16 @@ public class MemberCouponController {
     }
 
     // 쿠폰 조회
-    @GetMapping(params = "id")
-    public ResponseEntity<List<MemberCouponResponseTest>> getAllMemberCouponsTest(@RequestParam Long id) {
-        List<MemberCouponResponseTest> response = memberCouponService.getAllMemberCouponsTest(id);
-        return ResponseEntity.ok(response);
+    @GetMapping(params = "memberId")
+    public ResponseEntity<List<MemberCouponResponse>> getAllMemberCouponsTest(@RequestParam Long memberId) {
+        List<MemberCouponResponse> responses = memberCouponService.getAllMemberCoupons(memberId);
+        return ResponseEntity.ok(responses);
+    }
+
+    // 쿠폰 정보 조회
+    @GetMapping("/{memberCouponId}/coupon")
+    public ResponseEntity<CouponResponse> getCouponInfoFromMemberCoupon(@PathVariable Long memberCouponId) {
+        return ResponseEntity.ok(memberCouponService.getCouponInfoFromMemberCoupon(memberCouponId));
     }
 
     // 쿠폰 사용
@@ -55,8 +62,7 @@ public class MemberCouponController {
     public ResponseEntity<MemberCouponUseResponse> useCoupon(@PathVariable String email,
                                                              @PathVariable Long memberCouponId) {
 
-        return ResponseEntity.ok(memberCouponService.useCoupon(email,memberCouponId));
-
+        return ResponseEntity.ok(memberCouponService.useCoupon(email, memberCouponId));
     }
 
 
