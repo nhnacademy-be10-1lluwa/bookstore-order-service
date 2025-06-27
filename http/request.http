@@ -136,7 +136,7 @@ Content-Type: application/json
 
 {
   "memberEmail": "test@test.com",
-  "couponName": "생일쿠폰"
+  "couponName": "웰컴쿠폰"
 }
 
 ### (회원) -> 쿠폰 발급내역

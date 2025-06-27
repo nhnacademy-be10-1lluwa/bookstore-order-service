@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupons.service.impl;
 
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponInfoResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
@@ -130,6 +131,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         // 고려사항 4 -> 생일 쿠폰
         if (coupon.getCouponType() == BIRTHDAY) {
             issueBirthDayCoupon();
+            return null;
         }
 
         MemberCoupon memberCoupon = MemberCoupon.builder()
@@ -198,11 +200,11 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     }
 
     @Override
-    public CouponResponse getCouponInfoFromMemberCoupon(Long memberCouponId) {
+    public CouponInfoResponse getCouponInfoFromMemberCoupon(Long memberCouponId) {
         MemberCoupon membercoupon = memberCouponRepository.findById(memberCouponId)
                 .orElseThrow(() -> new CouponNotFoundException("쿠폰이 존재하지 않습니다."));
         Coupon coupon = membercoupon.getCoupon();
-        return CouponResponse.fromEntity(coupon);
+        return CouponInfoResponse.fromEntity(coupon);
     }
 
 
