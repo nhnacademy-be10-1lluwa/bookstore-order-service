@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupons.service;
 
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponInfoResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
@@ -35,7 +36,7 @@ public interface MemberCouponService {
 
     Optional<CouponResponse> getCoupon(Long couponId);
 
-    CouponResponse getCouponInfoFromMemberCoupon(Long memberCouponId);
+    CouponInfoResponse getCouponInfoFromMemberCoupon(Long memberCouponId);
 
 
 }
