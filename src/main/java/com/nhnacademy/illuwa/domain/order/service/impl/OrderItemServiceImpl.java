@@ -1,14 +1,10 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
-import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
-import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
-import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderItemService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
