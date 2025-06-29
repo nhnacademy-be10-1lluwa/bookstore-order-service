@@ -56,9 +56,6 @@ public class ReturnRequestServiceTest {
     private ShippingPolicyRepository shippingPolicyRepository;
 
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
     private ShippingPolicy shippingPolicy;
     private Packaging packaging;
 
