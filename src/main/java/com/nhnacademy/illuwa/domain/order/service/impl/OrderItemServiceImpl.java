@@ -38,7 +38,6 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         return orderItemRepository.findOrderItemDtoByOrderItemId(id).orElseThrow(()
                 -> new NotFoundException("해당 주문 상품을 찾을 수 없습니다.", id));
-
     }
 
     @Override

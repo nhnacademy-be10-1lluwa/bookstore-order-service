@@ -1,8 +1,11 @@
 package com.nhnacademy.illuwa.domain.order.factory;
 
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDiscountDto;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
+import com.nhnacademy.illuwa.domain.coupons.factory.DiscountCalculator;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
+import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
@@ -32,6 +35,8 @@ public class OrderFactory {
     private final ShippingPolicyRepository shippingPolicyRepository;
     private final OrderRepository orderRepository;
     private final MemberCouponRepository memberCouponRepository;
+    private final MemberCouponService memberCouponService;
+    private final DiscountCalculator discountCalculator;
 
 
     public Order createOrder(OrderCreateRequestDto dto) {
@@ -51,7 +56,7 @@ public class OrderFactory {
 
 
     private Order buildOrderSkeleton(OrderCreateRequestDto dto,
-                                    ShippingPolicy shippingPolicy) {
+                                     ShippingPolicy shippingPolicy) {
 
         return Order.builder()
                 .orderNumber(generateOrderNumber(LocalDateTime.now()))
@@ -77,18 +82,25 @@ public class OrderFactory {
                     : priceDto.getPriceStandard();          // 판매가 null → 정가 사용
 
 
-            MemberCoupon coupon = memberCouponRepository.findMemberCouponById(req.getMemberCouponId()).orElseThrow(()
-            -> new NotFoundException("해당 쿠폰 정보를 찾을 수 없습니다.", req.getMemberCouponId()));
-
             // todo 할인율인지, 힐인 금액인지 확인하는 로직 추가하기
+            MemberCouponDiscountDto coupon = memberCouponService.getDiscountPrice(order.getMemberCouponId());
 
             // todo 할인금액이면 할인 금액을 discount에 추가, 할인율이면 책 가격 * 할인율 = 할인금액을 discount에 추가
 
 
             // (2) 할인·총액
-            BigDecimal discount = BigDecimal.ZERO;
-            BigDecimal itemTotal = unitPrice.multiply(BigDecimal.valueOf(req.getQuantity()))
-                    .subtract(discount);
+            BigDecimal grossPrice = unitPrice.multiply(BigDecimal.valueOf(req.getQuantity()));
+
+            // 쿠폰 적용할인
+            BigDecimal discountedPrice = discountCalculator.calculate(
+                    grossPrice,
+                    coupon.getDiscountAmount(),
+                    coupon.getDiscountPercent());
+
+            // 할인 금액
+            BigDecimal discount = grossPrice.subtract(discountedPrice);
+
+            // 최종 결제 금액
 
             // (3) 포장 옵션
             Packaging packaging = packagingRepository.findByPackagingId(req.getPackagingId())
@@ -101,15 +113,15 @@ public class OrderFactory {
                     .price(unitPrice)
                     .memberCouponId(req.getMemberCouponId())
                     .discountPrice(discount)
-                    .itemTotalPrice(itemTotal)
+                    .itemTotalPrice(discountedPrice)
                     .packaging(packaging)
                     .build();
         }).toList();
     }
 
     private void applyPriceSummary(Order order,
-                                  ShippingPolicy shippingPolicy,
-                                  List<OrderItem> items) {
+                                   ShippingPolicy shippingPolicy,
+                                   List<OrderItem> items) {
 
         BigDecimal totalPrice = items.stream()
                 .map(OrderItem::getItemTotalPrice)
@@ -119,19 +131,29 @@ public class OrderFactory {
          * todo
          * discountPrice -> 할인할 금액
          * usedPoint -> 사용할 포인트
-        * */
+         * */
 
-        Long memberCouponId = order.getMemberCouponId();
+        MemberCouponDiscountDto coupon = memberCouponService.getDiscountPrice(order.getMemberCouponId());
 
         // todo 할인율인지, 힐인 금액인지 확인하는 로직 추가하기
 
+
         // todo 할인금액이면 할인 금액을 discount에 추가, 할인율이면 totalPrice * 할인율 = 할인금액을 discount에 추가
+        // (2) 할인·총액
 
+        // 쿠폰 적용할인 (할인이 적용된 금액)
+        BigDecimal discountedPrice = discountCalculator.calculate(
+                totalPrice,
+                coupon.getDiscountAmount(),
+                coupon.getDiscountPercent());
 
-        BigDecimal discountPrice = BigDecimal.ZERO; // TODO 할인 로직
-        BigDecimal usedPoint = order.getUsedPoint(); // TODO 포인트 사용
+        // 할인 금액
+        BigDecimal discountPrice = totalPrice.subtract(discountedPrice);
 
-        BigDecimal finalPrice = totalPrice.subtract(discountPrice).subtract(usedPoint);
+        // 사용 포인트
+        BigDecimal usedPoint = order.getUsedPoint();
+
+        BigDecimal finalPrice = discountedPrice.subtract(usedPoint);
 
         BigDecimal shippingFee = totalPrice.compareTo(shippingPolicy.getMinAmount()) >= 0
                 ? BigDecimal.ZERO
@@ -156,7 +178,7 @@ public class OrderFactory {
 
     // todo UUID 로 변경하기
     private static String generateRandomNumber() {
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }
 
 }
