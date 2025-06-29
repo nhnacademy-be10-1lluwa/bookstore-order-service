@@ -5,12 +5,13 @@ import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.repository.custom.CouponMemberQuerydslRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long> {
+public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long>, CouponMemberQuerydslRepository {
 
     // 특정 회원을 기준으로 모든 쿠폰을 조회 (회원이 존재할 때)
     List<MemberCoupon> findMemberById(Long memberId);

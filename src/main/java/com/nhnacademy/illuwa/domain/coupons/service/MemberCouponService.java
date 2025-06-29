@@ -2,12 +2,9 @@ package com.nhnacademy.illuwa.domain.coupons.service;
 
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponInfoResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResponse;
-import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,5 +35,6 @@ public interface MemberCouponService {
 
     CouponInfoResponse getCouponInfoFromMemberCoupon(Long memberCouponId);
 
-
+    // 쿠폰의 할인율 or 할인 금액 조회
+    MemberCouponDiscountDto getDiscountPrice(Long memberCouponId);
 }

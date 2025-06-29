@@ -2,10 +2,7 @@ package com.nhnacademy.illuwa.domain.coupons.service.impl;
 
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponInfoResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResponse;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
@@ -16,6 +13,7 @@ import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
+import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -172,8 +170,9 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 //                .map(MemberCouponResponse::fromEntity)
 //                .toList();
 //
-////        memberRepository.findMemberById(memberId).stream().map(MemberCouponResponse::fromEntity)
-////                .toList();
+
+    /// /        memberRepository.findMemberById(memberId).stream().map(MemberCouponResponse::fromEntity)
+    /// /                .toList();
 //    }
 
     // 회원 소유 쿠폰 확인 (email)
@@ -206,7 +205,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         Coupon coupon = membercoupon.getCoupon();
         return CouponInfoResponse.fromEntity(coupon);
     }
-
 
     @Override
     public MemberCouponResponse getMemberCouponId(Long id) {
@@ -254,5 +252,14 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         return MemberCouponUseResponse.fromEntity(memberCoupon);
     }
 
+    /// @param memberCouponId 해당 멤버 쿠폰 id
+    /// @return 해당 멤버 쿠폰의 할인율 또는 할인 금액을 가진 변수
+
+    @Override
+    public MemberCouponDiscountDto getDiscountPrice(Long memberCouponId) {
+
+        return memberCouponRepository.findDtoByMemberCouponId(memberCouponId).orElseThrow(()
+                -> new NotFoundException("해당 쿠폰을 찾지 못하였습니다.", memberCouponId));
+    }
 
 }
