@@ -9,5 +9,4 @@ public class BookDto {
     Long bookId;
     String title;
     String author;
-    String category;
 }
