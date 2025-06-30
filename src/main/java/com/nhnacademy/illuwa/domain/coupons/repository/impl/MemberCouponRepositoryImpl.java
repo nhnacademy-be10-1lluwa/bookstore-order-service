@@ -7,7 +7,6 @@ import com.nhnacademy.illuwa.domain.coupons.entity.QCoupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.QCouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.QMemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.repository.custom.CouponMemberQuerydslRepository;
-import com.nhnacademy.illuwa.domain.order.entity.QOrder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
