@@ -20,10 +20,11 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate birth;
-
+    private String name;
     @Email
     private String email;
 
-    private String name;
+    private LocalDate birth;
+
+
 }

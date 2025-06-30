@@ -6,9 +6,12 @@ import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
 import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.*;
+import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberRepository;
@@ -35,6 +38,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     private final MemberCouponRepository memberCouponRepository;
     private final MemberRepository memberRepository;
     private final CouponRepository couponRepository;
+    private final CouponPolicyRepository couponPolicyRepository;
 
     // welcome 쿠폰 발급
     @Override
@@ -146,35 +150,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 
         return MemberCouponResponse.fromEntity(save);
     }
-
-//    // 회원 소유 쿠폰 조회 {ID 기준} --> 이거 필요없음 전체로 바꿔야함
-//    @Override
-//    public MemberCouponResponse getMemberCouponId(Long id) {
-//        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponByMemberId(id).orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
-//
-//        return MemberCouponResponse.fromEntity(memberCoupon);
-//    }
-
-    // 회원 소유 쿠폰 전체조회 (이거이거 개 멍청하게 memberCouponId도 조회를 시도했음 ㅎㅎ..)
-//    @Override
-//    public List<MemberCouponResponse> getAllMemberCoupons(Long id) {
-//        return memberCouponRepository.findMemberById(id)
-//                .stream()
-//                .map(MemberCouponResponse::fromEntity)
-//                .toList();
-//    }
-//    @Override
-//    public List<MemberCouponResponse> getAllMemberCoupons(Long memberId) {
-//        return memberCouponRepository.findMemberCouponByMemberId(memberId)
-//                .stream()
-//                .map(MemberCouponResponse::fromEntity)
-//                .toList();
-//
-
-    /// /        memberRepository.findMemberById(memberId).stream().map(MemberCouponResponse::fromEntity)
-    /// /                .toList();
-//    }
-
     // 회원 소유 쿠폰 확인 (email)
     @Override
     public List<MemberCouponResponse> getAllMemberCoupons(String email) {
@@ -191,11 +166,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
                 .stream()
                 .map(MemberCouponResponse::fromEntity)
                 .toList();
-    }
-
-    @Override
-    public Optional<CouponResponse> getCoupon(Long couponId) {
-        return Optional.empty();
     }
 
     @Override
@@ -230,6 +200,10 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     public MemberCouponUseResponse useCoupon(String email, Long memberCouponId) {
         MemberCoupon memberCoupon = memberCouponRepository.findByMember_EmailAndId(email, memberCouponId)
                 .orElseThrow(() -> new CouponNotFoundException("쿠폰이 존재하지 않습니다."));
+
+        if (memberCoupon.getCoupon().getPolicy().getStatus() == CouponStatus.INACTIVE) {
+            throw new CouponPolicyInactiveException("관리자에 의해 정책이 비활성화이므로 사용이 불가능합니다.");
+        }
 //        memberCouponRepository.findMemberCouponByMemberEmail(email);
 //        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponByMemberEmail(id).orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
         // 쿠폰의 사용 시 해당 쿠폰을 삭제하는게 좋지 않나?

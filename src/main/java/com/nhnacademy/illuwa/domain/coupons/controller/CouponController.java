@@ -3,9 +3,7 @@ package com.nhnacademy.illuwa.domain.coupons.controller;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

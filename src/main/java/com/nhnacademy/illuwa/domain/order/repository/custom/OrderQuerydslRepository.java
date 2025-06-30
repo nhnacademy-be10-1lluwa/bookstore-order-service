@@ -6,6 +6,7 @@ import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeUpdateR
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +22,7 @@ public interface OrderQuerydslRepository {
     // 멤버별 3개원 간 순수 주문 금액 조회
     List<MemberGradeUpdateRequest> findAllGradeDto();
 
+
     // 주문번호로 주문 찾기
     Optional<OrderResponseDto> findOrderDtoByOrderNumber(String orderNumber);
-
-
 }

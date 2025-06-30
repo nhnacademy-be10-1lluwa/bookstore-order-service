@@ -69,11 +69,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+
     public void cancelOrderById(Long orderId) {
         orderRepository.findByOrderId(orderId).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
 
         orderRepository.updateOrderStatusByOrderId(orderId, OrderStatus.Cancelled);
+
     }
 
     @Override

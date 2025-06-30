@@ -111,10 +111,4 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         couponPolicy.setStatus(CouponStatus.INACTIVE);
     }
 
-//    @Override
-//    public void createBatch(List<CouponPolicyCreateRequest> policies) {
-//        for (CouponPolicyCreateRequest req : policies) {
-//            createPolicy(req); // 단건 생성 메서드를 사용
-//        }
-//    }
 }

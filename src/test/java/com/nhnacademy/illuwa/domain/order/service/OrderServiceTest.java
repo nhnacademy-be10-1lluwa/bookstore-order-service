@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -130,6 +131,7 @@ public class OrderServiceTest {
     void testCancelOrder() {
         Order target = repository.findAll().getFirst();
         service.cancelOrderById(target.getOrderId());
+
         String status = jdbcTemplate.queryForObject(
                 "SELECT order_status FROM orders WHERE order_id = " + target.getOrderId(),
                 String.class);

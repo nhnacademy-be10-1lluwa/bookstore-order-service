@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.coupons.external.book;
+package com.nhnacademy.illuwa.domain.coupons.external.clientDto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -9,5 +9,4 @@ public class BookDto {
     Long bookId;
     String title;
     String author;
-    String category;
 }
