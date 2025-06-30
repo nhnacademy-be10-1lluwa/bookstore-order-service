@@ -32,36 +32,35 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public CouponCreateResponse createCoupon(CouponCreateRequest request) {
-        Long bookId; // 도서 ID
-        String auth = null;
+        Long bookId = null; // 도서 ID
+        Long categoryId = null; // 카테고리 ID
+        String categoryName = null;
 
         // 1 -> 정책 코드 확인
         CouponPolicy policy = couponPolicyRepository.findByCode(request.getPolicyCode())
                 .orElseThrow(() -> new CouponPolicyNotFoundException("해당 정책코드는 존재하지 않습니다."));
 
-        // 2 -> 도서에 대한 쿠폰인지 확인
-//        if (request.getCouponType() == CouponType.BOOKS) {
-//            if (Objects.isNull(request.getBookName())) {
-//                throw new IllegalArgumentException("도서 할인 쿠폰은 bookName 필드의 값이 필요합니다.");
-//            } else {
-//                List<BookDto> book = bookApiClient.getBookByTitle(request.getBookName());
-//                bookId = book.getFirst().getBookId();
-//            }
-//        } else{
-//            bookId = request.getBooksId();
-//        }
-
+        // 2 -> 쿠폰 타입 검증 로직
         if (request.getCouponType() == CouponType.BOOKS) {
             if (Objects.isNull(request.getBooksId())) {
                 throw new IllegalArgumentException("도서 할인 쿠폰은 bookId 필드의 값이 필요합니다.");
             } else {
                 bookId = bookApiClient.getBookById(request.getBooksId()).getBookId();
-                auth = bookApiClient.getBookById(request.getBooksId()).getAuthor();
             }
-        }else {
+        }else if(request.getCouponType() == CouponType.CATEGORY){
+            if (Objects.isNull(request.getCategoryId())) {
+                throw new IllegalArgumentException("카테고리 할인 쿠폰은 categoryId 필드의 값이 필요합니다.");
+            } else {
+                categoryId = bookApiClient.getCategoryId(request.getCategoryId()).getCategoryId();
+                categoryName = bookApiClient.getCategoryId(request.getCategoryId()).getCategoryName();
+            }
+        } else {
             bookId = request.getBooksId();
+            categoryId = request.getCategoryId();
         }
-        System.out.println(auth); // 김희선 저자 잘나옴
+
+        System.out.println(categoryName);
+
 
         // 3 -> 정책이 활성화인지 비활성인지 체크
         if (!policy.getStatus().equals(CouponStatus.INACTIVE)) {
@@ -75,14 +74,13 @@ public class CouponServiceImpl implements CouponService {
                     .conditions(request.getConditions())
                     .issueCount(request.getIssueCount())
                     .bookId(bookId)
-                    .categoryId(request.getCategoryId())
+                    .categoryId(categoryId)
                     .build();
             Coupon save = couponRepository.save(coupon);
             return CouponCreateResponse.fromEntity(save);
         } else { // 비활성일시 에러 발생
             throw new CouponPolicyInactiveException("쿠폰 정책 상태가 비활성화이므로 생성 불가합니다.");
         }
-
     }
 
 

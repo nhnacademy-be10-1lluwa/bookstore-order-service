@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupons.external.book;
 
+import com.nhnacademy.illuwa.domain.coupons.external.category.CategoryDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -24,19 +25,6 @@ public class BookApiClient {
         this.restTemplate = builder.build();
     }
 
-    //    public List<BookDto> getBookByTitle(String bookName) {
-//        String url = bookApiUrl + "admin/books?title=" + bookName;
-//        try {
-//            ResponseEntity<BookDto[]> response = restTemplate.getForEntity(url, BookDto[].class);
-//            BookDto[] body = response.getBody();
-//            if (Objects.isNull(body)) {
-//                return List.of(); // 빈 리스트 반환
-//            }
-//            return Arrays.asList(body);
-//        } catch (Exception e) {
-//            throw new IllegalArgumentException("도서 정보 조회 실패 -> " + e.getMessage());
-//            }
-//        }
     public BookDto getBookById(Long bookId) {
         String url = bookApiUrl + "admin/books/" + bookId;
         try {
@@ -48,6 +36,20 @@ public class BookApiClient {
             return body;
         } catch (Exception e) {
             throw new IllegalArgumentException("도서 정보 조회 실패 -> " + e.getMessage());
+        }
+    }
+
+    public CategoryDto getCategoryId(Long categoryId) {
+        String url = bookApiUrl + "categories/" + categoryId;
+        try {
+            ResponseEntity<CategoryDto> response = restTemplate.getForEntity(url, CategoryDto.class);
+            CategoryDto body = response.getBody();
+            if (Objects.isNull(body)) {
+                return null;
+            }
+            return body;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("카테고리 정보 조회 실패 -> " + e.getMessage());
         }
     }
 }
