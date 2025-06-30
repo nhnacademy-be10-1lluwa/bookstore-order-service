@@ -33,7 +33,7 @@ public class OrderItem {
     private BigDecimal price;
 
     @Column(name = "member_coupon_id")
-    private long memberCouponId;
+    private Long memberCouponId;
 
     @Column(name = "discount_price")
     private BigDecimal discountPrice;
@@ -47,7 +47,7 @@ public class OrderItem {
 
 
     @Builder
-    public OrderItem(long bookId, Order order, int quantity, BigDecimal price, long memberCouponId, BigDecimal discountPrice, BigDecimal itemTotalPrice, Packaging packaging) {
+    public OrderItem(long bookId, Order order, int quantity, BigDecimal price, Long memberCouponId, BigDecimal discountPrice, BigDecimal itemTotalPrice, Packaging packaging) {
         this.bookId = bookId;
         this.order = order;
         this.quantity = quantity;
