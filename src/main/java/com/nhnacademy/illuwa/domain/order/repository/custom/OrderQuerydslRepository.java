@@ -2,7 +2,7 @@ package com.nhnacademy.illuwa.domain.order.repository.custom;
 
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
-import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeDto;
+import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeUpdateRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +17,5 @@ public interface OrderQuerydslRepository {
     Optional<OrderResponseDto> findOrderDto(Long orderId);
 
     // 멤버별 3개원 간 순수 주문 금액 조회
-    List<MemberGradeDto> findAllGradeDto();
+    List<MemberGradeUpdateRequest> findAllGradeDto();
 }

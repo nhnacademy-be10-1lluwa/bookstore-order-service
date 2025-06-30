@@ -72,8 +72,6 @@ public class OrderServiceImpl implements OrderService {
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", id));
 
         orderRepository.updateOrderStatusByOrderId(id, OrderStatus.Cancelled);
-
-
     }
 
     @Override

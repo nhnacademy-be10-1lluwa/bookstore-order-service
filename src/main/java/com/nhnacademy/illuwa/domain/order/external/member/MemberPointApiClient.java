@@ -2,7 +2,7 @@ package com.nhnacademy.illuwa.domain.order.external.member;
 
 
 
-import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeDto;
+import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberPointDto;
 import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberSavePointDto;
 import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberUsedPointDto;
@@ -23,6 +23,6 @@ public interface MemberPointApiClient {
     Optional<MemberPointDto> getPointByMemberId(Long memberId);
 
     // 멤버들의 3개월간 순수 주문 금액 전송 (주문 상태: confirmed )
-    List<MemberGradeDto> sendNetOrderAmount();
+    List<MemberGradeUpdateRequest> sendNetOrderAmount();
 
 }

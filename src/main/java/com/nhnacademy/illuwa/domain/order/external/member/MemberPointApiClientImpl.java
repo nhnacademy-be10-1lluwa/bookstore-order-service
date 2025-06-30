@@ -1,7 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.external.member;
 
 
-import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeDto;
+import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberPointDto;
 import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberSavePointDto;
 import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberUsedPointDto;
@@ -13,7 +13,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -75,14 +74,14 @@ public class MemberPointApiClientImpl implements MemberPointApiClient {
     }
 
     @Override
-    public List<MemberGradeDto> sendNetOrderAmount() {
-        String url = memberApiUrl + "/grades"; // todo api 주소 수정하기
+    public List<MemberGradeUpdateRequest> sendNetOrderAmount() {
+        String url = memberApiUrl + "/members/grades/update";
 
-        List<MemberGradeDto> request = orderRepository.findAllGradeDto();
+        List<MemberGradeUpdateRequest> request = orderRepository.findAllGradeDto();
 
-        HttpEntity<List<MemberGradeDto>> entity = new HttpEntity<>(request);
+        HttpEntity<List<MemberGradeUpdateRequest>> entity = new HttpEntity<>(request);
 
-        ResponseEntity<List<MemberGradeDto>> response = restTemplate.exchange(
+        ResponseEntity<List<MemberGradeUpdateRequest>> response = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
                 entity,
@@ -92,13 +91,4 @@ public class MemberPointApiClientImpl implements MemberPointApiClient {
         return Objects.requireNonNull(response.getBody());
     }
 
-    @Scheduled(cron = "0 0 10 1 * ?", zone = "Asia/Seoul")
-    public void scheduledSendNetOrderAmount() {
-        try {
-            List<MemberGradeDto> result = this.sendNetOrderAmount();
-            log.info("월간 순주문 금액 전송 완료 - {}건", result.size());
-        } catch (Exception e) {
-            log.error("월간 순주문 금액 전송 실패 - {}", e.getMessage(), e);
-        }
-    }
 }

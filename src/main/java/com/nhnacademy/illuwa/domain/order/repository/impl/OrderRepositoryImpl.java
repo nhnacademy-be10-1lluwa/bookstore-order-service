@@ -7,7 +7,7 @@ import com.nhnacademy.illuwa.domain.order.dto.order.QOrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.QOrder;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
-import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeDto;
+import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.repository.custom.OrderQuerydslRepository;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
@@ -68,7 +68,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     }
 
     @Override
-    public List<MemberGradeDto> findAllGradeDto() {
+    public List<MemberGradeUpdateRequest> findAllGradeDto() {
         LocalDateTime threeMonthsAgo = LocalDateTime.now().minusMonths(3);
 
         return queryFactory
@@ -76,7 +76,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 .where(order.orderStatus.eq(OrderStatus.Confirmed).and(order.orderDate.after(threeMonthsAgo)))
                 .transform(GroupBy.groupBy(order.memberId)
                         .list(Projections.constructor(
-                                MemberGradeDto.class,
+                                MemberGradeUpdateRequest.class,
                                 order.memberId,
                                 GroupBy.list(order.totalPrice)
                         )));
