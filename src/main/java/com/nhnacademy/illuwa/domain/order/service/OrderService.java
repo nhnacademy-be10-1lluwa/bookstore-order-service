@@ -6,30 +6,41 @@ import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface OrderService {
 
     // 전체 주문 내역 조회(ADMIN)
-    List<OrderListResponseDto> getAllOrders();
+    Page<OrderListResponseDto> getAllOrders(Pageable pageable);
 
     // id로 주문 내역 조회(ADMIN, MEMBERS)
-    OrderResponseDto getOrderById(String orderId);
+    OrderResponseDto getOrderById(Long orderId);
+
+    // number 로 주문 내역 조회(ADMIN, MEMBERS)
+    OrderResponseDto getOrderByNumber(String orderNumber);
 
     // member 별 주문 내역 조회 (ADMIN, MEMBERS)
-    List<OrderListResponseDto> getOrderByMemberId(String memberId);
+    Page<OrderListResponseDto> getOrderByMemberId(Long memberId, Pageable pageable);
 
     // 주문 상태별 조회 (ADMIN)
-    List<OrderListResponseDto> getOrderByOrderStatus(OrderStatus status);
+    Page<OrderListResponseDto> getOrderByOrderStatus(OrderStatus status, Pageable pageable);
 
     // 주문하기(MEMBERS)
     Order createOrderWithItems(OrderCreateRequestDto dto);
 
-    // 주문 취소하기(MEMBERS)
-    void cancelOrderById(String orderId);
+    // id로 주문 취소하기(MEMBERS)
+    void cancelOrderById(Long orderId);
 
-    // 주문 상태 변경하기(ADMIN)
-    void updateOrderStatus(String orderId, OrderUpdateStatusDto orderUpdateDto);
+    // number로 주문 취소하기(MEMBERS)
+    void cancelOrderByOrderNumber(String orderNumber);
+
+    // id로 주문 상태 변경하기(ADMIN)
+    void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto);
+
+    // number로 주문 상태 변경하기 (ADMIN)
+    void updateOrderStatusByOrderNumber(String orderNumber, OrderUpdateStatusDto orderUpdateDto);
 
 }

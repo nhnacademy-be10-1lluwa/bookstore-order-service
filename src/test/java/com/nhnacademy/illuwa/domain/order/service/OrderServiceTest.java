@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +27,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * OrderService 통합 테스트 (OrderServiceTest 전용)
- *  - 실제 DB 사용 (Replace.NONE)
- *  - profile : db
- */
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("db")
@@ -80,17 +77,20 @@ public class OrderServiceTest {
     @Test
     @DisplayName("전체 주문 조회")
     void testGetAllOrders() {
-        List<OrderListResponseDto> list = service.getAllOrders();
+        Page<OrderListResponseDto> page = service.getAllOrders(Pageable.unpaged());
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM orders", Integer.class);
-        assertThat(list).hasSize(count);
+
+        assert count != null;
+        assertThat(page.getTotalElements()).isEqualTo(count.longValue());
+        assertThat(page.getContent()).hasSize(count);
     }
 
     @Test
     @DisplayName("주문 ID로 조회")
     void testGetOrderById() {
         Order saved = repository.findAll().getFirst();
-        assertThat(service.getOrderById(String.valueOf(saved.getOrderId())))
+        assertThat(service.getOrderById(saved.getOrderId()))
                 .extracting("orderId")
                 .isEqualTo(saved.getOrderId());
     }
@@ -101,32 +101,37 @@ public class OrderServiceTest {
         Long orderId = 10L;
 
         Assertions.assertThrows(NotFoundException.class,
-                () -> service.getOrderById(String.valueOf(orderId)));
+                () -> service.getOrderById(orderId));
     }
 
     @Test
     @DisplayName("회원 ID로 주문 조회")
     void testGetOrderByMemberId() {
-        List<OrderListResponseDto> list = service.getOrderByMemberId("1");
+        Page<OrderListResponseDto> page = service.getOrderByMemberId(1L, Pageable.unpaged());
         Integer cnt = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM orders WHERE member_id = 1", Integer.class);
-        assertThat(list).hasSize(cnt);
+        assert cnt != null;
+        assertThat(page.getTotalElements()).isEqualTo(cnt.longValue());
+        assertThat(page.getContent()).hasSize(cnt);
     }
 
     @Test
     @DisplayName("주문 상태로 조회")
     void testGetOrderByStatus() {
-        List<OrderListResponseDto> list = service.getOrderByOrderStatus(OrderStatus.Shipped);
+        Page<OrderListResponseDto> page = service.getOrderByOrderStatus(OrderStatus.Shipped, Pageable.unpaged());
         Integer cnt = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM orders WHERE order_status = 'Shipped'", Integer.class);
-        assertThat(list).hasSize(cnt);
+        assert cnt != null;
+        assertThat(page.getTotalElements()).isEqualTo(cnt.longValue());
+        assertThat(page.getContent()).hasSize(cnt);
     }
 
     @Test
     @DisplayName("주문 취소")
     void testCancelOrder() {
         Order target = repository.findAll().getFirst();
-        service.cancelOrderById(String.valueOf(target.getOrderId()));
+        service.cancelOrderById(target.getOrderId());
+
         String status = jdbcTemplate.queryForObject(
                 "SELECT order_status FROM orders WHERE order_id = " + target.getOrderId(),
                 String.class);
@@ -138,7 +143,7 @@ public class OrderServiceTest {
     void testUpdateStatus() {
         Order target = repository.findAll().getFirst();
         service.updateOrderStatus(
-                String.valueOf(target.getOrderId()),
+                target.getOrderId(),
                 new OrderUpdateStatusDto(OrderStatus.Shipped));
         String status = jdbcTemplate.queryForObject(
                 "SELECT order_status FROM orders WHERE order_id = " + target.getOrderId(),

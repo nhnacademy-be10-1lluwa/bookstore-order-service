@@ -6,11 +6,13 @@ import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
-import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
+import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundStringException;
 import com.nhnacademy.illuwa.domain.order.factory.OrderFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,30 +33,33 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderListResponseDto> getAllOrders() {
-        return orderRepository.findOrderDtos();
+    public Page<OrderListResponseDto> getAllOrders(Pageable pageable) {
+        return orderRepository.findOrderDtos(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public OrderResponseDto getOrderById(String orderId) {
-        long id = parseId(orderId);
+    public OrderResponseDto getOrderById(Long orderId) {
+        return orderRepository.findOrderDto(orderId).orElseThrow(()
+                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
+    }
 
-        return orderRepository.findOrderDto(id).orElseThrow(()
-                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", id));
+    @Override
+    public OrderResponseDto getOrderByNumber(String orderNumber) {
+        return orderRepository.findOrderDtoByOrderNumber(orderNumber).orElseThrow(() ->
+                new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderListResponseDto> getOrderByMemberId(String memberId) {
-        long id = parseId(memberId);
-        return orderRepository.findByMemberId(id).stream().map(OrderListResponseDto::orderListResponseDto).toList();
+    public Page<OrderListResponseDto> getOrderByMemberId(Long memberId, Pageable pageable ) {
+        return orderRepository.findByMemberId(memberId, pageable).map(OrderListResponseDto::orderListResponseDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderListResponseDto> getOrderByOrderStatus(OrderStatus status) {
-        return orderRepository.findByOrderStatus(status).stream().map(OrderListResponseDto::orderListResponseDto).toList();
+    public Page<OrderListResponseDto> getOrderByOrderStatus(OrderStatus status, Pageable pageable) {
+        return orderRepository.findByOrderStatus(status, pageable).map(OrderListResponseDto::orderListResponseDto);
     }
 
     @Override
@@ -64,31 +69,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void cancelOrderById(String orderId) {
-        long id = parseId(orderId);
-        orderRepository.findByOrderId(id).orElseThrow(()
-                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", id));
 
-        orderRepository.updateOrderStatusByOrderId(id, OrderStatus.Cancelled);
+    public void cancelOrderById(Long orderId) {
+        orderRepository.findByOrderId(orderId).orElseThrow(()
+                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
+
+        orderRepository.updateOrderStatusByOrderId(orderId, OrderStatus.Cancelled);
+
     }
 
     @Override
-    public void updateOrderStatus(String orderId, OrderUpdateStatusDto orderUpdateDto) {
-        long id = parseId(orderId);
-        orderRepository.findByOrderId(id).orElseThrow(()
-                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", id));
-
-        orderRepository.updateOrderStatusByOrderId(id, orderUpdateDto.getOrderStatus());
+    public void cancelOrderByOrderNumber(String orderNumber) {
+        orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
+                -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
     }
 
+    @Override
+    public void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto) {
+        orderRepository.findByOrderId(orderId).orElseThrow(()
+                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
 
-
-    // ID 파싱 오류 (잘못된 숫자 포맷)
-    private Long parseId(String orderId) {
-        try {
-            return Long.parseLong(orderId);
-        } catch (NumberFormatException e) {
-            throw new BadRequestException("유효하지 않은 주문 ID: " + orderId);
-        }
+        orderRepository.updateOrderStatusByOrderId(orderId, orderUpdateDto.getOrderStatus());
     }
+
+    @Override
+    public void updateOrderStatusByOrderNumber(String orderNumber, OrderUpdateStatusDto orderUpdateDto) {
+        orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
+                -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+    }
+
 }

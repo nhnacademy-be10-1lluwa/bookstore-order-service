@@ -11,8 +11,12 @@ import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeUpdateR
 import com.nhnacademy.illuwa.domain.order.repository.custom.OrderQuerydslRepository;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -36,16 +40,33 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
 
 
     @Override
-    public List<OrderListResponseDto> findOrderDtos() {
+    public Page<OrderListResponseDto> findOrderDtos(Pageable pageable) {
 
-        return queryFactory
+        JPAQuery<OrderListResponseDto> query = queryFactory
                 .select(new QOrderListResponseDto(
                         order.orderId,
                         order.orderDate,
                         order.totalPrice,
-                        order.orderStatus))
+                        order.orderStatus
+                ))
                 .from(order)
-                .fetch();
+                .orderBy(order.orderDate.desc());
+
+        if (pageable.isPaged()) {
+            query.offset(pageable.getOffset()).limit(pageable.getPageSize());
+        }
+
+        List<OrderListResponseDto> contents = query.fetch();
+
+        Long totalWrapper = queryFactory.select(order.count())
+                .from(order)
+                .fetchOne();
+
+        long total = totalWrapper != null ? totalWrapper : 0L;
+
+        return new PageImpl<>(contents,
+                pageable,
+                total);
     }
 
     @Override
@@ -80,6 +101,24 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                                 order.memberId,
                                 GroupBy.list(order.totalPrice)
                         )));
+    }
+
+    @Override
+    public Optional<OrderResponseDto> findOrderDtoByOrderNumber(String orderNumber) {
+        OrderResponseDto result =  queryFactory
+                .select(new QOrderResponseDto(
+                        order.orderId,
+                        order.orderNumber,
+                        order.memberId,
+                        order.orderDate,
+                        order.deliveryDate,
+                        order.totalPrice,
+                        order.orderStatus))
+                .from(order)
+                .where(order.orderNumber.eq(orderNumber))
+                .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 
 }
