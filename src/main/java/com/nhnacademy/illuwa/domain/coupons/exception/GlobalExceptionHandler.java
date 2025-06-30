@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.coupons.exception;
 
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.BadRequestException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.*;
@@ -17,6 +18,17 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> handleBadRequest(BadRequestException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "status", HttpStatus.BAD_REQUEST.value(),
+                        "error", HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        "code", "BAD_REQUEST",
+                        "message", ex.getMessage()
+                ));
+    }
     // 정책 존재 X
     @ExceptionHandler(CouponPolicyNotFoundException.class)
     public ResponseEntity<?> handleCouponPolicyNotFound(CouponPolicyNotFoundException ex) {
