@@ -146,35 +146,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 
         return MemberCouponResponse.fromEntity(save);
     }
-
-//    // 회원 소유 쿠폰 조회 {ID 기준} --> 이거 필요없음 전체로 바꿔야함
-//    @Override
-//    public MemberCouponResponse getMemberCouponId(Long id) {
-//        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponByMemberId(id).orElseThrow(() -> new IllegalArgumentException("쿠폰이 존재하지 않습니다."));
-//
-//        return MemberCouponResponse.fromEntity(memberCoupon);
-//    }
-
-    // 회원 소유 쿠폰 전체조회 (이거이거 개 멍청하게 memberCouponId도 조회를 시도했음 ㅎㅎ..)
-//    @Override
-//    public List<MemberCouponResponse> getAllMemberCoupons(Long id) {
-//        return memberCouponRepository.findMemberById(id)
-//                .stream()
-//                .map(MemberCouponResponse::fromEntity)
-//                .toList();
-//    }
-//    @Override
-//    public List<MemberCouponResponse> getAllMemberCoupons(Long memberId) {
-//        return memberCouponRepository.findMemberCouponByMemberId(memberId)
-//                .stream()
-//                .map(MemberCouponResponse::fromEntity)
-//                .toList();
-//
-
-    /// /        memberRepository.findMemberById(memberId).stream().map(MemberCouponResponse::fromEntity)
-    /// /                .toList();
-//    }
-
     // 회원 소유 쿠폰 확인 (email)
     @Override
     public List<MemberCouponResponse> getAllMemberCoupons(String email) {
@@ -191,11 +162,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
                 .stream()
                 .map(MemberCouponResponse::fromEntity)
                 .toList();
-    }
-
-    @Override
-    public Optional<CouponResponse> getCoupon(Long couponId) {
-        return Optional.empty();
     }
 
     @Override

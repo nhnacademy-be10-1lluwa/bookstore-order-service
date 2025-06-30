@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.coupon.service;
 
 import com.nhnacademy.illuwa.domain.coupon.CouponPolicyTestUtils;
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResponse;
@@ -9,14 +10,13 @@ import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
-import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponExpiredException;
-import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponInactiveException;
-import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponIsUsed;
-import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponQuantityFinishException;
+import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.*;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberRepository;
+import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,9 +29,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -60,6 +63,8 @@ class MemberCouponServiceImplTest {
     private MemberCouponCreateRequest request;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private CouponService couponService;
 
     @BeforeEach
     void setup() {
@@ -223,5 +228,170 @@ class MemberCouponServiceImplTest {
 
     }
 
+    @Test
+    @DisplayName("WELCOME 쿠폰 발급 (성공)")
+    void 웰컴쿠폰_발급_성공() {
+        // given
+        couponRepository.save(Coupon.builder()
+                .id(1L)
+                .couponName("웰컴쿠폰")
+                .policy(couponPolicy)
+                .validFrom(LocalDate.of(2025, 1, 1))
+                .validTo(LocalDate.of(2025, 12, 31))
+                .couponType(CouponType.WELCOME)
+                .comment("회원가입 대상자에게만 발행되는 쿠폰입니다.")
+                .conditions("최소주문 금액 20,000이상 시 3,000원 할인")
+                .issueCount(BigDecimal.valueOf(100))
+                .build());
 
+        // when
+        MemberCouponResponse response = memberCouponService.issueWelcomeCoupon("junghwan__@naver.com");
+
+        // then
+        assertThat(response.getCouponName()).isEqualTo("웰컴쿠폰");
+    }
+
+    @Test
+    @DisplayName("WELCOME 쿠폰 발급 (실패 -> 중복발급)")
+    void 웰컴쿠폰_중복발급_실패() {
+        // given
+        couponRepository.save(Coupon.builder()
+                .id(1L)
+                .couponName("웰컴쿠폰")
+                .policy(couponPolicy)
+                .validFrom(LocalDate.of(2025, 1, 1))
+                .validTo(LocalDate.of(2025, 12, 31))
+                .couponType(CouponType.WELCOME)
+                .comment("회원가입 대상자에게만 발행되는 쿠폰입니다.")
+                .conditions("최소주문 금액 20,000이상 시 3,000원 할인")
+                .issueCount(BigDecimal.valueOf(100))
+                .build());
+        memberCouponService.issueWelcomeCoupon("junghwan__@naver.com");
+
+        // when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> memberCouponService.issueWelcomeCoupon("junghwan__@naver.com"));
+
+        assertThat(exception.getMessage()).isEqualTo("해당 회원은 이미 웰컴 쿠폰을 지급받으셨습니다.");
+    }
+
+    @Test
+    @DisplayName("WELCOME 쿠폰 발급 (실패 -> 웰컴쿠폰X)")
+    void 웰컴쿠폰_존재X_발급실패() {
+
+        // when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> memberCouponService.issueWelcomeCoupon("junghwan__@naver.com"));
+
+        assertThat(exception.getMessage()).isEqualTo("WELCOME 쿠폰이 존재하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("WELCOME 쿠폰 발급 (실패 -> 수량마감)")
+    void 웰컴쿠폰_수량마감_발급실패() {
+        // given
+        couponRepository.save(Coupon.builder()
+                .id(1L)
+                .couponName("웰컴쿠폰")
+                .policy(couponPolicy)
+                .validFrom(LocalDate.of(2025, 1, 1))
+                .validTo(LocalDate.of(2025, 12, 31))
+                .couponType(CouponType.WELCOME)
+                .comment("회원가입 대상자에게만 발행되는 쿠폰입니다.")
+                .conditions("최소주문 금액 20,000이상 시 3,000원 할인")
+                .issueCount(BigDecimal.valueOf(100))
+                .build());
+
+        Coupon welcomeCoupon = couponRepository.findCouponByCouponName("웰컴쿠폰")
+                .orElseThrow(() -> new CouponNotFoundException("웰컴 쿠폰이 존재하지 않습니다."));
+
+        welcomeCoupon.setIssueCount(BigDecimal.ZERO);
+
+        // when & then
+        MemberCouponQuantityFinishException exception = assertThrows(MemberCouponQuantityFinishException.class,
+                () -> memberCouponService.issueWelcomeCoupon("junghwan__@naver.com"));
+
+        assertThat(exception.getMessage()).isEqualTo("발급 가능한 쿠폰 수량이 마감 되었습니다.");
+    }
+
+    @Test
+    @DisplayName("생일 쿠폰 발급 (성공)")
+    void 생일쿠폰_발급_성공() {
+        // given
+        member.setBirth(LocalDate.now());
+
+        couponRepository.save(Coupon.builder()
+                .id(1L)
+                .couponName("생일쿠폰")
+                .policy(couponPolicy)
+                .validFrom(LocalDate.now())
+                .validTo(LocalDate.now().plusMonths(3L))
+                .couponType(CouponType.BIRTHDAY)
+                .comment("생일 축하드립니다.")
+                .issueCount(BigDecimal.valueOf(1000))
+                .build());
+
+        // when
+        memberCouponService.issueBirthDayCoupon();
+
+        // then
+        List<MemberCoupon> memberCoupons = memberCouponRepository.findMemberById(member.getId());
+        assertThat(memberCoupons).isNotEmpty();
+        assertThat(memberCoupons.stream()
+                .anyMatch(mc -> mc.getCoupon().getCouponName().equals("생일쿠폰"))).isTrue();
+
+    }
+
+    @Test
+    @DisplayName("생일 쿠폰 발급 (실패 -> 당월 생일이 아님)")
+    void 생일쿠폰_발급_실패() {
+        member.setBirth(LocalDate.of(1999, 8, 12));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> memberCouponService.issueBirthDayCoupon());
+
+        assertThat(exception.getMessage()).isEqualTo("당월 생일자에게만 발급되는 쿠폰입니다.");
+    }
+
+    @Test
+    @DisplayName("생일 쿠폰 발급 (실패 -> 발급 수량 마감)")
+    void 생일쿠폰_발급_실패_수량마감() {
+        // given
+        member.setBirth(LocalDate.now());
+
+        couponRepository.save(Coupon.builder()
+                .id(1L)
+                .couponName("생일쿠폰")
+                .policy(couponPolicy)
+                .validFrom(LocalDate.now())
+                .validTo(LocalDate.now().plusMonths(3L))
+                .couponType(CouponType.BIRTHDAY)
+                .comment("생일 축하드립니다.")
+                .issueCount(BigDecimal.ZERO)
+                .build());
+
+        Coupon birthDayCoupon = couponRepository.findCouponByCouponName("생일쿠폰")
+                .orElseThrow(() -> new MemberCouponQuantityFinishException("발급 가능한 쿠폰 수량이 마감 되었습니다."));
+
+
+        // when & then
+        MemberCouponQuantityFinishException exception = assertThrows(MemberCouponQuantityFinishException.class,
+                () -> memberCouponService.issueBirthDayCoupon());
+
+        assertThat(birthDayCoupon.getIssueCount()).isEqualTo(BigDecimal.ZERO);
+        assertThat(exception.getMessage()).isEqualTo("발급 가능한 쿠폰 수량이 마감 되었습니다.");
+    }
+
+    @Test
+    @DisplayName("회원 소유 쿠폰 리스트 확인 {")
+    void 회원소유_쿠폰_리스트확인() {
+        // given
+        memberCouponService.issueCoupon(request); // 쿠폰 1개 발급
+
+        // when
+        List<MemberCouponResponse> responses = memberCouponService.getAllMemberCoupons(member.getId());
+
+        // then
+        assertThat(responses.size()).isEqualTo(1);
+    }
 }
