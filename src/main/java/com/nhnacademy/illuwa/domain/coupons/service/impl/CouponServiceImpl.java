@@ -6,6 +6,7 @@ import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.BadRequestException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.external.ProductApiClient;
@@ -41,13 +42,13 @@ public class CouponServiceImpl implements CouponService {
         // 2 -> 쿠폰 타입 검증 로직
         if (request.getCouponType() == CouponType.BOOKS) {
             if (Objects.isNull(request.getBooksId())) {
-                throw new IllegalArgumentException("도서 할인 쿠폰은 bookId 필드의 값이 필요합니다.");
+                throw new BadRequestException("도서 할인 쿠폰은 bookId 필드의 값이 필요합니다.");
             } else {
                 bookId = bookApiClient.getBookById(request.getBooksId()).getBookId();
             }
         }else if(request.getCouponType() == CouponType.CATEGORY){
             if (Objects.isNull(request.getCategoryId())) {
-                throw new IllegalArgumentException("카테고리 할인 쿠폰은 categoryId 필드의 값이 필요합니다.");
+                throw new BadRequestException("카테고리 할인 쿠폰은 categoryId 필드의 값이 필요합니다.");
             } else {
                 categoryId = bookApiClient.getCategoryById(request.getCategoryId()).getCategoryId();
                 categoryName = bookApiClient.getCategoryById(request.getCategoryId()).getCategoryName();
