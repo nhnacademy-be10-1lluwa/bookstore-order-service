@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.coupons.external.category;
+package com.nhnacademy.illuwa.domain.coupons.external.clientDto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

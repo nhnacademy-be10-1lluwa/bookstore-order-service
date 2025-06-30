@@ -8,14 +8,12 @@ import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
-import com.nhnacademy.illuwa.domain.coupons.external.book.BookApiClient;
-import com.nhnacademy.illuwa.domain.coupons.external.book.BookDto;
+import com.nhnacademy.illuwa.domain.coupons.external.ProductApiClient;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +26,7 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponRepository couponRepository;
     private final CouponPolicyRepository couponPolicyRepository;
-    private final BookApiClient bookApiClient;
+    private final ProductApiClient bookApiClient;
 
     @Override
     public CouponCreateResponse createCoupon(CouponCreateRequest request) {
@@ -51,8 +49,8 @@ public class CouponServiceImpl implements CouponService {
             if (Objects.isNull(request.getCategoryId())) {
                 throw new IllegalArgumentException("카테고리 할인 쿠폰은 categoryId 필드의 값이 필요합니다.");
             } else {
-                categoryId = bookApiClient.getCategoryId(request.getCategoryId()).getCategoryId();
-                categoryName = bookApiClient.getCategoryId(request.getCategoryId()).getCategoryName();
+                categoryId = bookApiClient.getCategoryById(request.getCategoryId()).getCategoryId();
+                categoryName = bookApiClient.getCategoryById(request.getCategoryId()).getCategoryName();
             }
         } else {
             bookId = request.getBooksId();
