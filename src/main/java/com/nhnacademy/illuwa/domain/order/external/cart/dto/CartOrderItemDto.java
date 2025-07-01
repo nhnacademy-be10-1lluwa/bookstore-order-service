@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartIdDto {
-    private Long memberId;
+public class CartOrderItemDto {
+    private Long bookId;
+    private int quantity;
+
 }
