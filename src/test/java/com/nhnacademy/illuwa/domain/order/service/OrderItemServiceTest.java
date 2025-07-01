@@ -118,7 +118,7 @@ public class OrderItemServiceTest {
     @DisplayName("주문상품 ID로 단건 조회")
     void testGetOrderItemById() {
         Long anyId = orderItemRepository.findAll().get(0).getOrderItemId();
-        OrderItemResponseDto dto = service.getOrderItemById(String.valueOf(anyId));
+        OrderItemResponseDto dto = service.getOrderItemById(anyId);
         assertThat(dto.getOrderItemId()).isEqualTo(anyId);
     }
 
@@ -126,17 +126,11 @@ public class OrderItemServiceTest {
     @DisplayName("주문 ID로 주문상품 조회")
     void testGetOrderItemByOrderId() {
         List<OrderItemResponseDto> list = service.getOrderItemByOrderId(
-                String.valueOf(orderA.getOrderId()));
+                orderA.getOrderId());
         Integer cnt = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM order_item WHERE order_id = " + orderA.getOrderId(),
                 Integer.class);
         assertThat(list).hasSize(cnt);
     }
 
-    @Test
-    @DisplayName("잘못된 ID 파싱 예외")
-    void testInvalidIdThrowsBadRequest() {
-        assertThatThrownBy(() -> service.getOrderItemById("abc"))
-                .isInstanceOf(BadRequestException.class);
-    }
 }
