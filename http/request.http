@@ -165,9 +165,9 @@ POST http://localhost:10305/members
 Content-Type: application/json
 
 {
-  "birth": "1999-08-12",
+  "birth": "1999-07-12",
   "email": "test@test.com",
-  "name": "testName"
+  "name": "test"
 }
 
 ### (회원) -> 쿠폰 발급 (WELCOME 쿠폰)
@@ -180,7 +180,7 @@ Content-Type: application/json
 
 {
   "memberEmail": "test@test.com",
-  "couponName": "홍길동 저자의 자바 입문 3000원 할인"
+  "couponName": "생일쿠폰"
 }
 
 ### (회원) -> 쿠폰 발급내역
@@ -193,4 +193,4 @@ GET http://localhost:10305/members/member-coupons?memberId=1
 GET http://localhost:10305/members/member-coupons/1/coupon
 
 ### (회원) -> 쿠폰 사용 (memberCouponId로 사용)
-PUT http://localhost:10305/members/member-coupons/test@test.com/2/use
+PUT http://localhost:10305/members/member-coupons/abc@abc.com/3/use
