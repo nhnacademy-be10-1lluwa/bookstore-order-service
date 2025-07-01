@@ -9,8 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartDto {
+public class CreateOrderFromCartRequest {
     private Long cartId;
-    private Long memberId;
-    private List<CartItemDto> items;
+    private List<CartOrderItemDto> items;
 }
