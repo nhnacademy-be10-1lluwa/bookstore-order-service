@@ -1,10 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.factory;
 
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDiscountDto;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponseTest;
-import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.factory.DiscountCalculator;
-import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
@@ -34,7 +31,6 @@ public class OrderFactory {
     private final BookPriceApiClient bookPriceApiClient;
     private final ShippingPolicyRepository shippingPolicyRepository;
     private final OrderRepository orderRepository;
-    private final MemberCouponRepository memberCouponRepository;
     private final MemberCouponService memberCouponService;
     private final DiscountCalculator discountCalculator;
 
@@ -82,11 +78,7 @@ public class OrderFactory {
                     : priceDto.getPriceStandard();          // 판매가 null → 정가 사용
 
 
-            // todo 할인율인지, 힐인 금액인지 확인하는 로직 추가하기
             MemberCouponDiscountDto coupon = memberCouponService.getDiscountPrice(order.getMemberCouponId());
-
-            // todo 할인금액이면 할인 금액을 discount에 추가, 할인율이면 책 가격 * 할인율 = 할인금액을 discount에 추가
-
 
             // (2) 할인·총액
             BigDecimal grossPrice = unitPrice.multiply(BigDecimal.valueOf(req.getQuantity()));
@@ -127,18 +119,10 @@ public class OrderFactory {
                 .map(OrderItem::getItemTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        /*
-         * todo
-         * discountPrice -> 할인할 금액
-         * usedPoint -> 사용할 포인트
-         * */
 
         MemberCouponDiscountDto coupon = memberCouponService.getDiscountPrice(order.getMemberCouponId());
 
-        // todo 할인율인지, 힐인 금액인지 확인하는 로직 추가하기
 
-
-        // todo 할인금액이면 할인 금액을 discount에 추가, 할인율이면 totalPrice * 할인율 = 할인금액을 discount에 추가
         // (2) 할인·총액
 
         // 쿠폰 적용할인 (할인이 적용된 금액)
@@ -176,7 +160,7 @@ public class OrderFactory {
     }
 
 
-    // todo UUID 로 변경하기
+    // 총 10자리 uuid 만들기
     private static String generateRandomNumber() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }
