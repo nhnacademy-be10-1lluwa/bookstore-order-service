@@ -3,6 +3,7 @@ package com.nhnacademy.illuwa.domain.coupons.service.impl;
 import com.nhnacademy.illuwa.domain.coupons.dto.member.MemberCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.member.MemberResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.Member;
+import com.nhnacademy.illuwa.domain.coupons.message.CouponEventPublisher;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Objects;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final CouponEventPublisher couponEventPublisher;
 
     @Override
     public MemberResponse createMember(MemberCreateRequest createRequest) {
@@ -31,6 +33,9 @@ public class MemberServiceImpl implements MemberService {
 
         // 그 엔티티를 repo(=DB에 저장)
         Member save = memberRepository.save(member);
+
+        // 회원가입 성공 시 RabbitMQ로 이벤트 발송
+        couponEventPublisher.sendWelcomeCouponEvent(member.getEmail());
         return MemberResponse.fromEntity(save);
     }
 
