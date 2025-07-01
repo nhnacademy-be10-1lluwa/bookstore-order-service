@@ -98,7 +98,12 @@ public class OrderServiceTest {
     @Test
     @DisplayName("주문 ID NotFoundException")
     void testNotFoundException() {
-        Long orderId = 10L;
+//        Long orderId = 10L;
+
+        long orderId = repository.findAll().stream()
+                .mapToLong(Order::getOrderId)
+                .max()
+                .orElse(0L) + 10;
 
         Assertions.assertThrows(NotFoundException.class,
                 () -> service.getOrderById(orderId));
