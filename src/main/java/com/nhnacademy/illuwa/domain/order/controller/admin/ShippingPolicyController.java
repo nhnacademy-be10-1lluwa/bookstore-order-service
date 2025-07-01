@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.order.controller;
+package com.nhnacademy.illuwa.domain.order.controller.admin;
 
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyResponseDto;

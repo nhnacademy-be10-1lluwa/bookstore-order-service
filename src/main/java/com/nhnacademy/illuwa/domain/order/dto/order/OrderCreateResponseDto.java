@@ -2,6 +2,8 @@ package com.nhnacademy.illuwa.domain.order.dto.order;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponCreateResponse;
+import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
@@ -30,9 +32,16 @@ public class OrderCreateResponseDto {
 
     private BigDecimal finalPrice;
 
-    private boolean isGuest;
-
     private BigDecimal discountPrice;
 
-
+    public static OrderCreateResponseDto fromEntity(Order order) {
+        return OrderCreateResponseDto.builder()
+                .orderId(order.getOrderId())
+                .orderNumber(order.getOrderNumber())
+                .orderDate(order.getOrderDate())
+                .deliveryDate(order.getDeliveryDate())
+                .finalPrice(order.getFinalPrice())
+                .discountPrice(order.getDiscountPrice())
+                .build();
+    }
 }

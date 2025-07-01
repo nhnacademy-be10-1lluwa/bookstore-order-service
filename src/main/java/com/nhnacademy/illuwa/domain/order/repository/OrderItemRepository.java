@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.repository;
 
+import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 import com.nhnacademy.illuwa.domain.order.repository.custom.OrderItemQuerydslRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,6 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long>, Ord
     )
     @Transactional(readOnly = true)
     List<OrderItem> findByMemberId(long memberId);
+
+    Long order(Order order);
 }

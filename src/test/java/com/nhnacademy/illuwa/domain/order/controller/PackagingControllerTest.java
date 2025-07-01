@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.illuwa.domain.order.controller.admin.PackagingController;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;

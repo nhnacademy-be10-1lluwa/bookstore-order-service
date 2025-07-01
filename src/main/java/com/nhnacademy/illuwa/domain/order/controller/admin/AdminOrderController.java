@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.order.controller.user;
+package com.nhnacademy.illuwa.domain.order.controller.admin;
 
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;

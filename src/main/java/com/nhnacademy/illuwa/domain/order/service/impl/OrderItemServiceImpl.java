@@ -29,28 +29,15 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public OrderItemResponseDto getOrderItemById(String orderItemId) {
-        long id = parseId(orderItemId);
-
-        return orderItemRepository.findOrderItemDtoByOrderItemId(id).orElseThrow(()
-                -> new NotFoundException("해당 주문 상품을 찾을 수 없습니다.", id));
+    public OrderItemResponseDto getOrderItemById(Long orderItemId) {
+        return orderItemRepository.findOrderItemDtoByOrderItemId(orderItemId).orElseThrow(()
+                -> new NotFoundException("해당 주문 상품을 찾을 수 없습니다.", orderItemId));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderItemResponseDto> getOrderItemByOrderId(String orderId) {
-        long id = parseId(orderId);
-
-        return orderItemRepository.findOrderItemDtosByOrderId(id);
-    }
-
-    // ID 파싱 오류 (잘못된 숫자 포맷)
-    private Long parseId(String orderId) {
-        try {
-            return Long.parseLong(orderId);
-        } catch (NumberFormatException e) {
-            throw new BadRequestException("유효하지 않은 주문 ID: " + orderId);
-        }
+    public List<OrderItemResponseDto> getOrderItemByOrderId(Long orderId) {
+        return orderItemRepository.findOrderItemDtosByOrderId(orderId);
     }
 
 }
