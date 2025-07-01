@@ -13,12 +13,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+
 @FeignClient(
         name = "UserService",
         url = "${user-api.url}"
 )
 public interface MemberPointApiClient {
-
     // 사용된 포인트 전송
     @PostMapping(value = "/members/{memberId}/points/use")
     MemberUsedPointDto sendUsedPointByMemberId(@PathVariable Long memberId, BigDecimal usedPoint);

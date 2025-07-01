@@ -2,6 +2,7 @@ package com.nhnacademy.illuwa.domain.order.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.math.BigDecimal;
 

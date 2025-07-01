@@ -10,9 +10,9 @@ public interface OrderItemService {
     List<OrderItemResponseDto> getAllOrderItem();
 
     // id로 주문 아이템 내역 조회(ADMIN, MEMBERS)
-    OrderItemResponseDto getOrderItemById(String orderItemId);
+    OrderItemResponseDto getOrderItemById(Long orderItemId);
 
     // 주문별 주문 아이템 내역 조회 (MEMBERS, ADMIN)
-    List<OrderItemResponseDto> getOrderItemByOrderId(String orderId);
+    List<OrderItemResponseDto> getOrderItemByOrderId(Long orderId);
 
 }
