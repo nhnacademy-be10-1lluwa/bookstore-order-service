@@ -20,15 +20,20 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    //    @PostMapping
+//    public ResponseEntity<MemberResponse> createMember(@RequestBody @Valid MemberCreateRequest request) {
+//        MemberResponse response = memberService.createMember(request);
+//
+//        RestTemplate restTemplate = new RestTemplate();
+//        // 해당 이메일을 가지고 도메인의 포트를 이용해 post메서드 실행
+//        // postForObject(요청 URL, 파라미터, 반환타입.class)
+//        String couponUrl = "http://localhost:10305/members/member-coupons/welcome?email=" + response.getEmail();
+//        restTemplate.postForObject(couponUrl,null, Object.class);
+//        return ResponseEntity.ok(response);
+//    }
     @PostMapping
     public ResponseEntity<MemberResponse> createMember(@RequestBody @Valid MemberCreateRequest request) {
         MemberResponse response = memberService.createMember(request);
-
-        RestTemplate restTemplate = new RestTemplate();
-        // 해당 이메일을 가지고 도메인의 포트를 이용해 post메서드 실행
-        // postForObject(요청 URL, 파라미터, 반환타입.class)
-        String couponUrl = "http://localhost:10305/members/member-coupons/welcome?email=" + response.getEmail();
-        restTemplate.postForObject(couponUrl,null, Object.class);
         return ResponseEntity.ok(response);
     }
 }
