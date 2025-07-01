@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponCreateResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
+import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +35,8 @@ public class OrderCreateResponseDto {
 
     private BigDecimal discountPrice;
 
+    private OrderStatus orderStatus;
+
     public static OrderCreateResponseDto fromEntity(Order order) {
         return OrderCreateResponseDto.builder()
                 .orderId(order.getOrderId())
@@ -42,6 +45,7 @@ public class OrderCreateResponseDto {
                 .deliveryDate(order.getDeliveryDate())
                 .finalPrice(order.getFinalPrice())
                 .discountPrice(order.getDiscountPrice())
+                .orderStatus(order.getOrderStatus())
                 .build();
     }
 }
