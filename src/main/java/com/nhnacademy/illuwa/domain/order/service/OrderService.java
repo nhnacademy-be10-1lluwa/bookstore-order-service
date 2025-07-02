@@ -42,4 +42,7 @@ public interface OrderService {
 
     // 주문 초기 데이터 조회(member)
     OrderInitFromCartResponseDto getOrderInitFromCartData(Long memberId);
-}
+
+    // 주문 초기 데이터 조회(Guest)
+    GuestOrderInitResponseDto getGuestOrderInitFromCartData(Long cartId);
+    }

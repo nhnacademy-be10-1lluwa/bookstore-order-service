@@ -1,9 +1,8 @@
 package com.nhnacademy.illuwa.domain.order.controller.guest;
 
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
+import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,17 @@ import org.springframework.web.bind.annotation.*;
 public class GuestOrderController {
 
     private final OrderService orderService;
+
+    @GetMapping("/init-from-cart")
+    public ResponseEntity<GuestOrderInitResponseDto> getOrderInitFromCart(
+            @CookieValue(value = "cartId", required = false) Long cartId
+    ) {
+        if (cartId == null) {
+            throw new IllegalArgumentException("장바구니 정보가 없습니다.");
+        }
+        GuestOrderInitResponseDto response = orderService.getGuestOrderInitFromCartData(cartId);
+        return ResponseEntity.ok(response);
+    }
 
     // 비회원 주문내역 확인
     @GetMapping("/orders/{orderNumber}")
