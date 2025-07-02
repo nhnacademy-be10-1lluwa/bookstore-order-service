@@ -57,5 +57,5 @@ public interface MemberPointApiClient {
 
     // 멤버들의 3개월간 순수 주문 금액 전송 (주문 상태: confirmed )
     @PostMapping(value = "/members/grades/update")
-    List<MemberGradeUpdateRequest> sendNetOrderAmount();
+    List<MemberGradeUpdateRequest> sendNetOrderAmount(@RequestBody List<MemberGradeUpdateRequest> request);
 }

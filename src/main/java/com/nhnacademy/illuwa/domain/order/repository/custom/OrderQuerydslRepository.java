@@ -25,4 +25,7 @@ public interface OrderQuerydslRepository {
 
     // 주문번호로 주문 찾기
     Optional<OrderResponseDto> findOrderDtoByOrderNumber(String orderNumber);
+
+    // 멤버별 3개월 주문내역 조회
+    List<MemberGradeUpdateRequest> buildMemberGradeUpdateRequest();
 }
