@@ -16,4 +16,5 @@ public class BirthdayCouponScheduler {
     public void autoIssueBirthDayCoupons() {
         memberCouponService.issueBirthDayCoupon();
     }
+    // testMessage
 }
