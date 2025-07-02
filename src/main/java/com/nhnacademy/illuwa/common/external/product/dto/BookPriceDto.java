@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.order.external.book;
+package com.nhnacademy.illuwa.common.external.product.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

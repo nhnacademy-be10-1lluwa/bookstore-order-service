@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.order.external.cart.dto;
+package com.nhnacademy.illuwa.common.external.product.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

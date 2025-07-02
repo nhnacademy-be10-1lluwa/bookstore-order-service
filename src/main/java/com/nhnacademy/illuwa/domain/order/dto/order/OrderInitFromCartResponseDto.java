@@ -1,8 +1,8 @@
 package com.nhnacademy.illuwa.domain.order.dto.order;
 
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
-import com.nhnacademy.illuwa.domain.order.external.cart.dto.CartOrderItemDto;
-import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberAddressDto;
+import com.nhnacademy.illuwa.common.external.product.dto.CartOrderItemDto;
+import com.nhnacademy.illuwa.common.external.user.dto.MemberAddressDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

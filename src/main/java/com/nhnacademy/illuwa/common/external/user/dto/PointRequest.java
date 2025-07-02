@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.order.external.member;
+package com.nhnacademy.illuwa.common.external.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

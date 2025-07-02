@@ -1,6 +1,5 @@
-package com.nhnacademy.illuwa.domain.order.external.member.dto;
+package com.nhnacademy.illuwa.common.external.user.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -2,7 +2,7 @@ package com.nhnacademy.illuwa.domain.order.repository.custom;
 
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
-import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeUpdateRequest;
+import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
