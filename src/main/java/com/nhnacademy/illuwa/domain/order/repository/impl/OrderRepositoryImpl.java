@@ -7,7 +7,7 @@ import com.nhnacademy.illuwa.domain.order.dto.order.QOrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.QOrder;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
-import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeUpdateRequest;
+import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.repository.custom.OrderQuerydslRepository;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;

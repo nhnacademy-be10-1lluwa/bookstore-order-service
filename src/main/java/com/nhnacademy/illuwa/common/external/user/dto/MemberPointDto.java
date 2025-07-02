@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.order.external.member.dto;
+package com.nhnacademy.illuwa.common.external.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberUsedPointDto {
-    private BigDecimal usedPoint;
+public class MemberPointDto {
+
+    private BigDecimal point;
 }

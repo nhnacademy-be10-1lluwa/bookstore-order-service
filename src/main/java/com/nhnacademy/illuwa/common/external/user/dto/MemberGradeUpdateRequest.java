@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.order.external.member.dto;
+package com.nhnacademy.illuwa.common.external.user.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.scheduler;
 
-import com.nhnacademy.illuwa.domain.order.external.member.MemberPointApiClient;
-import com.nhnacademy.illuwa.domain.order.external.member.dto.MemberGradeUpdateRequest;
+import com.nhnacademy.illuwa.common.external.member.MemberPointApiClient;
+import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
