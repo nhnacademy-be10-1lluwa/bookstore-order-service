@@ -1,8 +1,7 @@
-package com.nhnacademy.illuwa.domain.coupons.external.clientDto;
+package com.nhnacademy.illuwa.common.external.product.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import org.springframework.web.client.RestTemplate;
 
 @Getter
 public class BookDto {

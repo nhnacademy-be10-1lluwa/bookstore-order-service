@@ -1,5 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
+import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
+import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
@@ -8,11 +10,8 @@ import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundStringException;
-import com.nhnacademy.illuwa.common.external.cart.CartApiClient;
 import com.nhnacademy.illuwa.common.external.product.dto.CartOrderItemDto;
 import com.nhnacademy.illuwa.common.external.product.dto.CreateOrderFromCartRequest;
-import com.nhnacademy.illuwa.common.external.member.MemberAddressApiClient;
-import com.nhnacademy.illuwa.common.external.member.MemberPointApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberAddressDto;
 import com.nhnacademy.illuwa.domain.order.factory.OrderFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
@@ -32,13 +31,13 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
 
     private final OrderFactory orderFactory;
-    private final CartApiClient cartApiClient;
-    private final MemberAddressApiClient memberAddressApiClient;
+    private final ProductApiClient cartApiClient;
+    private final UserApiClient memberAddressApiClient;
     private final CouponService couponService;
     private final MemberCouponService memberCouponService;
-    private final MemberPointApiClient memberPointApiClient;
+    private final UserApiClient memberPointApiClient;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderFactory orderFactory, CartApiClient cartApiClient, MemberAddressApiClient memberAddressApiClient, CouponService couponService, MemberCouponService memberCouponService, MemberPointApiClient memberPointApiClient) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderFactory orderFactory, ProductApiClient cartApiClient, UserApiClient memberAddressApiClient, CouponService couponService, MemberCouponService memberCouponService, UserApiClient memberPointApiClient) {
         this.orderRepository = orderRepository;
         this.orderFactory = orderFactory;
         this.cartApiClient = cartApiClient;

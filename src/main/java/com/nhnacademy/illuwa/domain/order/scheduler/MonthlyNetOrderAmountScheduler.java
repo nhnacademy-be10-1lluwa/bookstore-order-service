@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.scheduler;
 
-import com.nhnacademy.illuwa.common.external.member.MemberPointApiClient;
+import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
+import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MonthlyNetOrderAmountScheduler {
 
-    private final MemberPointApiClient memberPointApiClient;
+    private final UserApiClient memberPointApiClient;
     private final OrderRepository orderRepository;
 
     @Scheduled(cron = "0 0 10 1 * ?", zone = "Asia/Seoul")

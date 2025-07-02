@@ -3,6 +3,8 @@ package com.nhnacademy.illuwa.common.external.product;
 
 import com.nhnacademy.illuwa.common.external.product.dto.BookPriceDto;
 import com.nhnacademy.illuwa.common.external.product.dto.CreateOrderFromCartRequest;
+import com.nhnacademy.illuwa.common.external.product.dto.BookDto;
+import com.nhnacademy.illuwa.common.external.product.dto.CategoryDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,15 +13,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
-@FeignClient(
-        name = "product-service"
-)
+@FeignClient(name = "product-service")
 public interface ProductApiClient {
 
 
     // 책 가격 가져오기
     @GetMapping(value = "/admin/books", params = "bookId")
     Optional<BookPriceDto> getBookPriceByBookId(@RequestParam("bookId") Long bookId);
+
+    // 책 정보 가져오기
+    @GetMapping("/admin/books/{bookId}")
+    BookDto getBookById(@PathVariable("bookId") Long bookId);
+
+    // 카테고리 가져오기
+    @GetMapping("/categories/{categoryId}")
+    CategoryDto getCategoryById(@PathVariable("categoryId") Long categoryId);
 
     // 카드 조회
     @GetMapping(value = "/members/{memberId}/cart")

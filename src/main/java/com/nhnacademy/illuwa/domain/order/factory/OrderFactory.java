@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.factory;
 
+import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDiscountDto;
 import com.nhnacademy.illuwa.domain.coupons.factory.DiscountCalculator;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
@@ -10,7 +11,6 @@ import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
-import com.nhnacademy.illuwa.common.external.book.BookPriceApiClient;
 import com.nhnacademy.illuwa.common.external.product.dto.BookPriceDto;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
@@ -28,7 +28,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderFactory {
     private final PackagingRepository packagingRepository;
-    private final BookPriceApiClient bookPriceApiClient;
+    private final ProductApiClient bookPriceApiClient;
     private final ShippingPolicyRepository shippingPolicyRepository;
     private final OrderRepository orderRepository;
     private final MemberCouponService memberCouponService;
