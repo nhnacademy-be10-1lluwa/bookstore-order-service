@@ -121,4 +121,22 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
         return Optional.ofNullable(result);
     }
 
+    @Override
+    public List<MemberGradeUpdateRequest> buildMemberGradeUpdateRequest() {
+        LocalDateTime threeMonthsAgo = LocalDateTime.now().minusMonths(3);
+
+        // 여기서는 하나의 통합된 요청 객체를 생성하는 방식으로 구성한다고 가정
+        return queryFactory
+            .from(order)
+            .where(order.orderStatus.eq(OrderStatus.Confirmed)
+                .and(order.orderDate.after(threeMonthsAgo)))
+            .transform(GroupBy.groupBy(order.memberId)
+                .list(Projections.constructor(
+                    MemberGradeUpdateRequest.class,
+                    order.memberId,
+                    GroupBy.list(order.totalPrice)
+                )));
+    }
+
+
 }

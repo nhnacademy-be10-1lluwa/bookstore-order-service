@@ -1,10 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.controller.user;
 
 import com.nhnacademy.illuwa.common.annotation.CurrentUserId;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.service.OrderItemService;
@@ -23,9 +20,15 @@ public class MemberOrderController {
     private final OrderService orderService;
     private final OrderItemService orderItemService;
 
-    @GetMapping(value = "/orders")
+    /*@GetMapping(value = "/orders")
     public ResponseEntity<Page<OrderListResponseDto>> getOrderByMemberId(@CurrentUserId Long memberId, Pageable pageable) {
         Page<OrderListResponseDto> response = orderService.getOrderByMemberId(memberId, pageable);
+        return ResponseEntity.ok(response);
+    }*/
+
+    @GetMapping(value = "/init-from-cart")
+    public ResponseEntity<OrderInitFromCartResponseDto> getOrderInitFromCart(@RequestParam("memberId") Long memberId) {
+        OrderInitFromCartResponseDto response = orderService.getOrderInitFromCartData(memberId);
         return ResponseEntity.ok(response);
     }
 
@@ -43,7 +46,7 @@ public class MemberOrderController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("orders/{orderNumber}/orderItems/{orderItemId}")
+    @GetMapping("/orders/{orderNumber}/orderItems/{orderItemId}")
     public ResponseEntity<OrderItemResponseDto> getOrderItemByOrderItemId(@PathVariable String orderNumber, @PathVariable Long orderItemId) {
         OrderItemResponseDto response = orderItemService.getOrderItemById(orderItemId);
         return ResponseEntity.ok(response);
