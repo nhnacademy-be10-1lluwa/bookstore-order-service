@@ -28,7 +28,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderFactory {
     private final PackagingRepository packagingRepository;
-    private final ProductApiClient bookPriceApiClient;
+    private final ProductApiClient productApiClient;
     private final ShippingPolicyRepository shippingPolicyRepository;
     private final OrderRepository orderRepository;
     private final MemberCouponService memberCouponService;
@@ -70,7 +70,7 @@ public class OrderFactory {
         return dto.getItems().stream().map(req -> {
 
             // (1) 외부 Book API 호출
-            BookPriceDto priceDto = bookPriceApiClient.getBookPriceByBookId(req.getBookId())
+            BookPriceDto priceDto = productApiClient.getBookPriceByBookId(req.getBookId())
                     .orElseThrow(() -> new NotFoundException("도서 가격 정보를 찾을 수 없습니다.", req.getBookId()));
 
             BigDecimal unitPrice = priceDto.getPriceSales() != null
