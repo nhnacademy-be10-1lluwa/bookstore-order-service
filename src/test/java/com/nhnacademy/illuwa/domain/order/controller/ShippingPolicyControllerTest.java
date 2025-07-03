@@ -78,12 +78,12 @@ class ShippingPolicyControllerTest {
     @DisplayName("GET /shipping-policy - 배송 정책 전체 조회 ")
     void getAllShippingPolicy() throws Exception {
         Mockito.when(shippingPolicyService.getShippingPolicyByActive(true))
-                .thenReturn(List.of(responseDto));
+                .thenReturn(responseDto);
 
         mockMvc.perform(get("/shipping-policy"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].shippingPolicyId").value(1L));
+                .andExpect(jsonPath("shippingPolicyId").value(1L));
     }
 
     @Test

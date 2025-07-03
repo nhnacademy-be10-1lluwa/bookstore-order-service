@@ -6,11 +6,9 @@ import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.QShippingPolicyResp
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.QShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
-import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import com.nhnacademy.illuwa.domain.order.repository.custom.ShippingPolicyQuerydslRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -43,7 +41,7 @@ public class ShippingPolicyRepositoryImpl extends QuerydslRepositorySupport impl
     }
 
     @Override
-    public List<ShippingPolicyResponseDto> findShippingPolicyDtosByActive(boolean active) {
+    public ShippingPolicyResponseDto findShippingPolicyDtoByActive(boolean active) {
         return queryFactory
                 .select(new QShippingPolicyResponseDto(
                         shippingPolicy.shippingPolicyId,
@@ -51,7 +49,7 @@ public class ShippingPolicyRepositoryImpl extends QuerydslRepositorySupport impl
                         shippingPolicy.fee))
                 .from(shippingPolicy)
                 .where(shippingPolicy.active.eq(active))
-                .fetch();
+                .fetchOne();
     }
 
     @Override

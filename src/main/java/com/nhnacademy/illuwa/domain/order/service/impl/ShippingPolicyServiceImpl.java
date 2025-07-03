@@ -33,8 +33,8 @@ public class ShippingPolicyServiceImpl implements ShippingPolicyService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ShippingPolicyResponseDto> getShippingPolicyByActive(boolean active) {
-        return shippingPolicyRepository.findShippingPolicyDtosByActive(active);
+    public ShippingPolicyResponseDto getShippingPolicyByActive(boolean active) {
+        return shippingPolicyRepository.findShippingPolicyDtoByActive(active);
     }
 
     @Override

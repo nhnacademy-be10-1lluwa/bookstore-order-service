@@ -11,8 +11,9 @@ public interface ShippingPolicyQuerydslRepository {
 
     List<AllShippingPolicyDto> findAllShippingDtosPolicy();
 
-    List<ShippingPolicyResponseDto> findShippingPolicyDtosByActive(boolean active);
+    ShippingPolicyResponseDto findShippingPolicyDtoByActive(boolean active);
 
     Optional<ShippingPolicyResponseDto> findSHippingPolicyDtoByShippingPolicyId(long shippingPolicyId);
+
 
 }
