@@ -13,7 +13,7 @@ public interface ShippingPolicyService {
     List<AllShippingPolicyDto> getAllShippingPolicy();
 
     // 활성화 배송비 정책 조회
-    List<ShippingPolicyResponseDto> getShippingPolicyByActive(boolean active);
+    ShippingPolicyResponseDto getShippingPolicyByActive(boolean active);
 
     // 단일 정책 조회
     ShippingPolicyResponseDto getShippingPolicy(Long shippingPolicyId);

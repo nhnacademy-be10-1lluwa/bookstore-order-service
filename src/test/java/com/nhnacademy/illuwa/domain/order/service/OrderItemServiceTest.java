@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -75,7 +76,7 @@ public class OrderItemServiceTest {
                 .shippingFee(BigDecimal.ZERO)
                 .shippingPolicy(null)
                 .orderDate(now)
-                .deliveryDate(now.plusDays(3))
+                .deliveryDate(LocalDate.now().plusDays(3))
                 .totalPrice(BigDecimal.ZERO)
                 .discountPrice(BigDecimal.ZERO)
                 .usedPoint(BigDecimal.ZERO)
@@ -84,7 +85,7 @@ public class OrderItemServiceTest {
                 .recipientName("tester")
                 .recipientContact("01012345678")
                 .readAddress("Seoul")
-                .detailAddress("Gangnam")
+                .detailAddress("GangNam")
                 .memberCouponId(0L)
                 .build();
     }

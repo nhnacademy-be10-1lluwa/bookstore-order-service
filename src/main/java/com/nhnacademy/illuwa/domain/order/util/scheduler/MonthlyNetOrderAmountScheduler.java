@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.order.scheduler;
+package com.nhnacademy.illuwa.domain.order.util.scheduler;
 
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;

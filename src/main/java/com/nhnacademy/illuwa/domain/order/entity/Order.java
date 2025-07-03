@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.Currency;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class Order {
     private String orderNumber;
 
     @Column(name = "member_id")
-    private long memberId;
+    private Long memberId;
 
     @Column(name = "guest_id")
     private Long guestId;
@@ -47,7 +48,7 @@ public class Order {
     private LocalDateTime orderDate;
 
     @Column(name = "delivery_date", nullable = false)
-    private LocalDateTime deliveryDate;
+    private LocalDate deliveryDate;
 
     @Setter
     @Column(name = "total_price", nullable = false)
@@ -87,7 +88,7 @@ public class Order {
     private Long memberCouponId;
 
     @Builder
-    public Order(long orderId, String orderNumber, long memberId, Long guestId, BigDecimal shippingFee, ShippingPolicy shippingPolicy, LocalDateTime orderDate, LocalDateTime deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus, String recipientName, String recipientContact, String readAddress, String detailAddress, Long memberCouponId) {
+    public Order(long orderId, String orderNumber, Long memberId, Long guestId, BigDecimal shippingFee, ShippingPolicy shippingPolicy, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus, String recipientName, String recipientContact, String readAddress, String detailAddress, Long memberCouponId) {
         this.orderId = orderId;
         this.orderNumber = orderNumber;
         this.memberId = memberId;

@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -60,7 +61,7 @@ public class OrderServiceTest {
                 .shippingFee(BigDecimal.ZERO)
                 .shippingPolicy(null)
                 .orderDate(now)
-                .deliveryDate(now.plusDays(3))
+                .deliveryDate(LocalDate.now().plusDays(3))
                 .totalPrice(BigDecimal.ZERO)
                 .discountPrice(BigDecimal.ZERO)
                 .usedPoint(BigDecimal.ZERO)

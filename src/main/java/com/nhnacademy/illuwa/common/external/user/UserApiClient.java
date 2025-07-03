@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.common.external.user;
 
+import com.nhnacademy.illuwa.common.annotation.CurrentUserId;
 import com.nhnacademy.illuwa.common.external.user.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +14,17 @@ import java.util.Optional;
 public interface UserApiClient {
 
     // 멤버 주소록 조회
-    @GetMapping(value = "/members/{memberId}/addresses")
-    List<MemberAddressDto> getAddressByMemberId(@PathVariable("memberId") Long memberId);
+    @GetMapping(value = "/members/addresses")
+    List<MemberAddressDto> getAddressByMemberId(@CurrentUserId Long memberId);
 
-    // 사용된 포인트 전송
+    // 사용된 포인트 전송 todo 수정 필요 (주소)
     @PostMapping(value = "/points/use")
     MemberUsedPointDto sendUsedPointByMemberId(@RequestBody PointRequest request);
 
-    // 순수 금액 전송 (상품 구매시, 적립금 적용에 사용)
+    // 순수 금액 전송 (상품 구매시, 적립금 적용에 사용) todo 수정 필요 (주소)
     @PostMapping(value = "/points/earn")
     MemberSavePointDto sendTotalPrice(@RequestBody TotalRequest request);
+
 
     // 해당 멤버의 포인트 조회 (쿼리 파라미터로 memberId 전달)
     @GetMapping(value = "/points")

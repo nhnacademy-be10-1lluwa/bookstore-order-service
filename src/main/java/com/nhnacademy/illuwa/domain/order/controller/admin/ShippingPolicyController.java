@@ -34,8 +34,8 @@ public class ShippingPolicyController {
 
     // 배송비 정책 전체 조회 (활성화 된 배송비 정책)
     @GetMapping
-    public ResponseEntity<List<ShippingPolicyResponseDto>> getAllShippingPolicy() {
-        List<ShippingPolicyResponseDto> response = shippingPolicyService.getShippingPolicyByActive(true);
+    public ResponseEntity<ShippingPolicyResponseDto> getAllShippingPolicy() {
+        ShippingPolicyResponseDto response = shippingPolicyService.getShippingPolicyByActive(true);
 
         return ResponseEntity.ok(response);
     }

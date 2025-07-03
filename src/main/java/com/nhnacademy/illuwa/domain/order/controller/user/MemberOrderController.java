@@ -2,13 +2,13 @@ package com.nhnacademy.illuwa.domain.order.controller.user;
 
 import com.nhnacademy.illuwa.common.annotation.CurrentUserId;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.service.OrderItemService;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +27,8 @@ public class MemberOrderController {
     }*/
 
     @GetMapping(value = "/init-from-cart")
-    public ResponseEntity<OrderInitFromCartResponseDto> getOrderInitFromCart(@RequestParam("memberId") Long memberId) {
-        OrderInitFromCartResponseDto response = orderService.getOrderInitFromCartData(memberId);
+    public ResponseEntity<MemberOrderInitFromCartResponseDto> getOrderInitFromCart(@RequestParam("memberId") Long memberId) {
+        MemberOrderInitFromCartResponseDto response = orderService.getOrderInitFromCartData(memberId);
         return ResponseEntity.ok(response);
     }
 
@@ -39,9 +39,8 @@ public class MemberOrderController {
     }
 
     @PostMapping("/orders")
-    public ResponseEntity<OrderCreateResponseDto> sendOrderRequest(@CurrentUserId Long memberId, @RequestBody OrderCreateRequestDto orderCreateRequestDto) {
-        orderCreateRequestDto.setMemberId(memberId);
-        Order order = orderService.createOrderWithItems(orderCreateRequestDto);
+    public ResponseEntity<OrderCreateResponseDto> sendOrderRequest(@CurrentUserId Long memberId, @RequestBody MemberOrderRequest memberOrderRequest) {
+        Order order = orderService.memberCreateOrderFromCartWithItems(memberId, memberOrderRequest);
         OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
         return ResponseEntity.ok(response);
     }

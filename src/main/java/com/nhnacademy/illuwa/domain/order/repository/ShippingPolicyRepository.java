@@ -17,10 +17,12 @@ public interface ShippingPolicyRepository extends JpaRepository<ShippingPolicy, 
     // findAll
 
     // 활성화 상태로 정책 조회
-    List<ShippingPolicy> findByActive(boolean active);
+    Optional<ShippingPolicy> findByActive(boolean active);
 
     // id로 정책 조회하기
     Optional<ShippingPolicy> findByShippingPolicyId(long shippingPolicyId);
+
+
 
     /** 정책 옵션 삭제 (active 컬럼값 false 로 변경)
      * @param shippingPolicyId 변경할 정책 ID
