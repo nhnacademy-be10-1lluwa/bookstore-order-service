@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -29,7 +30,7 @@ public class OrderCreateResponseDto {
     private LocalDateTime orderDate;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime deliveryDate;
+    private LocalDate deliveryDate;
 
     private BigDecimal finalPrice;
 

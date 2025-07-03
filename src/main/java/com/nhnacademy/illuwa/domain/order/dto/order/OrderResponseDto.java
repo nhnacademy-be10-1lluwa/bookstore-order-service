@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -19,12 +20,12 @@ public class OrderResponseDto {
     private String orderNumber;
     private long memberId; // 회원 넘버
     private LocalDateTime orderDate; //
-    private LocalDateTime deliveryDate;
+    private LocalDate deliveryDate;
     private BigDecimal totalPrice;
     private OrderStatus orderStatus;
 
     @QueryProjection
-    public OrderResponseDto(long orderId, String orderNumber, long memberId, LocalDateTime orderDate, LocalDateTime deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus) {
+    public OrderResponseDto(long orderId, String orderNumber, long memberId, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus) {
         this.orderId = orderId;
         this.orderNumber = orderNumber;
         this.memberId = memberId;
