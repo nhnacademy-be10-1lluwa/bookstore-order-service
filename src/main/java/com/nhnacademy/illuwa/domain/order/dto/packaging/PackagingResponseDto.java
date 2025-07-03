@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class PackagingResponseDto {
-    private long packagingId;
+    private Long packagingId;
     private String packagingName;
     private BigDecimal packagingPrice;
 
