@@ -24,6 +24,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
+import static com.nhnacademy.illuwa.domain.order.util.generator.OrderNumberGenerator.generateOrderNumber;
+
 @Component
 @RequiredArgsConstructor
 public class OrderFactory {
@@ -148,21 +150,6 @@ public class OrderFactory {
         order.setUsedPoint(usedPoint);
         order.setFinalPrice(finalPrice);
         order.setShippingFee(shippingFee);
-    }
-
-    // 주문 번호 생성 메서드
-    private static String generateOrderNumber(LocalDateTime time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String currentTime = time.format(formatter);
-        String randomNumber = generateRandomNumber();
-
-        return currentTime + "-" + randomNumber;
-    }
-
-
-    // 총 10자리 uuid 만들기
-    private static String generateRandomNumber() {
-        return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }
 
 }
