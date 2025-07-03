@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.EnumSet;
@@ -74,10 +75,10 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
 
         Order order = orderRepository.findByOrderId(parseId(orderId)).orElseThrow(() -> new NotFoundException("주문 내역을 찾을 수 없습니다.", parseId(orderId)));
 
-        LocalDateTime shippedAt = order.getDeliveryDate();
+        LocalDate shippedAt = order.getDeliveryDate();
         requireNonNull(shippedAt, "출고일 정보가 없습니다.");
 
-        long days = ChronoUnit.DAYS.between(shippedAt, LocalDateTime.now());
+        long days = ChronoUnit.DAYS.between(shippedAt, LocalDate.now());
         boolean isDamage = EnumSet.of(ReturnReason.Item_Damaged, ReturnReason.Defective_Item).contains(returnRequestCreateDto.getReason());
 
         int limit = isDamage ? 30 : 10;
