@@ -5,6 +5,10 @@ import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
@@ -13,10 +17,13 @@ import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundStringExcepti
 import com.nhnacademy.illuwa.common.external.product.dto.CartOrderItemDto;
 import com.nhnacademy.illuwa.common.external.product.dto.CreateOrderFromCartRequest;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberAddressDto;
+import com.nhnacademy.illuwa.domain.order.factory.GuestOrderCartFactory;
+import com.nhnacademy.illuwa.domain.order.factory.MemberOrderCartFactory;
 import com.nhnacademy.illuwa.domain.order.factory.OrderFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,24 +34,17 @@ import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
 
-    private final OrderFactory orderFactory;
+    private final GuestOrderCartFactory guestOrderCartFactory;
+    private final MemberOrderCartFactory memberOrderCartFactory;
     private final ProductApiClient productApiClient;
     private final MemberCouponService memberCouponService;
     private final UserApiClient userApiClient;
     private final PackagingService packagingService;
-
-    public OrderServiceImpl(OrderRepository orderRepository, OrderFactory orderFactory, ProductApiClient productApiClient, MemberCouponService memberCouponService, UserApiClient userApiClient, PackagingService packagingService) {
-        this.orderRepository = orderRepository;
-        this.orderFactory = orderFactory;
-        this.productApiClient = productApiClient;
-        this.memberCouponService = memberCouponService;
-        this.userApiClient = userApiClient;
-        this.packagingService = packagingService;
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -77,10 +77,19 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findByOrderStatus(status, pageable).map(OrderListResponseDto::orderListResponseDto);
     }
 
+    // member 주문하기 (cart)
     @Override
-    public Order createOrderWithItems(OrderCreateRequestDto dto) {
-        return orderFactory.createOrder(dto);
+    public Order memberCreateOrderFromCartWithItems(Long memberId, MemberOrderRequest request) {
+        return memberOrderCartFactory.createMemberOrderCart(memberId, request);
     }
+
+    // guest 주문하기 (cart)
+    @Override
+    public Order guestCreateOrderFromCartWithItems(GuestOrderRequest request) {
+        return guestOrderCartFactory.createGuestOrderCart(request);
+    }
+
+
 
     @Override
 
@@ -113,7 +122,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderInitFromCartResponseDto getOrderInitFromCartData(Long memberId) {
+    public MemberOrderInitFromCartResponseDto getOrderInitFromCartData(Long memberId) {
         CreateOrderFromCartRequest request = productApiClient.getCart(memberId).orElseThrow(()
                 -> new NotFoundException("장바구니를 찾을 수 없습니다.", memberId));
 
@@ -124,18 +133,21 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal pointBalance = userApiClient.getPointByMemberId(memberId).orElseThrow(()
                 -> new NotFoundException("보유 포인트를 찾을 수 없습니다.", memberId)).getPoint();
 
-        return new OrderInitFromCartResponseDto(cartItems, addresses, coupons, packaging, pointBalance);
+        return new MemberOrderInitFromCartResponseDto(cartItems, addresses, coupons, packaging, pointBalance);
     }
 
     @Override
-    public GuestOrderInitResponseDto getGuestOrderInitFromCartData(Long cartId) {
+    public GuestOrderInitFromCartResponseDto getGuestOrderInitFromCartData(Long cartId) {
         CreateOrderFromCartRequest request = productApiClient.getGuestCart(cartId).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", cartId));
 
         List<CartOrderItemDto> cartItems = request.getItems();
         List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
 
-        return new GuestOrderInitResponseDto(cartItems, packaging);
+        BigDecimal totalPrice = cartItems.stream().map(item ->
+                item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new GuestOrderInitFromCartResponseDto(cartItems, packaging, totalPrice);
     }
 
 }
