@@ -20,6 +20,7 @@ public class OrderItem {
     @Column(name = "book_id", nullable = false)
     private long bookId;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;

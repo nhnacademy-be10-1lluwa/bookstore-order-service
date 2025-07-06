@@ -3,6 +3,7 @@ package com.nhnacademy.illuwa.domain.order.controller.guest;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,13 @@ public class GuestOrderController {
         return ResponseEntity.ok(response);
     }
 
+    // 비회원 바로 구매
+    @PostMapping("/submit-direct")
+    public ResponseEntity<OrderCreateResponseDto> guestOrderRequestDirect(@RequestBody GuestOrderRequestDirect guestOrderRequestDirect) {
+        Order order = orderService.guestCreateOrderDirectWithItems(guestOrderRequestDirect);
+        OrderCreateResponseDto responseDto = OrderCreateResponseDto.fromEntity(order);
+        return ResponseEntity.ok(responseDto);
+    }
 
 
     // 비회원 주문내역 확인

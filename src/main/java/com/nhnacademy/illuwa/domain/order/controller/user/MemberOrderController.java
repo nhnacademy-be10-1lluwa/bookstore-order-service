@@ -38,7 +38,7 @@ public class MemberOrderController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/orders")
+    @PostMapping("/submit")
     public ResponseEntity<OrderCreateResponseDto> sendOrderRequest(@CurrentUserId Long memberId, @RequestBody MemberOrderRequest memberOrderRequest) {
         Order order = orderService.memberCreateOrderFromCartWithItems(memberId, memberOrderRequest);
         OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);

@@ -15,5 +15,4 @@ import java.util.List;
 public class GuestOrderInitFromCartResponseDto {
     private List<CartOrderItemDto> cartItems;
     private List<PackagingResponseDto> packaging;
-    private BigDecimal totalPrice;
 }

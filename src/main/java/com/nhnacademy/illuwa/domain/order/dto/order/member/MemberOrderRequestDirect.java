@@ -7,22 +7,19 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberOrderRequest {
+public class MemberOrderRequestDirect {
+
     private String recipientName;
     private String recipientContact;
     private String readAddress;
     private String detailAddress;
     private LocalDate deliverDate;
-    private String cartId;
 
-    private List<CartOrderItemDto> cartItem;
-    private BigDecimal totalPrice; // 전체 금액
-    private BigDecimal usedPoint; // 사용 포인트
-    private Long memberCouponId; // 사용한 member 쿠폰
-
+    private CartOrderItemDto item;
+    private BigDecimal usedPoint;
+    private Long memberCouponId;
 }

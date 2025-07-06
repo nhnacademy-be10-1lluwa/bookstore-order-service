@@ -3,8 +3,10 @@ package com.nhnacademy.illuwa.domain.order.service;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDirect;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,11 @@ public interface OrderService {
 
     // guest 주문하기 (cart)
     Order guestCreateOrderFromCartWithItems(GuestOrderRequest request);
+
+    // guest 주문하기 (direct)
+    Order guestCreateOrderDirectWithItems(GuestOrderRequestDirect request);
+
+    Order memberCreateOrderDirectWithItems(MemberOrderRequestDirect request);
 
     // id로 주문 취소하기(MEMBERS)
     void cancelOrderById(Long orderId);
