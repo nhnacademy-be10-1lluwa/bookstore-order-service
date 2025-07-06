@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 public class CartOrderItemDto {
     private Long bookId;
     private Integer quantity;
-    private BigDecimal price;
     private Long packagingId;
     private Long couponId;
 }
