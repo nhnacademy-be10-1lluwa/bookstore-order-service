@@ -21,10 +21,8 @@ public class MemberOrderRequest {
     private String cartId;
 
     private List<CartOrderItemDto> cartItem;
-    private BigDecimal totalPrice;
-    private BigDecimal discountPrice;
-    private BigDecimal usedPoint;
-    private BigDecimal finalPrice;
-    private Long memberCouponId;
+    private BigDecimal totalPrice; // 전체 금액
+    private BigDecimal usedPoint; // 사용 포인트
+    private Long memberCouponId; // 사용한 member 쿠폰
 
 }
