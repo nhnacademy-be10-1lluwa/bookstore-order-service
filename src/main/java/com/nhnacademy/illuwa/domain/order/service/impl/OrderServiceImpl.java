@@ -7,8 +7,10 @@ import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDirect;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
@@ -18,8 +20,8 @@ import com.nhnacademy.illuwa.common.external.product.dto.CartOrderItemDto;
 import com.nhnacademy.illuwa.common.external.product.dto.CreateOrderFromCartRequest;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberAddressDto;
 import com.nhnacademy.illuwa.domain.order.factory.GuestOrderCartFactory;
+import com.nhnacademy.illuwa.domain.order.factory.GuestOrderDirectFactory;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderCartFactory;
-import com.nhnacademy.illuwa.domain.order.factory.OrderFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;
@@ -45,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
     private final MemberCouponService memberCouponService;
     private final UserApiClient userApiClient;
     private final PackagingService packagingService;
+    private final GuestOrderDirectFactory guestOrderDirectFactory;
 
     @Override
     @Transactional(readOnly = true)
@@ -89,10 +92,19 @@ public class OrderServiceImpl implements OrderService {
         return guestOrderCartFactory.createGuestOrderCart(request);
     }
 
+    // guest 주문하기 (direct)
+    @Override
+    public Order guestCreateOrderDirectWithItems(GuestOrderRequestDirect request) {
+        return guestOrderDirectFactory.createGuestOrderDirect(request);
+    }
+
+    @Override
+    public Order memberCreateOrderDirectWithItems(MemberOrderRequestDirect request) {
+        return null;
+    }
 
 
     @Override
-
     public void cancelOrderById(Long orderId) {
         orderRepository.findByOrderId(orderId).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
@@ -144,10 +156,7 @@ public class OrderServiceImpl implements OrderService {
         List<CartOrderItemDto> cartItems = request.getItems();
         List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
 
-        BigDecimal totalPrice = cartItems.stream().map(item ->
-                item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return new GuestOrderInitFromCartResponseDto(cartItems, packaging, totalPrice);
+        return new GuestOrderInitFromCartResponseDto(cartItems, packaging);
     }
 
 }
