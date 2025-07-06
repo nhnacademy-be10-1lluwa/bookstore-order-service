@@ -1,5 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.factory;
 
+import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
+import com.nhnacademy.illuwa.common.external.product.dto.BookPriceDto;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDiscountDto;
 import com.nhnacademy.illuwa.domain.coupons.factory.DiscountCalculator;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
@@ -21,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.nhnacademy.illuwa.domain.order.util.generator.OrderNumberGenerator.generateOrderNumber;
+import static com.nhnacademy.illuwa.domain.order.util.generator.NumberGenerator.generateOrderNumber;
 
 @Component
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class MemberOrderCartFactory {
     private final OrderRepository orderRepository;
     private final MemberCouponService memberCouponService;
     private final DiscountCalculator discountCalculator;
+    private final ProductApiClient productApiClient;
 
     /*
      * [스택킹 정책 안내]
@@ -54,7 +57,7 @@ public class MemberOrderCartFactory {
 
         order.getItems().addAll(orderItems);
 
-        applyPriceSummary(order, shippingPolicy, orderItems);
+        applyPriceSummary(order, shippingPolicy);
 
         return orderRepository.save(order);
     }
@@ -78,46 +81,57 @@ public class MemberOrderCartFactory {
     private List<OrderItem> buildOrderItems(MemberOrderRequest request, Order order) {
         return request.getCartItem().stream().map(req -> {
 
-            BigDecimal price = req.getPrice(); // 아이템당 가격
-
-            Long couponId = req.getCouponId();
-
-            MemberCouponDiscountDto memberCouponDiscount = memberCouponService.getDiscountPrice(couponId); // 쿠폰 할인율, 할인 금액
-
-            // 할인 / 총액
-            BigDecimal grossPrice = price.multiply(BigDecimal.valueOf(req.getQuantity()));  // == 단가 * 개수
-
-            // 쿠폰 적용할인
-            BigDecimal discountedPrice = discountCalculator.calculate(
-                    grossPrice,
-                    memberCouponDiscount.getDiscountAmount(),
-                    memberCouponDiscount.getDiscountPercent()
-            );
-
-            // 할인 금액
-            BigDecimal discountAmount = grossPrice.subtract(discountedPrice);
+            // 도서 가격 정보
+            BookPriceDto priceDto = productApiClient.getBookPriceByBookId(req.getBookId()).orElseThrow(()
+                    -> new NotFoundException("해당 도서의 가격을 찾을 수 없습니다.")); // 아이템당 가격
 
             // 포장 옵션
             Packaging packaging = packagingRepository.findByPackagingId(req.getPackagingId())
                     .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", req.getPackagingId()));
 
+            // 쿠폰
+            Long couponId = req.getCouponId();
+            MemberCouponDiscountDto memberCouponDiscount = memberCouponService.getDiscountPrice(couponId); // 쿠폰 할인율, 할인 금액
+
+
+            BigDecimal unitPrice = priceDto.getPriceSales() != null
+                    ? priceDto.getPriceSales()
+                    : priceDto.getPriceStandard();
+
+
+            BigDecimal grossPrice = unitPrice.multiply(BigDecimal.valueOf(req.getQuantity()));  // == 단가 * 개수
+
+
+            // 쿠폰 적용할인
+            BigDecimal discountedPrice = discountCalculator.calculate( // 할인 적용한 금액 (소비자 계산가)
+                    grossPrice,
+                    memberCouponDiscount.getDiscountAmount(),
+                    memberCouponDiscount.getDiscountPercent()
+            );
+
+            // 할인될 금액
+            BigDecimal discountAmount = grossPrice.subtract(discountedPrice);
+
+            // 아이템 별 총 가격 ((도서 단가 * 주문 개수) - 할인 금액 + 포장 옵션 금액)
+            BigDecimal itemTotalPrice = discountedPrice.add(packaging.getPackagingPrice().multiply(BigDecimal.valueOf(req.getQuantity())));
+
+
             return OrderItem.builder()
                     .bookId(req.getBookId())
                     .order(order)
                     .quantity(req.getQuantity())
-                    .price(price)
+                    .price(unitPrice)
                     .memberCouponId(couponId)
                     .discountPrice(discountAmount)
-                    .itemTotalPrice(discountedPrice)
+                    .itemTotalPrice(itemTotalPrice)
                     .packaging(packaging)
                     .build();
         }).toList();
     }
 
-    private void applyPriceSummary(Order order, ShippingPolicy shippingPolicy, List<OrderItem> items) {
-        BigDecimal totalPrice = items.stream() // 할인 적용 전 가격
-                .map(OrderItem::getItemTotalPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    private void applyPriceSummary(Order order, ShippingPolicy shippingPolicy) {
+
+        BigDecimal totalPrice = order.getItems().stream().map(OrderItem::getItemTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         Long couponId = order.getMemberCouponId(); // 쿠폰
 
@@ -127,38 +141,28 @@ public class MemberOrderCartFactory {
                 ? BigDecimal.ZERO
                 : shippingPolicy.getFee();
 
+
+        BigDecimal discountAmount = BigDecimal.ZERO;
+
         /// 전체 주문의 할인 / 총액
         if (couponId != null) {
-            MemberCouponDiscountDto memberCouponDiscount = memberCouponService.getDiscountPrice(couponId); // 쿠폰의 내용 조회
 
+            MemberCouponDiscountDto memberCouponDiscount = memberCouponService.getDiscountPrice(couponId); // 쿠폰의 내용 조회
             BigDecimal orderAmountAfterCoupon = discountCalculator.calculate( // 쿠폰 할인이 적용된 금액
                     totalPrice,
                     memberCouponDiscount.getDiscountAmount(),
                     memberCouponDiscount.getDiscountPercent()
             );
-
             // 할인 금액
-            BigDecimal discountAmount
-                    = totalPrice.subtract(orderAmountAfterCoupon).subtract(usedPoint); // 할인 금액 = 총가격 - 쿠폰 적용할인 - 사용 포인트
-
-
-            BigDecimal payableAmount
-                    = totalPrice.subtract(discountAmount
-            ).add(shippingFee); // 할인이 적용된 금액 (지불해야하는 금액) = 전체 금액 - (쿠폰할인 - 포인트 할인) + 배송비
-
-            order.setTotalPrice(totalPrice);
-            order.setDiscountPrice(discountAmount);
-            order.setUsedPoint(usedPoint);
-            order.setFinalPrice(payableAmount);
-            order.setShippingFee(shippingFee);
-        } else {
-            BigDecimal payableAmount = totalPrice.subtract(usedPoint).add(shippingFee);
-
-            order.setTotalPrice(totalPrice);
-            order.setDiscountPrice(BigDecimal.ZERO);
-            order.setUsedPoint(usedPoint);
-            order.setFinalPrice(payableAmount);
-            order.setShippingFee(shippingFee);
+            discountAmount = totalPrice.subtract(orderAmountAfterCoupon).subtract(usedPoint); // 할인 금액 = 총가격 - 쿠폰 적용할인 - 사용 포인트
         }
+        BigDecimal payableAmount = totalPrice.subtract(discountAmount).add(shippingFee); // 할인이 적용된 금액 (지불해야하는 금액) = 전체 금액 - (쿠폰할인 - 포인트 할인) + 배송비
+
+        order.setTotalPrice(totalPrice);
+        order.setDiscountPrice(discountAmount);
+        order.setUsedPoint(usedPoint);
+        order.setFinalPrice(payableAmount);
+        order.setShippingFee(shippingFee);
     }
 }
+

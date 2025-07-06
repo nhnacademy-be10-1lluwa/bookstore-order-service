@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
-import static com.nhnacademy.illuwa.domain.order.util.generator.OrderNumberGenerator.generateOrderNumber;
+import static com.nhnacademy.illuwa.domain.order.util.generator.NumberGenerator.generateOrderNumber;
 
 @Component
 @RequiredArgsConstructor
@@ -139,11 +139,12 @@ public class OrderFactory {
         // 사용 포인트
         BigDecimal usedPoint = order.getUsedPoint();
 
-        BigDecimal finalPrice = discountedPrice.subtract(usedPoint);
 
         BigDecimal shippingFee = totalPrice.compareTo(shippingPolicy.getMinAmount()) >= 0
                 ? BigDecimal.ZERO
                 : shippingPolicy.getFee();
+
+        BigDecimal finalPrice = discountedPrice.subtract(usedPoint).add(shippingFee);
 
         order.setTotalPrice(totalPrice);
         order.setDiscountPrice(discountPrice);

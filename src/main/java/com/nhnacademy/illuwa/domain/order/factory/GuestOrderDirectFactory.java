@@ -2,7 +2,8 @@ package com.nhnacademy.illuwa.domain.order.factory;
 
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
 import com.nhnacademy.illuwa.common.external.product.dto.BookPriceDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
+import com.nhnacademy.illuwa.common.external.product.dto.CartOrderItemDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 import com.nhnacademy.illuwa.domain.order.entity.Packaging;
@@ -17,47 +18,45 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static com.nhnacademy.illuwa.domain.order.util.generator.NumberGenerator.generateGuestId;
 import static com.nhnacademy.illuwa.domain.order.util.generator.NumberGenerator.generateOrderNumber;
 
 @Component
 @RequiredArgsConstructor
-public class GuestOrderCartFactory {
+public class GuestOrderDirectFactory {
     private final PackagingRepository packagingRepository;
     private final ShippingPolicyRepository shippingPolicyRepository;
     private final OrderRepository orderRepository;
     private final ProductApiClient productApiClient;
 
-    public Order createGuestOrderCart(GuestOrderRequest request) {
-
+    public Order createGuestOrderDirect(GuestOrderRequestDirect request) {
         ShippingPolicy shippingPolicy = shippingPolicyRepository.findByActive(true).orElseThrow(()
-        -> new NotFoundException("해당 배송정책을 찾을 수 없습니다."));
+                -> new NotFoundException("해당 배송정책을 찾을 수 없습니다."));
 
-        Order order = buildOrderSkeleton(request, shippingPolicy);
+        Order emptyOrder = Order.builder().build();
 
-        List<OrderItem> orderItems = buildOrderItems(request, order);
+        OrderItem orderItem = buildOrderItem(request, emptyOrder);
 
-        order.getItems().addAll(orderItems);
+        Order order = buildOrderSkeleton(request, shippingPolicy, orderItem);
+
+        orderItem.setOrder(order);
+
+        order.getItems().add(orderItem);
 
         applyPriceSummary(order, shippingPolicy);
 
         return orderRepository.save(order);
+
     }
 
-
-
-    private Order buildOrderSkeleton(GuestOrderRequest request, ShippingPolicy shippingPolicy) {
+    private Order buildOrderSkeleton(GuestOrderRequestDirect request, ShippingPolicy shippingPolicy, OrderItem orderItem) {
         Order.OrderBuilder builder = Order.builder()
                 .orderNumber(generateOrderNumber(LocalDateTime.now()))
-                .memberId(null)
                 .guestId(generateGuestId())
-                .shippingFee(shippingPolicy.getFee())
                 .shippingPolicy(shippingPolicy)
                 .deliveryDate(request.getDeliveryDate())
-                .totalPrice(request.getTotalPrice())
-                .finalPrice(request.getTotalPrice())
+                .totalPrice(orderItem.getItemTotalPrice())
                 .recipientName(request.getRecipientName())
                 .recipientContact(request.getRecipientContact())
                 .readAddress(request.getReadAddress())
@@ -72,39 +71,39 @@ public class GuestOrderCartFactory {
         builder
             .discountPrice(BigDecimal.ZERO)
             .usedPoint(BigDecimal.ZERO)
-            .orderStatus(OrderStatus.AwaitingPayment)
-            .memberCouponId(null);
+            .orderStatus(OrderStatus.AwaitingPayment);
     }
 
-    // 개별 아이템 로직
-    private List<OrderItem> buildOrderItems(GuestOrderRequest request, Order order) {
-        return request.getCartItem().stream().map(req -> {
+    private OrderItem buildOrderItem(GuestOrderRequestDirect request, Order order) {
 
-            BookPriceDto priceDto = productApiClient.getBookPriceByBookId(req.getBookId())
-                    .orElseThrow(() -> new NotFoundException("해당 도서의 가격을 찾을 수 없습니다."));
+        CartOrderItemDto item = request.getItem();
+        Long bookId = item.getBookId();
 
-            BigDecimal unitPrice = priceDto.getPriceSales() != null
-                    ? priceDto.getPriceSales()
-                    : priceDto.getPriceStandard();
+        BookPriceDto priceDto = productApiClient.getBookPriceByBookId(bookId).orElseThrow(()
+                -> new NotFoundException("도서 가격 정보를 찾을 수 없습니다.", bookId));
 
-            BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(req.getQuantity()));
+        BigDecimal unitPrice = priceDto.getPriceSales() != null
+                ? priceDto.getPriceSales()
+                : priceDto.getPriceStandard();
 
-            Packaging packaging = packagingRepository.findByPackagingId(req.getPackagingId())
-                    .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", req.getPackagingId()));
+        BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
 
-            return OrderItem.builder()
-                    .bookId(req.getBookId())
-                    .order(order)
-                    .quantity(req.getQuantity())
-                    .price(unitPrice)
-                    .discountPrice(BigDecimal.ZERO)
-                    .itemTotalPrice(totalPrice)
-                    .packaging(packaging)
-                    .build();
-        }).toList();
+        Packaging packaging = packagingRepository.findByPackagingId(item.getPackagingId())
+                .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", item.getPackagingId()));
+
+        return OrderItem.builder()
+                .bookId(item.getBookId())
+                .order(order)
+                .quantity(item.getQuantity())
+                .price(unitPrice)
+                .discountPrice(BigDecimal.ZERO)
+                .itemTotalPrice(totalPrice)
+                .packaging(packaging)
+                .build();
     }
 
-    private void applyPriceSummary(Order order, ShippingPolicy shippingPolicy) {
+    private void applyPriceSummary(Order order,
+                                   ShippingPolicy shippingPolicy) {
         BigDecimal totalPrice = order.getTotalPrice();
 
         BigDecimal shippingFee = totalPrice.compareTo(shippingPolicy.getMinAmount()) >= 0
