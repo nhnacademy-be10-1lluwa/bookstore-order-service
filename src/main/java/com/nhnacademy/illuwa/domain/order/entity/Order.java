@@ -34,7 +34,7 @@ public class Order {
     private Long memberId;
 
     @Column(name = "guest_id")
-    private Long guestId;
+    private String guestId;
 
     @Setter
     @Column(name = "shipping_fee", nullable = false)
@@ -88,7 +88,7 @@ public class Order {
     private Long memberCouponId;
 
     @Builder
-    public Order(long orderId, String orderNumber, Long memberId, Long guestId, BigDecimal shippingFee, ShippingPolicy shippingPolicy, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus, String recipientName, String recipientContact, String readAddress, String detailAddress, Long memberCouponId) {
+    public Order(long orderId, String orderNumber, Long memberId, String guestId, BigDecimal shippingFee, ShippingPolicy shippingPolicy, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus, String recipientName, String recipientContact, String readAddress, String detailAddress, Long memberCouponId) {
         this.orderId = orderId;
         this.orderNumber = orderNumber;
         this.memberId = memberId;
