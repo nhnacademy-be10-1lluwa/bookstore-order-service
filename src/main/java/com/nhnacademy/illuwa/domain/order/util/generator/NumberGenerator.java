@@ -18,15 +18,19 @@ public class NumberGenerator {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String currentTime = time.format(formatter);
         String randomNumber = generateRandomNumber();
-        return currentTime  + "-" + randomNumber;
+        return currentTime + "-" + randomNumber;
     }
 
     public static String generateRandomNumber() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }
 
-    // 비회원 번호 생성 (12자리)
-    public static Long generateGuestId() {
-        return Long.parseLong(UUID.randomUUID().toString().replace("\\D", "").substring(0, 12));
+    // 비회원 번호 생성 (20자리, 숫자만)
+    public static String generateGuestId() {
+        StringBuilder uuid = new StringBuilder(UUID.randomUUID().toString().replaceAll("[^0-9]", ""));
+        while (uuid.length() < 20) {
+            uuid.append("0"); // pad if too short
+        }
+        return uuid.substring(0, 20);
     }
 }
