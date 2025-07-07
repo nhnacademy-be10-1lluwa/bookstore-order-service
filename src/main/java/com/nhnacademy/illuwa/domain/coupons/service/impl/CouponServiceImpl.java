@@ -32,6 +32,7 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public CouponCreateResponse createCoupon(CouponCreateRequest request) {
         Long bookId = null; // 도서 ID
+        String bookName = null;
         Long categoryId = null; // 카테고리 ID
         String categoryName = null;
 
@@ -45,6 +46,7 @@ public class CouponServiceImpl implements CouponService {
                 throw new BadRequestException("도서 할인 쿠폰은 bookId 필드의 값이 필요합니다.");
             } else {
                 bookId = bookApiClient.getBookById(request.getBooksId()).getBookId();
+                bookName = bookApiClient.getBookById(request.getBooksId()).getTitle();
             }
         }else if(request.getCouponType() == CouponType.CATEGORY){
             if (Objects.isNull(request.getCategoryId())) {
@@ -59,6 +61,7 @@ public class CouponServiceImpl implements CouponService {
         }
 
         System.out.println(categoryName);
+        System.out.println(bookName);
 
 
         // 3 -> 정책이 활성화인지 비활성인지 체크

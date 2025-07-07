@@ -15,8 +15,7 @@ import java.time.LocalDate;
 @Builder(toBuilder = true) // 목록 조회 용도
 public class MemberCouponResponse {
     private Long memberCouponId;
-    private String memberName;
-    private String memberEmail;
+    private Long memberId;
     private String couponName;
     private Long couponId;
     private String couponCode;
@@ -28,8 +27,7 @@ public class MemberCouponResponse {
     public static MemberCouponResponse fromEntity(MemberCoupon memberCoupon) {
         return MemberCouponResponse.builder()
                 .memberCouponId(memberCoupon.getId())
-                .memberName(memberCoupon.getMember().getName())
-                .memberEmail(memberCoupon.getMember().getEmail())
+                .memberId(memberCoupon.getMemberId())
                 .couponName(memberCoupon.getCoupon().getCouponName())
                 .couponId(memberCoupon.getCoupon().getId())
                 .couponCode(memberCoupon.getCoupon().getPolicy().getCode())

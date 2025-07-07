@@ -2,6 +2,7 @@ package com.nhnacademy.illuwa.domain.coupons.exception;
 
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.BadRequestException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyExistsByCodeException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.*;
@@ -38,6 +39,19 @@ public class GlobalExceptionHandler {
                         "status", HttpStatus.NOT_FOUND.value(),
                         "error", HttpStatus.NOT_FOUND.getReasonPhrase(),
                         "code", "COUPON_POLICY_NOT_FOUND",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    // 정책 코드 중복
+    @ExceptionHandler(CouponPolicyExistsByCodeException.class)
+    public ResponseEntity<?> handleCouponPolicyExistsByCode(CouponPolicyExistsByCodeException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "status", HttpStatus.CONFLICT.value(),
+                        "error", HttpStatus.CONFLICT.getReasonPhrase(),
+                        "code", "COUPON_POLICY_EXISTS_BY_CODE",
                         "message", ex.getMessage()
                 ));
     }

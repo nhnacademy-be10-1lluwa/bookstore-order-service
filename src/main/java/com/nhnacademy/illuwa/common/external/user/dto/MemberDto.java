@@ -7,9 +7,9 @@ import java.time.LocalDate;
 
 @Getter
 public class MemberDto {
-    @JsonProperty("member_id")
-    Long memberId;
-    String name;
-    String email;
-    LocalDate birth;
+    @JsonProperty("memberId")
+    private Long memberId;
+    private String name;
+    private String email;
+    private LocalDate birth;
 }

@@ -11,14 +11,12 @@ import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateR
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
-import com.nhnacademy.illuwa.domain.coupons.entity.Member;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -170,25 +168,25 @@ public class CouponPolicyTestUtils {
                 .build();
     }
 
-    public static Member createMember() {
-        return Member.builder()
-                .id(1L)
-                .name("testName")
-                .email("test@test.com")
-                .birth(LocalDate.now())
-                .build();
+//    public static Member createMember() {
+//        return Member.builder()
+//                .id(1L)
+//                .name("testName")
+//                .email("test@test.com")
+//                .birth(LocalDate.now())
+//                .build();
+//
+//    }
 
-    }
-
-    public static MemberCoupon createMemberCoupon() {
-        return MemberCoupon.builder()
-                .id(1L)
-                .member(createMember())
-                .coupon(createCoupon())
-                .issuedAt(LocalDate.now())
-                .expiresAt(LocalDate.now().plusMonths(1L))
-                .build();
-    }
+//    public static MemberCoupon createMemberCoupon() {
+//        return MemberCoupon.builder()
+//                .id(1L)
+//                .member(createMember())
+//                .coupon(createCoupon())
+//                .issuedAt(LocalDate.now())
+//                .expiresAt(LocalDate.now().plusMonths(1L))
+//                .build();
+//    }
 
     public static CouponCreateRequest createCouponRequest() {
         return CouponCreateRequest.builder()
@@ -202,16 +200,16 @@ public class CouponPolicyTestUtils {
                 .build();
     }
 
-    public static MemberCouponCreateRequest createMemberCouponRequest() {
-        return MemberCouponCreateRequest.builder()
-                .memberEmail("test@test.com")
-                .couponName("테 스 트 쿠 폰 이 름 임")
-                .build();
-    }
+//    public static MemberCouponCreateRequest createMemberCouponRequest() {
+//        return MemberCouponCreateRequest.builder()
+//                .memberEmail("test@test.com")
+//                .couponName("테 스 트 쿠 폰 이 름 임")
+//                .build();
+//    }
 
-    public static MemberCouponResponse memberCouponResponse() {
-        return MemberCouponResponse.fromEntity(createMemberCoupon());
-    }
+//    public static MemberCouponResponse memberCouponResponse() {
+//        return MemberCouponResponse.fromEntity(createMemberCoupon());
+//    }
 
 
 

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @FeignClient(
-        name = "user-service"
+        name = "user-service", url = "http://localhost:10303"
 )
 public interface UserApiClient {
 
@@ -31,4 +31,13 @@ public interface UserApiClient {
     // 멤버들의 3개월간 순수 주문 금액 전송 (주문 상태: confirmed )
     @PostMapping(value = "/members/grades/update")
     List<MemberGradeUpdateRequest> sendNetOrderAmount(@RequestBody List<MemberGradeUpdateRequest> request);
+
+    @GetMapping("/members")
+    MemberDto getMember(@RequestHeader("X-USER_ID") long memberId);
+    // 이제 USER 쪽에 RabbitMQ로 회원가입이 완료됐다는 신호를 받으면 내쪽에서는
+    // 그 신호를 바탕으로 FeignClient를 사용해 해당 멤버 ID를 기준으로 멤버를 가져와서
+    // 쿠폰을 발급시킨다.
+
+    @GetMapping(value = "/members/birth-month", params = "month")
+    List<MemberDto> getBirthDayMember(@RequestParam("month") int month);
 }
