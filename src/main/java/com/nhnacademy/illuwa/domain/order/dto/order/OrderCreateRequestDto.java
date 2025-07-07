@@ -18,7 +18,7 @@ public class OrderCreateRequestDto {
 
     private Long memberId;
 
-    private Long guestId;
+    private String guestId;
 
     @NotNull
     private Long shippingPolicyId;

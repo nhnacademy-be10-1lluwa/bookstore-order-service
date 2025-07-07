@@ -1,23 +1,21 @@
 package com.nhnacademy.illuwa.domain.order.dto.order.member;
 
 import com.nhnacademy.illuwa.common.external.product.dto.CartOrderItemDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.common.BaseOrderRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class MemberOrderRequest {
-    private String recipientName;
-    private String recipientContact;
-    private String readAddress;
-    private String detailAddress;
-    private LocalDate deliverDate;
+@SuperBuilder
+public class MemberOrderRequest extends BaseOrderRequest {
     private String cartId;
 
     private List<CartOrderItemDto> cartItem;
