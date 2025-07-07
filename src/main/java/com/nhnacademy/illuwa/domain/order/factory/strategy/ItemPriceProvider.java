@@ -18,15 +18,15 @@ public interface ItemPriceProvider {
     /**
      * @param unitPrice 단가
      * @param grossPrice 단가*수량 (할인 전)
-     * @param amountAfterDiscount 할인 액
+     * @param discountAmount 할인 액
     */
     record ItemPrice(BigDecimal unitPrice,
                      BigDecimal grossPrice,
-                     BigDecimal amountAfterDiscount) {
+                     BigDecimal discountAmount) {
 
         /// @return 할인이 적용된 금액
         public BigDecimal netPrice() {
-            return grossPrice.subtract(amountAfterDiscount);
+            return grossPrice.subtract(discountAmount);
         }
     }
 
