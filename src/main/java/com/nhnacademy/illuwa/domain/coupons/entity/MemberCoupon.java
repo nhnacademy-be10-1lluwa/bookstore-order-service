@@ -1,4 +1,5 @@
 package com.nhnacademy.illuwa.domain.coupons.entity;
+import com.nhnacademy.illuwa.common.external.user.dto.MemberDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,9 +26,11 @@ public class MemberCoupon {
     private Long id;
 
     // 쿠폰을 가진 사용자
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+//    @ManyToOne
+//    @JoinColumn(name = "member_id")
+    @Column(name = "member_id")
+    private Long memberId;
+
 
     // 어떠한 쿠폰을 가지고 있는지 판별
     @ManyToOne

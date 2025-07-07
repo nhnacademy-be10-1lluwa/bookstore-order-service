@@ -33,6 +33,7 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public CouponCreateResponse createCoupon(CouponCreateRequest request) {
         Long bookId = null; // 도서 ID
+        String bookName = null;
         Long categoryId = null; // 카테고리 ID
         String categoryName = null;
 
@@ -62,6 +63,7 @@ public class CouponServiceImpl implements CouponService {
         }
 
         System.out.println(categoryName);
+        System.out.println(bookName);
 
 
         // 3 -> 정책이 활성화인지 비활성인지 체크

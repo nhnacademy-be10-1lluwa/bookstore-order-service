@@ -1,6 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
-import com.nhnacademy.illuwa.domain.coupons.repository.MemberRepository;
+//import com.nhnacademy.illuwa.domain.coupons.repository.MemberRepository;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.AdminReturnRequestRegisterDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestListResponseDto;
@@ -37,8 +37,8 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
 
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private MemberRepository memberRepository;
+//    @Autowired
+//    private MemberRepository memberRepository;
 
 
     @Override

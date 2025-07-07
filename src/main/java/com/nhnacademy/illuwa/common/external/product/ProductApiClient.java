@@ -27,6 +27,7 @@ public interface ProductApiClient {
     @GetMapping("/admin/books/{bookId}")
     Optional<BookDto> getBookById(@PathVariable("bookId") Long bookId);
 
+
     // 카테고리 가져오기
     @GetMapping("/categories/{categoryId}")
     CategoryDto getCategoryById(@PathVariable("categoryId") Long categoryId);
