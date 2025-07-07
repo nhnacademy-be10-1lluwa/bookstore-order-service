@@ -24,7 +24,7 @@ public interface ProductApiClient {
     Optional<BookPriceDto> getBookPriceByBookId(@RequestParam("bookId") Long bookId);
 
     // 책 정보 가져오기
-    @GetMapping("/admin/books/{bookId}")
+    @GetMapping("/books/{bookId}")
     BookDto getBookById(@PathVariable("bookId") Long bookId);
 
     // 카테고리 가져오기
