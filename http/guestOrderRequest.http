@@ -4,11 +4,6 @@ GET https://examples.http-client.intellij.net/get
 
 ###
 
-#@GetMapping("/order-history/{order-number}")
-#    public ResponseEntity<OrderResponseDto> getOrderHistory(@PathVariable("order-number") String orderNumber, @RequestParam("contact") String recipientContact) {
-#        OrderResponseDto response = orderService.getOrderByNumberAndContact(orderNumber, recipientContact);
-#        return ResponseEntity.ok(response);
-#    }
 
 
 GET localhost:10305/order/guest/order-history/20250707121010-1111100000?contact=010-9876-5432
