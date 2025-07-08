@@ -26,6 +26,7 @@ import com.nhnacademy.illuwa.domain.order.factory.GuestOrderCartFactory;
 import com.nhnacademy.illuwa.domain.order.factory.GuestOrderDirectFactory;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderCartFactory;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderDirectFactory;
+import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;
@@ -44,6 +45,7 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
     private final GuestOrderCartFactory guestOrderCartFactory;
     private final MemberOrderCartFactory memberOrderCartFactory;
@@ -189,5 +191,8 @@ public class OrderServiceImpl implements OrderService {
         return new GuestOrderInitDirectResponseDto(item, packaging);
     }
 
-
+    @Override
+    public boolean isConfirmedOrder(Long memberId, Long bookId) {
+        return orderRepository.existsConfirmedOrderByMemberIdAndBookId(memberId, bookId);
+    }
 }

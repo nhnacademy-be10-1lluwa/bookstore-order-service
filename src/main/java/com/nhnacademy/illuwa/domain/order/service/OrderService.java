@@ -67,4 +67,7 @@ public interface OrderService {
 
     // 주문 초기 데이터 조회(guest, 바로 구매용)
     GuestOrderInitDirectResponseDto getGuestOrderInitDirectData(Long bookId, Long memberId);
+
+    // 주문 도서에 대한 구매 확정여부를 검사
+    boolean isConfirmedOrder(Long memberId, Long bookId);
 }
