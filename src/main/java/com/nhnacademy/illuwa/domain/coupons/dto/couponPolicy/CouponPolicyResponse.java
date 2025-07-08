@@ -2,6 +2,7 @@ package com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy;
 
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +19,8 @@ public class CouponPolicyResponse {
     private Long id;
 
     private String code;
+
+    private DiscountType discountType;
 
     private BigDecimal minOrderAmount; // 최소 주문 금액
 
@@ -40,6 +43,7 @@ public class CouponPolicyResponse {
         return CouponPolicyResponse.builder()
                 .id(policy.getId())
                 .code(policy.getCode())
+                .discountType(policy.getDiscountType())
                 .status(policy.getStatus())
                 .minOrderAmount(policy.getMinOrderAmount())
                 .discountAmount(policy.getDiscountAmount())
