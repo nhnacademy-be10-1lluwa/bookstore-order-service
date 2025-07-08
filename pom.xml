@@ -156,7 +156,7 @@
                 <configuration>
                     <!--                     Querydsl 해당 경로에 Q 클래스를 생성 -->
                     <generatedSourcesDirectory>
-                        ${project.build.directory}/generated-sources/annotations
+                        ${project.build.directory}/generated-sources/querydsl
                     </generatedSourcesDirectory>
                     <annotationProcessorPaths>
                         <path>
