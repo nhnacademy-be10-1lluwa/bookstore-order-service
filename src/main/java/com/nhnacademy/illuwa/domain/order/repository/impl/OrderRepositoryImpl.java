@@ -2,13 +2,14 @@ package com.nhnacademy.illuwa.domain.order.repository.impl;
 
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.QOrderListResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.QOrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
-import com.nhnacademy.illuwa.domain.order.entity.QOrder;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.repository.custom.OrderQuerydslRepository;
+import com.nhnacademy.illuwa.domain.order.entity.QOrder;
+import com.nhnacademy.illuwa.domain.order.entity.QOrderItem;
+import com.nhnacademy.illuwa.domain.order.dto.order.QOrderListResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.QOrderResponseDto;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -31,6 +32,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
 
     private final JPAQueryFactory queryFactory;
     private final QOrder order = QOrder.order;
+    private final QOrderItem orderItem = QOrderItem.orderItem;
 
     @Autowired
     public OrderRepositoryImpl(JPAQueryFactory queryFactory) {
@@ -138,5 +140,18 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 )));
     }
 
+    @Override
+    public boolean existsConfirmedOrderByMemberIdAndBookId(Long memberId, Long bookId) {
 
+        return queryFactory
+                .selectOne()
+                .from(order)
+                .join(order.items, orderItem)
+                .where(
+                        order.memberId.eq(memberId),
+                        order.orderStatus.eq(OrderStatus.Confirmed),
+                        orderItem.bookId.eq(bookId)
+                )
+                .fetchFirst() != null;
+    }
 }
