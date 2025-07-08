@@ -11,3 +11,9 @@ Accept: application/json
 
 
 ###
+
+GET localhost:10305/order/member/orders/history?page=0&size=10
+X-USER-ID: 2
+Accept: application/json
+
+###

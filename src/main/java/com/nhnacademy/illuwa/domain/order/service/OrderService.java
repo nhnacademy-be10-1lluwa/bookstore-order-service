@@ -14,6 +14,8 @@ import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface OrderService {
 
     // 전체 주문 내역 조회(ADMIN)
@@ -25,7 +27,9 @@ public interface OrderService {
     // number 로 주문 내역 조회(ADMIN, MEMBERS)
     OrderResponseDto getOrderByNumber(String orderNumber);
 
+    Page<OrderListResponseDto> getOrdersByMemberId(Long memberId, Pageable pageable);
 
+    // 비회원 주문 조회
     OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact);
 
     // member 별 주문 내역 조회 (ADMIN, MEMBERS)
