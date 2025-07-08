@@ -47,6 +47,7 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
     private final GuestOrderCartFactory guestOrderCartFactory;
     private final MemberOrderCartFactory memberOrderCartFactory;
@@ -212,5 +213,8 @@ public class OrderServiceImpl implements OrderService {
         return new GuestOrderInitDirectResponseDto(item, packaging);
     }
 
-
+    @Override
+    public boolean isConfirmedOrder(Long memberId, Long bookId) {
+        return orderRepository.existsConfirmedOrderByMemberIdAndBookId(memberId, bookId);
+    }
 }

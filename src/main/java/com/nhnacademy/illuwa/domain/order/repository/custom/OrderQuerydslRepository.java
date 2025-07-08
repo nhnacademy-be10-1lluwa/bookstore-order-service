@@ -30,4 +30,7 @@ public interface OrderQuerydslRepository {
 
     // 멤버별 3개월 주문내역 조회
     List<MemberGradeUpdateRequest> buildMemberGradeUpdateRequest();
+
+    // 주문한 책이 구매 확정상태인지 확인
+    boolean existsConfirmedOrderByMemberIdAndBookId(Long memberId, Long bookId);
 }
