@@ -14,30 +14,25 @@ import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static com.nhnacademy.illuwa.domain.order.util.generator.NumberGenerator.generateGuestId;
-
-/*
+/**
  * [스택킹 정책 안내]
  * 1. 각 아이템에 개별 쿠폰이 적용됨 (buildOrderItems).
  * 2. 이후 전체 주문 단위의 쿠폰이 적용됨 (applyPriceSummary).
  * 3. 사용자가 입력한 포인트는 최종 금액에서 차감.
- * 4. 배송비는 최종 금액 기준으로 산정되며, 최소 주문 금액 미만일 경우 부과됨.
- *
+ * 4. 배송비는 최종 금액(할인 적용 전) 기준으로 산정되며, 최소 주문 금액 미만일 경우 부과됨.
+ * <p>
  * 주의: 쿠폰 중복 할인 적용 정책은 기획 정책과 일치해야 하며,
  * 필요시 아이템/전체 쿠폰 중 하나만 허용하도록 검증 필요.
  */
 
 @Component
 public class MemberOrderCartFactory extends AbstractOrderFactory<MemberOrderRequest> {
-
     private final DiscountCalculator discountCalculator;
     private final MemberCouponService memberCouponService;
-
     public MemberOrderCartFactory(PackagingRepository packagingRepo,
                                   ShippingPolicyRepository shippingRepo,
                                   OrderRepository orderRepo,
@@ -48,6 +43,7 @@ public class MemberOrderCartFactory extends AbstractOrderFactory<MemberOrderRequ
         this.discountCalculator = discountCalculator;
         this.memberCouponService = memberCouponService;
     }
+
 
     @Override
     public Order create(Long memberId, MemberOrderRequest request) {

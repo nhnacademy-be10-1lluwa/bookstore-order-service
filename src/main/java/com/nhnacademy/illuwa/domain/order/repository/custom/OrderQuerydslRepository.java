@@ -22,9 +22,11 @@ public interface OrderQuerydslRepository {
     // 멤버별 3개원 간 순수 주문 금액 조회
     List<MemberGradeUpdateRequest> findAllGradeDto();
 
-
     // 주문번호로 주문 찾기
     Optional<OrderResponseDto> findOrderDtoByOrderNumber(String orderNumber);
+
+    // 비회원 주문 찾기
+    Optional<OrderResponseDto> findOrderDtoByOrderNumberAndContact(String orderNumber, String recipientContact);
 
     // 멤버별 3개월 주문내역 조회
     List<MemberGradeUpdateRequest> buildMemberGradeUpdateRequest();

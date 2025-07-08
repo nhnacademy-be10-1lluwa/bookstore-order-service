@@ -25,6 +25,9 @@ public interface OrderService {
     // number 로 주문 내역 조회(ADMIN, MEMBERS)
     OrderResponseDto getOrderByNumber(String orderNumber);
 
+
+    OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact);
+
     // member 별 주문 내역 조회 (ADMIN, MEMBERS)
     Page<OrderListResponseDto> getOrderByMemberId(Long memberId, Pageable pageable);
 

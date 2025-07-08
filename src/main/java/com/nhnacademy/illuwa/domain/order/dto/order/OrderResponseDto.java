@@ -1,31 +1,33 @@
 package com.nhnacademy.illuwa.domain.order.dto.order;
 
+import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
+import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
 public class OrderResponseDto {
 
-    private long orderId; // orderNumber
+    private Long orderId; // orderNumber
     private String orderNumber;
-    private long memberId; // 회원 넘버
+    private Long memberId; // 회원 넘버
     private LocalDateTime orderDate; //
     private LocalDate deliveryDate;
     private BigDecimal totalPrice;
     private OrderStatus orderStatus;
+    private List<OrderItemResponseDto> items;
 
     @QueryProjection
-    public OrderResponseDto(long orderId, String orderNumber, long memberId, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus) {
+    public OrderResponseDto(Long orderId, String orderNumber, Long memberId, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus, List<OrderItemResponseDto> items) {
         this.orderId = orderId;
         this.orderNumber = orderNumber;
         this.memberId = memberId;
@@ -33,7 +35,10 @@ public class OrderResponseDto {
         this.deliveryDate = deliveryDate;
         this.totalPrice = totalPrice;
         this.orderStatus = orderStatus;
+        this.items = items;
     }
+
+
 
     public static OrderResponseDto orderResponseDto(Order order) {
          return OrderResponseDto.builder()

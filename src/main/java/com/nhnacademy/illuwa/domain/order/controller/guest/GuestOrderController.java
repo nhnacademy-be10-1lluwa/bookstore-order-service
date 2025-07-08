@@ -33,6 +33,12 @@ public class GuestOrderController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/order-history/{order-number}")
+    public ResponseEntity<OrderResponseDto> getOrderHistory(@PathVariable("order-number") String orderNumber, @RequestParam("contact") String recipientContact) {
+        OrderResponseDto response = orderService.getOrderByNumberAndContact(orderNumber, recipientContact);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/init-member-info/books/{book-id}")
     public ResponseEntity<GuestOrderInitDirectResponseDto> getOrderInitDirect(@PathVariable("book-id") Long bookId, @CurrentUserId Long memberId) {
         GuestOrderInitDirectResponseDto response = orderService.getGuestOrderInitDirectData(bookId, memberId);
