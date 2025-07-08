@@ -78,6 +78,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Page<OrderListResponseDto> getOrdersByMemberId(Long memberId, Pageable pageable) {
+        return orderRepository.findOrderListDtoByMemberId(memberId, pageable);
+    }
+
+    @Override
     public OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact) {
         OrderResponseDto orderResponseDto = orderRepository.findOrderDtoByOrderNumberAndContact(orderNumber, recipientContact)
             .orElseThrow(() -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));

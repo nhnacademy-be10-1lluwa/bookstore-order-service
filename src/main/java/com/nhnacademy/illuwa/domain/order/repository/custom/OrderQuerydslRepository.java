@@ -22,6 +22,9 @@ public interface OrderQuerydslRepository {
     // 멤버별 3개원 간 순수 주문 금액 조회
     List<MemberGradeUpdateRequest> findAllGradeDto();
 
+    // 멤버 주문 내역들 찾기
+    Page<OrderListResponseDto> findOrderListDtoByMemberId(Long memberId, Pageable pageable);
+
     // 주문번호로 주문 찾기
     Optional<OrderResponseDto> findOrderDtoByOrderNumber(String orderNumber);
 

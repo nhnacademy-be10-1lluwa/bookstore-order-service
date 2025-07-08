@@ -15,13 +15,13 @@ import java.time.LocalDateTime;
 @Builder
 public class OrderListResponseDto {
 
-    private long orderId;
+    private Long orderId;
     private LocalDateTime orderDate;
     private BigDecimal totalPrice;
     private OrderStatus orderStatus;
 
     @QueryProjection
-    public OrderListResponseDto(long orderId, LocalDateTime orderDate, BigDecimal totalPrice, OrderStatus orderStatus) {
+    public OrderListResponseDto(Long orderId, LocalDateTime orderDate, BigDecimal totalPrice, OrderStatus orderStatus) {
         this.orderId = orderId;
         this.orderDate = orderDate;
         this.totalPrice = totalPrice;
