@@ -72,4 +72,9 @@ public class MemberOrderController {
         orderService.cancelOrderByOrderNumber(orderNumber);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/confirmed")
+    public ResponseEntity<Boolean> isConfirmedOrder(@RequestHeader("X-USER-ID") Long memberId, @RequestParam Long bookId) {
+        return ResponseEntity.ok(orderService.isConfirmedOrder(memberId, bookId));
+    }
 }
