@@ -70,4 +70,18 @@ public class OrderItemRepositoryImpl extends QuerydslRepositorySupport implement
                 .fetch();
     }
 
+    @Override
+    public List<OrderItemResponseDto> findOrderItemDtosByOrderNumber(String orderNumber) {
+        return queryFactory
+                .select(new QOrderItemResponseDto(
+                        orderItem.orderItemId,
+                        orderItem.bookId,
+                        orderItem.quantity,
+                        orderItem.price,
+                        orderItem.packaging.packagingId))
+                .from(orderItem)
+                .where(orderItem.order.orderNumber.eq(orderNumber))
+                .fetch();
+    }
+
 }

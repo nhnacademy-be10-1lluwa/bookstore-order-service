@@ -1,119 +1,108 @@
 package com.nhnacademy.illuwa.domain.order.factory;
 
-import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
-import com.nhnacademy.illuwa.common.external.product.dto.BookPriceDto;
+import com.nhnacademy.illuwa.domain.coupons.factory.DiscountCalculator;
+import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
-import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
+import com.nhnacademy.illuwa.domain.order.factory.strategy.ItemPriceProvider;
+import com.nhnacademy.illuwa.domain.order.factory.strategy.ItemPriceProvider.CartPayload;
+import com.nhnacademy.illuwa.domain.order.factory.strategy.ItemPriceProvider.ItemPrice;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static com.nhnacademy.illuwa.domain.order.util.generator.NumberGenerator.generateGuestId;
-import static com.nhnacademy.illuwa.domain.order.util.generator.NumberGenerator.generateOrderNumber;
 
 @Component
-@RequiredArgsConstructor
-public class GuestOrderCartFactory {
-    private final PackagingRepository packagingRepository;
-    private final ShippingPolicyRepository shippingPolicyRepository;
-    private final OrderRepository orderRepository;
-    private final ProductApiClient productApiClient;
+public class GuestOrderCartFactory extends AbstractOrderFactory<GuestOrderRequest> {
 
-    public Order createGuestOrderCart(GuestOrderRequest request) {
 
-        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByActive(true).orElseThrow(()
-        -> new NotFoundException("해당 배송정책을 찾을 수 없습니다."));
+    private final DiscountCalculator discountCalculator;
+    private final MemberCouponService memberCouponService;
 
-        Order order = buildOrderSkeleton(request, shippingPolicy);
+    @Autowired
+    public GuestOrderCartFactory(
+            PackagingRepository packagingRepo,
+            ShippingPolicyRepository shippingRepo,
+            OrderRepository orderRepo,
+            @Qualifier("cartPayloadProvider") ItemPriceProvider priceProvider,
+            DiscountCalculator discountCalculator,
+            MemberCouponService memberCouponService) {
 
-        List<OrderItem> orderItems = buildOrderItems(request, order);
-
-        order.getItems().addAll(orderItems);
-
-        applyPriceSummary(order, shippingPolicy);
-
-        return orderRepository.save(order);
+        super(packagingRepo, shippingRepo, orderRepo, priceProvider);
+        this.discountCalculator = discountCalculator;
+        this.memberCouponService = memberCouponService;
     }
 
 
+    @Override
+    public Order create(Long memberId, GuestOrderRequest request) {
 
-    private Order buildOrderSkeleton(GuestOrderRequest request, ShippingPolicy shippingPolicy) {
-        Order.OrderBuilder builder = Order.builder()
-                .orderNumber(generateOrderNumber(LocalDateTime.now()))
-                .memberId(null)
+        ShippingPolicy pol = shippingRepo.findByActive(true).orElseThrow(() -> new NotFoundException("배송 정책을 찾을 수 없습니다."));
+
+        // 기본 주문 골격
+        Order order = initSkeleton()
                 .guestId(generateGuestId())
-                .shippingFee(shippingPolicy.getFee())
-                .shippingPolicy(shippingPolicy)
+                .shippingPolicy(pol)
+                .shippingFee(pol.getFee())
                 .deliveryDate(request.getDeliveryDate())
-                .totalPrice(request.getTotalPrice())
-                .finalPrice(request.getTotalPrice())
                 .recipientName(request.getRecipientName())
                 .recipientContact(request.getRecipientContact())
                 .readAddress(request.getReadAddress())
-                .detailAddress(request.getDetailAddress());
+                .detailAddress(request.getDetailAddress())
+                .build();
 
-        applyDefaultOrderFields(builder);
+        // 아이템 생성
+        List<OrderItem> items = buildOrderItems(request, order);
+        order.getItems().addAll(items);
 
-        return builder.build();
+        // 총액/배송비/(주문, 포인트) 계산
+        applyPriceSummary(order, pol, BigDecimal.ZERO, null, discountCalculator, memberCouponService);
+
+        return orderRepo.save(order);
     }
 
-    private void applyDefaultOrderFields(Order.OrderBuilder builder) {
-        builder
-            .discountPrice(BigDecimal.ZERO)
-            .usedPoint(BigDecimal.ZERO)
-            .orderStatus(OrderStatus.AwaitingPayment)
-            .memberCouponId(null);
-    }
-
-    // 개별 아이템 로직
     private List<OrderItem> buildOrderItems(GuestOrderRequest request, Order order) {
-        return request.getCartItem().stream().map(req -> {
+        return request.getCartItem().stream().map(item -> {
+            CartPayload payload = new CartPayload(
+                    item.getPrice(),
+                    item.getQuantity(),
+                    item.getTotalPrice());
 
-            BookPriceDto priceDto = productApiClient.getBookPriceByBookId(req.getBookId())
-                    .orElseThrow(() -> new NotFoundException("해당 도서의 가격을 찾을 수 없습니다."));
+            ItemPrice ip = priceProvider.fetchPrice(
+                    item.getBookId(),
+                    item.getQuantity(),
+                    item.getCouponId(),
+                    Optional.of(payload)
+            );
 
-            BigDecimal unitPrice = priceDto.getPriceSales() != null
-                    ? priceDto.getPriceSales()
-                    : priceDto.getPriceStandard();
+            Packaging packaging = packagingRepo.findByPackagingId(item.getPackagingId())
+                    .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", item.getPackagingId()));
 
-            BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(req.getQuantity()));
+            BigDecimal packagingFee = packaging.getPackagingPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
 
-            Packaging packaging = packagingRepository.findByPackagingId(req.getPackagingId())
-                    .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", req.getPackagingId()));
+            BigDecimal itemTotal = item.getTotalPrice().add(packagingFee);
 
             return OrderItem.builder()
-                    .bookId(req.getBookId())
                     .order(order)
-                    .quantity(req.getQuantity())
-                    .price(unitPrice)
-                    .discountPrice(BigDecimal.ZERO)
-                    .itemTotalPrice(totalPrice)
+                    .bookId(item.getBookId())
+                    .quantity(item.getQuantity())
+                    .price(ip.unitPrice())
+                    .discountPrice(ip.discountAmount())
+                    .itemTotalPrice(itemTotal)
                     .packaging(packaging)
                     .build();
         }).toList();
-    }
-
-    private void applyPriceSummary(Order order, ShippingPolicy shippingPolicy) {
-        BigDecimal totalPrice = order.getTotalPrice();
-
-        BigDecimal shippingFee = totalPrice.compareTo(shippingPolicy.getMinAmount()) >= 0
-                ? BigDecimal.ZERO
-                : shippingPolicy.getFee();
-
-        BigDecimal finalPrice = totalPrice.add(shippingFee);
-
-        order.setFinalPrice(finalPrice);
-        order.setShippingFee(shippingFee);
     }
 }

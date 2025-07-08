@@ -1,9 +1,11 @@
 package com.nhnacademy.illuwa.domain.order.service;
 
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitDirectResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitDirectResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDirect;
@@ -23,6 +25,9 @@ public interface OrderService {
     // number 로 주문 내역 조회(ADMIN, MEMBERS)
     OrderResponseDto getOrderByNumber(String orderNumber);
 
+
+    OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact);
+
     // member 별 주문 내역 조회 (ADMIN, MEMBERS)
     Page<OrderListResponseDto> getOrderByMemberId(Long memberId, Pageable pageable);
 
@@ -32,13 +37,15 @@ public interface OrderService {
     // member 주문하기 (cart)
     Order memberCreateOrderFromCartWithItems(Long memberId, MemberOrderRequest request);
 
+    // member 주문하기 (direct)
+    Order memberCreateOrderDirectWithItems(Long memberId, MemberOrderRequestDirect request);
+
     // guest 주문하기 (cart)
-    Order guestCreateOrderFromCartWithItems(GuestOrderRequest request);
+    Order guestCreateOrderFromCartWithItems(Long memberId, GuestOrderRequest request);
 
     // guest 주문하기 (direct)
-    Order guestCreateOrderDirectWithItems(GuestOrderRequestDirect request);
+    Order guestCreateOrderDirectWithItems(Long memberId, GuestOrderRequestDirect request);
 
-    Order memberCreateOrderDirectWithItems(MemberOrderRequestDirect request);
 
     // id로 주문 취소하기(MEMBERS)
     void cancelOrderById(Long orderId);
@@ -52,9 +59,15 @@ public interface OrderService {
     // number로 주문 상태 변경하기 (ADMIN)
     void updateOrderStatusByOrderNumber(String orderNumber, OrderUpdateStatusDto orderUpdateDto);
 
-    // 주문 초기 데이터 조회(member)
+    // 주문 초기 데이터 조회(member, 장바구니용)
     MemberOrderInitFromCartResponseDto getOrderInitFromCartData(Long memberId);
 
-    // 주문 초기 데이터 조회(Guest)
+    // 주문 초기 데이터 조회(Guest, 장바구니용)
     GuestOrderInitFromCartResponseDto getGuestOrderInitFromCartData(Long cartId);
-    }
+
+    // 주문 초기 게이터 조회(member, 바로 구매용)
+    MemberOrderInitDirectResponseDto getOrderInitDirectData(Long bookId, Long memberId);
+
+    // 주문 초기 데이터 조회(guest, 바로 구매용)
+    GuestOrderInitDirectResponseDto getGuestOrderInitDirectData(Long bookId, Long memberId);
+}

@@ -1,17 +1,22 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
+import com.nhnacademy.illuwa.common.external.product.dto.BookDto;
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitDirectResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitDirectResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDirect;
+import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
@@ -22,6 +27,8 @@ import com.nhnacademy.illuwa.common.external.user.dto.MemberAddressDto;
 import com.nhnacademy.illuwa.domain.order.factory.GuestOrderCartFactory;
 import com.nhnacademy.illuwa.domain.order.factory.GuestOrderDirectFactory;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderCartFactory;
+import com.nhnacademy.illuwa.domain.order.factory.MemberOrderDirectFactory;
+import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;
@@ -48,6 +55,8 @@ public class OrderServiceImpl implements OrderService {
     private final UserApiClient userApiClient;
     private final PackagingService packagingService;
     private final GuestOrderDirectFactory guestOrderDirectFactory;
+    private final MemberOrderDirectFactory memberOrderDirectFactory;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -69,6 +78,25 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact) {
+        OrderResponseDto orderResponseDto = orderRepository.findOrderDtoByOrderNumberAndContact(orderNumber, recipientContact)
+            .orElseThrow(() -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+
+        List<OrderItemResponseDto> items = orderItemRepository.findOrderItemDtosByOrderNumber(orderNumber);
+
+        // 책 제목 조회 및 설정
+        for (OrderItemResponseDto item : items) {
+            BookDto bookDto = productApiClient.getBookById(item.getBookId())
+                    .orElseThrow(() -> new NotFoundException("해당 도서를 찾을 수 없습니다.", item.getBookId()));
+            item.setTitle(bookDto.getTitle());
+        }
+
+        orderResponseDto.setItems(items);
+
+        return orderResponseDto;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<OrderListResponseDto> getOrderByMemberId(Long memberId, Pageable pageable) {
         return orderRepository.findByMemberId(memberId, pageable).map(OrderListResponseDto::orderListResponseDto);
@@ -83,24 +111,28 @@ public class OrderServiceImpl implements OrderService {
     // member 주문하기 (cart)
     @Override
     public Order memberCreateOrderFromCartWithItems(Long memberId, MemberOrderRequest request) {
-        return memberOrderCartFactory.createMemberOrderCart(memberId, request);
+        Order order = memberOrderCartFactory.create(memberId, request);
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public Order memberCreateOrderDirectWithItems(Long memberId, MemberOrderRequestDirect request) {
+        Order order = memberOrderDirectFactory.create(memberId, request);
+        return orderRepository.save(order);
     }
 
     // guest 주문하기 (cart)
     @Override
-    public Order guestCreateOrderFromCartWithItems(GuestOrderRequest request) {
-        return guestOrderCartFactory.createGuestOrderCart(request);
+    public Order guestCreateOrderFromCartWithItems(Long memberId, GuestOrderRequest request) {
+        Order order = guestOrderCartFactory.create(null, request);
+        return orderRepository.save(order);
     }
 
     // guest 주문하기 (direct)
     @Override
-    public Order guestCreateOrderDirectWithItems(GuestOrderRequestDirect request) {
-        return guestOrderDirectFactory.createGuestOrderDirect(request);
-    }
-
-    @Override
-    public Order memberCreateOrderDirectWithItems(MemberOrderRequestDirect request) {
-        return null;
+    public Order guestCreateOrderDirectWithItems(Long memberId, GuestOrderRequestDirect request) {
+        Order order = guestOrderDirectFactory.create(null, request);
+        return orderRepository.save(order);
     }
 
 
@@ -158,5 +190,27 @@ public class OrderServiceImpl implements OrderService {
 
         return new GuestOrderInitFromCartResponseDto(cartItems, packaging);
     }
+
+    @Override
+    public MemberOrderInitDirectResponseDto getOrderInitDirectData(Long bookId, Long memberId) {
+        BookDto item = productApiClient.getBookById(bookId).orElseThrow(
+                () -> new NotFoundException("해당 도서를 찾을 수 없습니다.", bookId));
+        List<MemberAddressDto> addresses = userApiClient.getAddressByMemberId(memberId);
+        List<MemberCouponResponse> coupons = memberCouponService.getAllMemberCoupons(memberId);
+        List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
+        BigDecimal pointBalance = userApiClient.getPointByMemberId(memberId).orElseThrow(()
+                -> new NotFoundException("보유 포인트를 찾을 수 없습니다.", memberId)).getPoint();
+
+        return new MemberOrderInitDirectResponseDto(item, addresses, coupons, packaging, pointBalance);
+    }
+
+    @Override
+    public GuestOrderInitDirectResponseDto getGuestOrderInitDirectData(Long bookId, Long memberId) {
+        BookDto item = productApiClient.getBookById(bookId).orElseThrow(
+                () -> new NotFoundException("해당 도서를 찾을 수 없습니다.", bookId));
+        List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
+        return new GuestOrderInitDirectResponseDto(item, packaging);
+    }
+
 
 }

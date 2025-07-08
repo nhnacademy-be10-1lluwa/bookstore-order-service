@@ -14,4 +14,6 @@ public interface OrderItemQuerydslRepository {
 
     List<OrderItemResponseDto> findOrderItemDtosByOrderId(Long orderId);
 
+    List<OrderItemResponseDto> findOrderItemDtosByOrderNumber(String orderNumber);
+
 }

@@ -11,15 +11,16 @@ import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
-@Builder
 public class OrderItemResponseDto {
 
     private long orderItemId;
+    private String title;
     private long bookId;
     private int quantity;
     private BigDecimal price;
     private long packagingId;
 
+    @Builder
     @QueryProjection
     public OrderItemResponseDto(long orderItemId, long bookId, int quantity, BigDecimal price, long packagingId) {
         this.orderItemId = orderItemId;
@@ -28,7 +29,6 @@ public class OrderItemResponseDto {
         this.price = price;
         this.packagingId = packagingId;
     }
-
 }
 
 // order 서버 -> 프론트 (개별 주문 상품 조회 요청)

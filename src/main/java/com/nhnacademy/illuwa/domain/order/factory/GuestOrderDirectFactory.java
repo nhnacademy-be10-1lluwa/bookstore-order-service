@@ -1,118 +1,114 @@
 package com.nhnacademy.illuwa.domain.order.factory;
 
-import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
-import com.nhnacademy.illuwa.common.external.product.dto.BookPriceDto;
-import com.nhnacademy.illuwa.common.external.product.dto.CartOrderItemDto;
+import com.nhnacademy.illuwa.common.external.product.dto.OrderItemDto;
+import com.nhnacademy.illuwa.domain.coupons.factory.DiscountCalculator;
+import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
-import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
+import com.nhnacademy.illuwa.domain.order.factory.strategy.ItemPriceProvider;
+import com.nhnacademy.illuwa.domain.order.factory.strategy.ItemPriceProvider.ItemPrice;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import static com.nhnacademy.illuwa.domain.order.util.generator.NumberGenerator.generateGuestId;
-import static com.nhnacademy.illuwa.domain.order.util.generator.NumberGenerator.generateOrderNumber;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
-public class GuestOrderDirectFactory {
+public class GuestOrderDirectFactory extends AbstractOrderFactory<GuestOrderRequestDirect> {
     private final PackagingRepository packagingRepository;
     private final ShippingPolicyRepository shippingPolicyRepository;
     private final OrderRepository orderRepository;
-    private final ProductApiClient productApiClient;
 
-    public Order createGuestOrderDirect(GuestOrderRequestDirect request) {
-        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByActive(true).orElseThrow(()
-                -> new NotFoundException("해당 배송정책을 찾을 수 없습니다."));
+    @Qualifier("bookApiProvider")
+    private final ItemPriceProvider priceProvider;
 
-        Order emptyOrder = Order.builder().build();
+    private final DiscountCalculator discountCalculator;
+    private final MemberCouponService memberCouponService;
 
-        OrderItem orderItem = buildOrderItem(request, emptyOrder);
+    @Autowired
+    public GuestOrderDirectFactory(
+            PackagingRepository packagingRepository,
+            ShippingPolicyRepository shippingPolicyRepository,
+            OrderRepository orderRepository,
+            @Qualifier("bookApiProvider") ItemPriceProvider priceProvider,
+            DiscountCalculator discountCalculator,
+            MemberCouponService memberCouponService) {
 
-        Order order = buildOrderSkeleton(request, shippingPolicy, orderItem);
-
-        orderItem.setOrder(order);
-
-        order.getItems().add(orderItem);
-
-        applyPriceSummary(order, shippingPolicy);
-
-        return orderRepository.save(order);
-
+        super(packagingRepository, shippingPolicyRepository, orderRepository, priceProvider);
+        this.priceProvider = priceProvider;
+        this.discountCalculator = discountCalculator;
+        this.memberCouponService = memberCouponService;
+        this.packagingRepository = packagingRepository;
+        this.shippingPolicyRepository = shippingPolicyRepository;
+        this.orderRepository = orderRepository;
     }
 
-    private Order buildOrderSkeleton(GuestOrderRequestDirect request, ShippingPolicy shippingPolicy, OrderItem orderItem) {
-        Order.OrderBuilder builder = Order.builder()
-                .orderNumber(generateOrderNumber(LocalDateTime.now()))
+    @Override
+    public Order create(Long memberId, GuestOrderRequestDirect request) {
+        ShippingPolicy pol = shippingPolicyRepository.findByActive(true).orElseThrow(()
+                -> new NotFoundException("해당 배송정책을 찾을 수 없습니다."));
+
+        Order order = initSkeleton()
                 .guestId(generateGuestId())
-                .shippingPolicy(shippingPolicy)
+                .shippingPolicy(pol)
+                .shippingFee(pol.getFee())
                 .deliveryDate(request.getDeliveryDate())
-                .totalPrice(orderItem.getItemTotalPrice())
                 .recipientName(request.getRecipientName())
                 .recipientContact(request.getRecipientContact())
                 .readAddress(request.getReadAddress())
-                .detailAddress(request.getDetailAddress());
+                .detailAddress(request.getDetailAddress())
+                .build();
 
-        applyDefaultOrderFields(builder);
+        List<OrderItem> items = List.of(buildOrderItem(request, order));
+        order.getItems().addAll(items);
 
-        return builder.build();
-    }
+        applyPriceSummary(
+                order, pol,
+                BigDecimal.ZERO,      // usedPoint
+                null,                 // orderCoupon
+                discountCalculator, memberCouponService);
 
-    private void applyDefaultOrderFields(Order.OrderBuilder builder) {
-        builder
-            .discountPrice(BigDecimal.ZERO)
-            .usedPoint(BigDecimal.ZERO)
-            .orderStatus(OrderStatus.AwaitingPayment);
+        return orderRepository.save(order);
     }
 
     private OrderItem buildOrderItem(GuestOrderRequestDirect request, Order order) {
 
-        CartOrderItemDto item = request.getItem();
+        OrderItemDto item = request.getItem();
         Long bookId = item.getBookId();
 
-        BookPriceDto priceDto = productApiClient.getBookPriceByBookId(bookId).orElseThrow(()
-                -> new NotFoundException("도서 가격 정보를 찾을 수 없습니다.", bookId));
+        ItemPrice ip = priceProvider.fetchPrice(
+                bookId,
+                item.getQuantity(),
+                item.getCouponId(),
+                Optional.empty());
 
-        BigDecimal unitPrice = priceDto.getPriceSales() != null
-                ? priceDto.getPriceSales()
-                : priceDto.getPriceStandard();
-
-        BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
+        BigDecimal unitPrice = ip.unitPrice();
+        BigDecimal totalPrice = ip.netPrice();   // 할인 후 금액
 
         Packaging packaging = packagingRepository.findByPackagingId(item.getPackagingId())
                 .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", item.getPackagingId()));
+
+        totalPrice = packaging.getPackagingPrice().multiply(BigDecimal.valueOf(item.getQuantity())).add(ip.netPrice());
 
         return OrderItem.builder()
                 .bookId(item.getBookId())
                 .order(order)
                 .quantity(item.getQuantity())
                 .price(unitPrice)
-                .discountPrice(BigDecimal.ZERO)
+                .discountPrice(ip.discountAmount())
                 .itemTotalPrice(totalPrice)
                 .packaging(packaging)
                 .build();
-    }
-
-    private void applyPriceSummary(Order order,
-                                   ShippingPolicy shippingPolicy) {
-        BigDecimal totalPrice = order.getTotalPrice();
-
-        BigDecimal shippingFee = totalPrice.compareTo(shippingPolicy.getMinAmount()) >= 0
-                ? BigDecimal.ZERO
-                : shippingPolicy.getFee();
-
-        BigDecimal finalPrice = totalPrice.add(shippingFee);
-
-        order.setFinalPrice(finalPrice);
-        order.setShippingFee(shippingFee);
     }
 }

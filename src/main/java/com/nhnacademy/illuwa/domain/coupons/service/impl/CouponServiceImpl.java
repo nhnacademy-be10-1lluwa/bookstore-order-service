@@ -13,6 +13,7 @@ import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyN
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
+import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,8 +46,9 @@ public class CouponServiceImpl implements CouponService {
             if (Objects.isNull(request.getBooksId())) {
                 throw new BadRequestException("도서 할인 쿠폰은 bookId 필드의 값이 필요합니다.");
             } else {
-                bookId = bookApiClient.getBookById(request.getBooksId()).getBookId();
-                bookName = bookApiClient.getBookById(request.getBooksId()).getTitle();
+                bookId = bookApiClient.getBookById(request.getBooksId()).orElseThrow(
+                        () -> new NotFoundException("도서 정보를 가져올 수 없습니다.")
+                ).getBookId();
             }
         }else if(request.getCouponType() == CouponType.CATEGORY){
             if (Objects.isNull(request.getCategoryId())) {
