@@ -15,8 +15,12 @@ import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,6 +45,12 @@ public class MemberOrderController {
     @GetMapping(value = "/orders/{order-number}")
     public ResponseEntity<OrderResponseDto> getOrderByOrderId(@PathVariable("order-number") String orderNumber) {
         OrderResponseDto response = orderService.getOrderByNumber(orderNumber);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/orders/history")
+    public ResponseEntity<Page<OrderListResponseDto>> getOrdersHistory(@CurrentUserId Long memberId, Pageable pageable) {
+        Page<OrderListResponseDto> response = orderService.getOrderByMemberId(memberId, pageable);
         return ResponseEntity.ok(response);
     }
 

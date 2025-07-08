@@ -20,7 +20,7 @@ public class PackagingResponseDto {
     private BigDecimal packagingPrice;
 
     @QueryProjection
-    public PackagingResponseDto(long packagingId, String packagingName, BigDecimal packagingPrice) {
+    public PackagingResponseDto(Long packagingId, String packagingName, BigDecimal packagingPrice) {
         this.packagingId = packagingId;
         this.packagingName = packagingName;
         this.packagingPrice = packagingPrice;

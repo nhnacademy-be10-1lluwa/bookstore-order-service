@@ -1,11 +1,8 @@
 package com.nhnacademy.illuwa.domain.order.dto.orderItem;
 
-import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
+import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -13,21 +10,31 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class OrderItemResponseDto {
 
-    private long orderItemId;
+    private Long orderItemId;
     private String title;
-    private long bookId;
+    private Long bookId;
     private int quantity;
     private BigDecimal price;
-    private long packagingId;
+    private Long packagingId;
+    private BigDecimal totalPrice;
+    private PackagingResponseDto packaging; // <- 추가해야 프론트에서 출력 가능
 
     @Builder
     @QueryProjection
-    public OrderItemResponseDto(long orderItemId, long bookId, int quantity, BigDecimal price, long packagingId) {
+    public OrderItemResponseDto(Long orderItemId,
+                                Long bookId,
+                                int quantity,
+                                BigDecimal price,
+                                Long packagingId,
+                                BigDecimal totalPrice,
+                                PackagingResponseDto packagingResponseDto) {
         this.orderItemId = orderItemId;
         this.bookId = bookId;
         this.quantity = quantity;
         this.price = price;
         this.packagingId = packagingId;
+        this.totalPrice = totalPrice;
+        this.packaging = packagingResponseDto;
     }
 }
 

@@ -2,7 +2,6 @@ package com.nhnacademy.illuwa.domain.order.dto.order;
 
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
-import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
@@ -22,17 +21,19 @@ public class OrderResponseDto {
     private Long memberId; // 회원 넘버
     private LocalDateTime orderDate; //
     private LocalDate deliveryDate;
+    private BigDecimal shippingFee;
     private BigDecimal totalPrice;
     private OrderStatus orderStatus;
     private List<OrderItemResponseDto> items;
 
     @QueryProjection
-    public OrderResponseDto(Long orderId, String orderNumber, Long memberId, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal totalPrice, OrderStatus orderStatus, List<OrderItemResponseDto> items) {
+    public OrderResponseDto(Long orderId, String orderNumber, Long memberId, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal shippingFee, BigDecimal totalPrice, OrderStatus orderStatus, List<OrderItemResponseDto> items) {
         this.orderId = orderId;
         this.orderNumber = orderNumber;
         this.memberId = memberId;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
+        this.shippingFee = shippingFee;
         this.totalPrice = totalPrice;
         this.orderStatus = orderStatus;
         this.items = items;
@@ -47,6 +48,7 @@ public class OrderResponseDto {
                  .memberId(order.getMemberId())
                  .orderDate(order.getOrderDate())
                  .deliveryDate(order.getDeliveryDate())
+                 .shippingFee(order.getShippingFee())
                  .totalPrice(order.getTotalPrice())
                  .orderStatus(order.getOrderStatus())
                  .build();
