@@ -80,6 +80,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                         order.memberId,
                         order.orderDate,
                         order.deliveryDate,
+                        order.shippingFee,
                         order.totalPrice,
                         order.orderStatus,
                         Expressions.nullExpression()))
@@ -106,6 +107,33 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     }
 
     @Override
+    public Page<OrderListResponseDto> findOrderListDtoByMemberId(Long memberId, Pageable pageable) {
+
+        JPAQuery<OrderListResponseDto> query = queryFactory
+                .select(new QOrderListResponseDto(
+                        order.orderId,
+                        order.orderDate,
+                        order.totalPrice,
+                        order.orderStatus
+                ))
+                .from(order)
+                .where(order.memberId.eq(memberId))
+                .orderBy(order.orderDate.desc());
+
+        List<OrderListResponseDto> contents = query.fetch();
+
+        Long totalWrapper = queryFactory.select(order.count())
+                .from(order)
+                .fetchOne();
+
+        long total = totalWrapper != null ? totalWrapper : 0L;
+
+        return new PageImpl<>(contents,
+                pageable,
+                total);
+    }
+
+    @Override
     public Optional<OrderResponseDto> findOrderDtoByOrderNumber(String orderNumber) {
         OrderResponseDto result =  queryFactory
                 .select(new QOrderResponseDto(
@@ -114,6 +142,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                         order.memberId,
                         order.orderDate,
                         order.deliveryDate,
+                        order.shippingFee,
                         order.totalPrice,
                         order.orderStatus,
                         Expressions.nullExpression()))
@@ -133,6 +162,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                         order.memberId,
                         order.orderDate,
                         order.deliveryDate,
+                        order.shippingFee,
                         order.totalPrice,
                         order.orderStatus,
                         Expressions.nullExpression()))

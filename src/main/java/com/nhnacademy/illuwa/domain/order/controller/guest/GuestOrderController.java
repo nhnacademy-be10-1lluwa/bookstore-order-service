@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @Controller
 @AllArgsConstructor
 @RequestMapping("/order/guest")
@@ -33,8 +35,8 @@ public class GuestOrderController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/order-history/{order-number}")
-    public ResponseEntity<OrderResponseDto> getOrderHistory(@PathVariable("order-number") String orderNumber, @RequestParam("contact") String recipientContact) {
+    @GetMapping("/order-history/{orderNumber}")
+    public ResponseEntity<OrderResponseDto> getOrderHistory(@PathVariable("orderNumber") String orderNumber, @RequestParam("contact") String recipientContact) {
         OrderResponseDto response = orderService.getOrderByNumberAndContact(orderNumber, recipientContact);
         return ResponseEntity.ok(response);
     }
