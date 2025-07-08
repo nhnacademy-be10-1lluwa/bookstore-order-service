@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
     private final PackagingService packagingService;
     private final GuestOrderDirectFactory guestOrderDirectFactory;
     private final MemberOrderDirectFactory memberOrderDirectFactory;
-    private final OrderItemRepository orderItemRepository;
+
 
     @Override
     @Transactional(readOnly = true)
