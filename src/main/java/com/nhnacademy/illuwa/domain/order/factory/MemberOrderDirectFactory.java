@@ -98,5 +98,46 @@ public class MemberOrderDirectFactory extends AbstractOrderFactory<MemberOrderRe
                 .itemTotalPrice(totalPrice)
                 .packaging(packaging)
                 .build();
+
+
+    }
+
+    private void applyPriceSummary(Order order) {
+
+        BigDecimal totalPrice = order.getItems().stream().map(OrderItem::getItemTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        ShippingPolicy shippingPolicy = order.getShippingPolicy();
+
+       Long couponId = order.getMemberCouponId(); // 전체 적용 쿠폰
+
+        BigDecimal usedPoint = Optional.ofNullable(order.getUsedPoint()).orElse(BigDecimal.ZERO); // 사용한 포인트
+
+        BigDecimal shippingFee = totalPrice.compareTo(shippingPolicy.getMinAmount()) >= 0
+                ? BigDecimal.ZERO
+                : shippingPolicy.getFee();
+
+        BigDecimal discountAmount = BigDecimal.ZERO;
+
+        ///  전체 주문의 할인 / 총액
+       if (couponId != null) {
+
+           MemberCouponDiscountDto memberCouponDiscount = memberCouponService.getDiscountPrice(couponId);
+
+           BigDecimal orderAmountAfterCoupon = discountCalculator.calculate(
+                   totalPrice,
+                   memberCouponDiscount.getDiscountAmount(),
+                   memberCouponDiscount.getDiscountPercent()
+           );
+
+           // 할인 금액
+           discountAmount = totalPrice.subtract(orderAmountAfterCoupon);
+       }
+        BigDecimal payableAmount = totalPrice.subtract(discountAmount).add(shippingFee);
+
+        order.setTotalPrice(totalPrice);
+        order.setDiscountPrice(discountAmount);
+        order.setUsedPoint(usedPoint);
+        order.setFinalPrice(payableAmount);
+        order.setShippingFee(shippingFee);
     }
 }
