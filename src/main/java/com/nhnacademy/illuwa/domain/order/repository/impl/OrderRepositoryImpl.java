@@ -11,6 +11,7 @@ import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.repository.custom.OrderQuerydslRepository;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,8 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                         order.orderDate,
                         order.deliveryDate,
                         order.totalPrice,
-                        order.orderStatus))
+                        order.orderStatus,
+                        Expressions.nullExpression()))
                 .from(order)
                 .where(order.orderId.eq(orderId))
                 .fetchOne();
@@ -113,9 +115,29 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                         order.orderDate,
                         order.deliveryDate,
                         order.totalPrice,
-                        order.orderStatus))
+                        order.orderStatus,
+                        Expressions.nullExpression()))
                 .from(order)
                 .where(order.orderNumber.eq(orderNumber))
+                .fetchOne();
+
+        return Optional.ofNullable(result);
+    }
+
+    @Override
+    public Optional<OrderResponseDto> findOrderDtoByOrderNumberAndContact(String orderNumber, String recipientContact) {
+        OrderResponseDto result =  queryFactory
+                .select(new QOrderResponseDto(
+                        order.orderId,
+                        order.orderNumber,
+                        order.memberId,
+                        order.orderDate,
+                        order.deliveryDate,
+                        order.totalPrice,
+                        order.orderStatus,
+                        Expressions.nullExpression()))
+                .from(order)
+                .where(order.orderNumber.eq(orderNumber).and(order.recipientContact.eq(recipientContact)))
                 .fetchOne();
 
         return Optional.ofNullable(result);

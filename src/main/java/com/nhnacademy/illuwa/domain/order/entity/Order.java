@@ -84,7 +84,7 @@ public class Order {
     @Column(name = "detail_address", nullable = false)
     private String detailAddress;
 
-    @Column(name = "member_coupon_id", nullable = false)
+    @Column(name = "member_coupon_id")
     private Long memberCouponId;
 
     @Builder

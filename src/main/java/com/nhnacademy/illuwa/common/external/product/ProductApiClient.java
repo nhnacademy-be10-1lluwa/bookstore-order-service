@@ -20,11 +20,11 @@ public interface ProductApiClient {
 
 
     // 책 가격 가져오기
-    @GetMapping(value = "/admin/books", params = "bookId")
+    @GetMapping(value = "/books", params = "bookId")
     Optional<BookPriceDto> getBookPriceByBookId(@RequestParam("bookId") Long bookId);
 
     // 책 정보 가져오기
-    @GetMapping("/admin/books/{bookId}")
+    @GetMapping("/books/{bookId}")
     Optional<BookDto> getBookById(@PathVariable("bookId") Long bookId);
 
 

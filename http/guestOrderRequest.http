@@ -1,0 +1,13 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+###
+
+
+
+GET localhost:10305/order/guest/order-history/20250707121010-1111100000?contact=010-9876-5432
+Accept: application/json
+
+
+###

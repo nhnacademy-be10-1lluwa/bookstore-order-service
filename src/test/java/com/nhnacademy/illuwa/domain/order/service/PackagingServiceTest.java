@@ -30,8 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class PackagingServiceTest {
 
-
-
     @Autowired
     private PackagingServiceImpl service;
 
