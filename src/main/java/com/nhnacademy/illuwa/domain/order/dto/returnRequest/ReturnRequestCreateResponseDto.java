@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Data
@@ -12,7 +13,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 public class ReturnRequestCreateResponseDto {
 
-    private ZonedDateTime requestedAt;
+    private LocalDateTime requestedAt;
     private BigDecimal shippingFeeDeducted;
     private long orderId;
 }

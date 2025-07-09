@@ -3,6 +3,10 @@ package com.nhnacademy.illuwa.domain.coupons.service.impl;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.BadRequestException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyExistsByCodeException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponPolicyService;
 import jakarta.transaction.Transactional;
@@ -10,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +25,33 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
 
     @Override
     public CouponPolicyCreateResponse createPolicy(CouponPolicyCreateRequest request) {
+        if (request.getDiscountType() == DiscountType.AMOUNT) {
+            if (Objects.isNull(request.getDiscountAmount())) {
+                throw new BadRequestException("금액 할인 정책은 discountAmount 값이 필요합니다.");
+            }
+            if (request.getDiscountPercent() != null) {
+                throw new BadRequestException("금액 할인 정책은 discountPercent 값을 입력하면 안됩니다.");
+            }
+        } else {
+            if (Objects.isNull(request.getDiscountPercent())) {
+                throw new BadRequestException("퍼센트 할인 정책은 discountPercent 값이 필요합니다.");
+            }
+            if (Objects.nonNull(request.getDiscountAmount())) {
+                throw new BadRequestException("퍼센트 할인 정책은 discountAmount 값을 입력하면 안됩니다.");
+            }
+        }
+
+        if (couponPolicyRepository.existsByCode(request.getCode())) {
+            throw new CouponPolicyExistsByCodeException("해당 정책코드는 중복으로 인해 사용이 불가능합니다.");
+        }
+
         CouponPolicy couponPolicy = CouponPolicy.builder()
                 .code(request.getCode())
                 .minOrderAmount(request.getMinOrderAmount())
                 .discountAmount(request.getDiscountAmount())
                 .discountPercent(request.getDiscountPercent())
                 .maxDiscountAmount(request.getMaxDiscountAmount())
+                .discountType(request.getDiscountType())
                 .build();
 
         CouponPolicy save = couponPolicyRepository.save(couponPolicy);
@@ -38,7 +64,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     public CouponPolicyResponse getPolicyById(Long id) {
         return couponPolicyRepository.findById(id)
                 .map(CouponPolicyResponse::fromEntity)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰 ID 입니다. -> " + id));
+                .orElseThrow(() -> new CouponPolicyNotFoundException("존재하지 않는 쿠폰 ID 입니다. -> " + id));
     }
 
     @Override
@@ -46,7 +72,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
 
         return couponPolicyRepository.findByCode(code)
                 .map(CouponPolicyResponse::fromEntity)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰 코드입니다. -> " + code));
+                .orElseThrow(() -> new CouponPolicyNotFoundException("존재하지 않는 쿠폰 코드입니다. -> " + code));
     }
 
     @Override
@@ -59,7 +85,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     @Override
     public CouponPolicyUpdateResponse updatePolicy(String code, CouponPolicyUpdateRequest request) {
         CouponPolicy policy = couponPolicyRepository.findByCode(code)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰 코드입니다. + " + code));
+                .orElseThrow(() -> new CouponPolicyNotFoundException("존재하지 않는 쿠폰 코드입니다. -> + " + code));
 
         if (request.getMinOrderAmount() != null) {
             policy.setMinOrderAmount(request.getMinOrderAmount());
@@ -88,14 +114,8 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     public void deletePolicy(String code) {
 
         CouponPolicy couponPolicy = couponPolicyRepository.findByCode(code)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰 코드입니다. + " + code));
+                .orElseThrow(() -> new CouponPolicyNotFoundException("존재하지 않는 쿠폰 코드입니다. -> + " + code));
         couponPolicy.setStatus(CouponStatus.INACTIVE);
     }
 
-//    @Override
-//    public void createBatch(List<CouponPolicyCreateRequest> policies) {
-//        for (CouponPolicyCreateRequest req : policies) {
-//            createPolicy(req); // 단건 생성 메서드를 사용
-//        }
-//    }
 }

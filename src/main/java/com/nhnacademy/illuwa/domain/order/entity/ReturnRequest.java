@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,32 +23,33 @@ public class ReturnRequest {
     private long returnId;
 
     @Setter
-    private String memberId;
+    @Column(name = "requested_at")
+    private LocalDateTime requestedAt;
 
     @Setter
-    private ZonedDateTime requestedAt;
+    @Column(name = "returned_at")
+    private LocalDateTime returnedAt;
 
     @Setter
-    private ZonedDateTime returnedAt;
-
-    @Setter
-    private BigDecimal shippingFeeDeducted;
+    @Column(name = "shipping_fee_deducted")
+    private BigDecimal shippingFeeDeducted; // 차감 배송비
 
     @Setter
     @Enumerated(EnumType.STRING)
+    @Column(name = "return_reason")
     private ReturnReason returnReason;
 
     @Setter
     @Enumerated(EnumType.STRING)
+    @Column(name = "return_status")
     private ReturnStatus status;
 
     @OneToOne
-    @JoinColumn(name = "order_order_id", referencedColumnName = "order_id")
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     private Order order;
 
     @Builder
-    public ReturnRequest(String memberId, ZonedDateTime requestedAt, ZonedDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason returnReason, ReturnStatus status, Order order) {
-        this.memberId = memberId;
+    public ReturnRequest(LocalDateTime requestedAt, LocalDateTime returnedAt, BigDecimal shippingFeeDeducted, ReturnReason returnReason, ReturnStatus status, Order order) {
         this.requestedAt = requestedAt;
         this.returnedAt = returnedAt;
         this.shippingFeeDeducted = shippingFeeDeducted;
@@ -56,4 +57,5 @@ public class ReturnRequest {
         this.status = status;
         this.order = order;
     }
+
 }

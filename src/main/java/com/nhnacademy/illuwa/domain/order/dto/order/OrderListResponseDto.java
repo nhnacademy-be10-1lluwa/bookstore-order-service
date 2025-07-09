@@ -8,20 +8,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @Builder
 public class OrderListResponseDto {
 
-    private long orderId;
-    private ZonedDateTime orderDate;
+    private Long orderId;
+    private LocalDateTime orderDate;
     private BigDecimal totalPrice;
     private OrderStatus orderStatus;
 
     @QueryProjection
-    public OrderListResponseDto(long orderId, ZonedDateTime orderDate, BigDecimal totalPrice, OrderStatus orderStatus) {
+    public OrderListResponseDto(Long orderId, LocalDateTime orderDate, BigDecimal totalPrice, OrderStatus orderStatus) {
         this.orderId = orderId;
         this.orderDate = orderDate;
         this.totalPrice = totalPrice;
@@ -39,3 +39,5 @@ public class OrderListResponseDto {
 }
 
 // order 서버 -> 프론트 (Admin/ 주문 목록 응답(리스트용) )
+
+// 주문 list 반환용

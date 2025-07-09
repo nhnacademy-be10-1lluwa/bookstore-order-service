@@ -22,12 +22,14 @@ public class CouponResponse {
     private LocalDate validTo;
     private CouponType couponType;
     private String comment;
+    private String conditions;
     private BigDecimal issueCount;
+    private Long bookId;
+
 
     // 도서와 카테고리 연동시 주석해제
 //    private Long bookId;
 //    private Long categoryId;
-
 
     public static CouponResponse fromEntity(Coupon coupon) {
         return CouponResponse.builder()
@@ -38,7 +40,9 @@ public class CouponResponse {
                 .validTo(coupon.getValidTo())
                 .couponType(coupon.getCouponType())
                 .comment(coupon.getComment())
+                .conditions(coupon.getConditions())
                 .issueCount(coupon.getIssueCount())
+                .bookId(coupon.getBookId())
                 .build();
     }
 

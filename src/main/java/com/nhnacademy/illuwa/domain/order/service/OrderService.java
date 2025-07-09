@@ -1,35 +1,80 @@
 package com.nhnacademy.illuwa.domain.order.service;
 
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderCreateRequestDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.*;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitDirectResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitDirectResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
+import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDirect;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface OrderService {
 
     // 전체 주문 내역 조회(ADMIN)
-    List<OrderListResponseDto> getAllOrders();
+    Page<OrderListResponseDto> getAllOrders(Pageable pageable);
 
     // id로 주문 내역 조회(ADMIN, MEMBERS)
-    OrderResponseDto getOrderById(String orderId);
+    OrderResponseDto getOrderById(Long orderId);
+
+    // number 로 주문 내역 조회(ADMIN, MEMBERS)
+    OrderResponseDto getOrderByNumber(String orderNumber);
+
+    Page<OrderListResponseDto> getOrdersByMemberId(Long memberId, Pageable pageable);
+
+    // 비회원 주문 조회
+    OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact);
 
     // member 별 주문 내역 조회 (ADMIN, MEMBERS)
-    List<OrderListResponseDto> getOrderByMemberId(String memberId);
+    Page<OrderListResponseDto> getOrderByMemberId(Long memberId, Pageable pageable);
 
     // 주문 상태별 조회 (ADMIN)
-    List<OrderListResponseDto> getOrderByOrderStatus(OrderStatus status);
+    Page<OrderListResponseDto> getOrderByOrderStatus(OrderStatus status, Pageable pageable);
 
-    // 주문하기(MEMBERS)
-    Order createOrderWithItems(String memberId, OrderCreateRequestDto dto);
+    // member 주문하기 (cart)
+    Order memberCreateOrderFromCartWithItems(Long memberId, MemberOrderRequest request);
 
-    // 주문 취소하기(MEMBERS)
-    void cancelOrderById(String orderId);
+    // member 주문하기 (direct)
+    Order memberCreateOrderDirectWithItems(Long memberId, MemberOrderRequestDirect request);
 
-    // 주문 상태 변경하기(ADMIN)
-    void updateOrderStatus(String orderId, OrderUpdateStatusDto orderUpdateDto);
+    // guest 주문하기 (cart)
+    Order guestCreateOrderFromCartWithItems(Long memberId, GuestOrderRequest request);
 
+    // guest 주문하기 (direct)
+    Order guestCreateOrderDirectWithItems(Long memberId, GuestOrderRequestDirect request);
+
+
+    // id로 주문 취소하기(MEMBERS)
+    void cancelOrderById(Long orderId);
+
+    // number로 주문 취소하기(MEMBERS)
+    void cancelOrderByOrderNumber(String orderNumber);
+
+    // id로 주문 상태 변경하기(ADMIN)
+    void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto);
+
+    // number로 주문 상태 변경하기 (ADMIN)
+    void updateOrderStatusByOrderNumber(String orderNumber, OrderUpdateStatusDto orderUpdateDto);
+
+    // 주문 초기 데이터 조회(member, 장바구니용)
+    MemberOrderInitFromCartResponseDto getOrderInitFromCartData(Long memberId);
+
+    // 주문 초기 데이터 조회(Guest, 장바구니용)
+    GuestOrderInitFromCartResponseDto getGuestOrderInitFromCartData(Long cartId);
+
+    // 주문 초기 게이터 조회(member, 바로 구매용)
+    MemberOrderInitDirectResponseDto getOrderInitDirectData(Long bookId, Long memberId);
+
+    // 주문 초기 데이터 조회(guest, 바로 구매용)
+    GuestOrderInitDirectResponseDto getGuestOrderInitDirectData(Long bookId, Long memberId);
+
+    // 주문 도서에 대한 구매 확정여부를 검사
+    boolean isConfirmedOrder(Long memberId, Long bookId);
 }

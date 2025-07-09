@@ -1,10 +1,8 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
-import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ActiveShippingPolicyDto;
+import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.AllShippingPolicyDto;
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.shippingPolicy.ShippingPolicyUpdateRequestDto;
-import com.nhnacademy.illuwa.domain.order.entity.Packaging;
 import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
@@ -29,55 +27,45 @@ public class ShippingPolicyServiceImpl implements ShippingPolicyService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ActiveShippingPolicyDto> getAllShippingPolicy() {
-        return shippingPolicyRepository.findAll().stream().map(this::toResponseDto).collect(Collectors.toList());
+    public List<AllShippingPolicyDto> getAllShippingPolicy() {
+        return shippingPolicyRepository.findAllShippingDtosPolicy();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ActiveShippingPolicyDto> getShippingPolicyByActive() {
-        return shippingPolicyRepository.findByActive(true).stream().map(this::toResponseDto).collect(Collectors.toList());
+    public ShippingPolicyResponseDto getShippingPolicyByActive(boolean active) {
+        return shippingPolicyRepository.findShippingPolicyDtoByActive(active);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ActiveShippingPolicyDto getShippingPolicy(String shippingPolicyId) {
-        long id = parseId(shippingPolicyId);
-        ShippingPolicy shippingPolicy = shippingPolicyRepository.findByShippingPolicyId(id)
-                .orElseThrow(() -> new NotFoundException("해당 배송 정책을 찾을 수 없습니다.", id));
-
-        return toResponseDto(shippingPolicy);
+    public ShippingPolicyResponseDto getShippingPolicy(Long shippingPolicyId) {
+        return shippingPolicyRepository.findSHippingPolicyDtoByShippingPolicyId(shippingPolicyId)
+                .orElseThrow(() -> new NotFoundException("해당 배송 정책을 찾을 수 없습니다.", shippingPolicyId));
     }
 
     @Override
-    public ShippingPolicy addShippingPolicy(ShippingPolicyCreateRequestDto shippingPolicyCreateDto) {
+    public ShippingPolicyResponseDto addShippingPolicy(ShippingPolicyCreateRequestDto shippingPolicyCreateDto) {
         ShippingPolicy sp = ShippingPolicy.builder()
                 .minAmount(shippingPolicyCreateDto.getMinAmount())
                 .fee(shippingPolicyCreateDto.getFee())
                 .active(true)
                 .build();
-        return shippingPolicyRepository.save(sp);
+
+        ShippingPolicy shippingPolicy = shippingPolicyRepository.save(sp);
+
+        return ShippingPolicyResponseDto.fromEntity(shippingPolicy);
     }
 
     @Override
-    public int removeShippingPolicy(String shippingPolicyId) {
-        long id = parseId(shippingPolicyId);
-        return shippingPolicyRepository.updateActiveByPackagingId(id, false);
+    public int removeShippingPolicy(Long shippingPolicyId) {
+        return shippingPolicyRepository.updateActiveByPackagingId(shippingPolicyId, false);
     }
 
     @Override
-    public ShippingPolicy updateShippingPolicy(String shippingPolicyId, ShippingPolicyCreateRequestDto shippingPolicyCreateDto) {
-        long id = parseId(shippingPolicyId);
-        shippingPolicyRepository.updateActiveByPackagingId(id, false);
+    public ShippingPolicyResponseDto updateShippingPolicy(Long shippingPolicyId, ShippingPolicyCreateRequestDto shippingPolicyCreateDto) {
+        shippingPolicyRepository.updateActiveByPackagingId(shippingPolicyId, false);
         return addShippingPolicy(shippingPolicyCreateDto);
-    }
-
-    // Entity -> Dto
-    private ActiveShippingPolicyDto toResponseDto(ShippingPolicy pkg) {
-        return new ActiveShippingPolicyDto(pkg.getShippingPolicyId(),
-                pkg.getMinAmount(),
-                pkg.getFee()
-        );
     }
 
     // ID 파싱 오류

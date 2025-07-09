@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 public class ShippingPolicyCreateRequestDto {
     private BigDecimal minAmount;
     private BigDecimal fee;
-    private boolean active;
 }
 
 // 프로트 -> 주문 서버 (배송 정책 등록)

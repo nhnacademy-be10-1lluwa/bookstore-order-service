@@ -36,6 +36,14 @@ public class CouponCreateRequest {
 
     private String comment;
 
+    private String conditions;
+
+    private String bookName;
+
+    private Long booksId;
+
+    private Long categoryId;
+
     // 쿠폰 발급수량
     @NotNull
     private BigDecimal issueCount;

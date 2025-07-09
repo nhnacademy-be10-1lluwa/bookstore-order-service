@@ -16,6 +16,4 @@ public interface CouponPolicyService {
     CouponPolicyUpdateResponse updatePolicy(String code, CouponPolicyUpdateRequest request);
     // 정책 삭제 (= 실 삭제가 아닌 상태 값(비활성화 처리)
     void deletePolicy(String code);
-
-//    void createBatch(List<CouponPolicyCreateRequest> policies);
 }

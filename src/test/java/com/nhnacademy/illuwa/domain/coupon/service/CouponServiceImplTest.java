@@ -5,6 +5,10 @@ import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
+import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.impl.CouponServiceImpl;
@@ -14,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -26,8 +31,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 
 @SpringBootTest
-@AutoConfigureTestDatabase
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
+@ActiveProfiles("db")
 class CouponServiceImplTest {
 
     @Autowired
@@ -45,16 +51,19 @@ class CouponServiceImplTest {
 
     @BeforeEach
     void setup() {
+        couponRepository.deleteAll(); // ddl-auto -> update시
         couponPolicyRepository.deleteAll();
 
         couponPolicyRepository.save(CouponPolicy.builder()
                 .code("testCode1")
                 .minOrderAmount(BigDecimal.valueOf(10_000))
+                .discountType(DiscountType.AMOUNT)
                 .discountAmount(BigDecimal.valueOf(3_000))
                 .build());
         couponPolicyRepository.save(CouponPolicy.builder()
                 .code("testCode2")
                 .minOrderAmount(BigDecimal.valueOf(20_000))
+                .discountType(DiscountType.PERCENT)
                 .discountPercent(BigDecimal.valueOf(20))
                 .build());
 
@@ -102,7 +111,7 @@ class CouponServiceImplTest {
                 .build();
 
         assertThatThrownBy(() -> couponService.createCoupon(notCodeRequest))
-                .isInstanceOf(IllegalCharsetNameException.class)
+                .isInstanceOf(CouponPolicyNotFoundException.class)
                 .hasMessageContaining("해당 정책코드는 존재하지 않습니다.");
     }
 
@@ -114,6 +123,7 @@ class CouponServiceImplTest {
         CouponPolicy inactivePolicy = CouponPolicy.builder()
                 .code("inactiveCode")
                 .minOrderAmount(BigDecimal.valueOf(10_000))
+                .discountType(DiscountType.AMOUNT)
                 .discountAmount(BigDecimal.valueOf(3_000))
                 .status(CouponStatus.INACTIVE) // 비활성화
                 .build();
@@ -131,7 +141,7 @@ class CouponServiceImplTest {
                 .build();
 
         assertThatThrownBy(() -> couponService.createCoupon(request))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(CouponPolicyInactiveException.class)
                 .hasMessageContaining("쿠폰 정책 상태가 비활성화이므로 생성 불가합니다.");
     }
 
@@ -139,8 +149,8 @@ class CouponServiceImplTest {
     @DisplayName("정책기반 쿠폰 단건 조회 실패 -> 존재하지 않는 ID")
     void getCouponByInvalidIdTest() {
         assertThatThrownBy(() -> couponService.getCouponById(999L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("존재하지 않는 쿠폰입니다");
+                .isInstanceOf(CouponNotFoundException.class)
+                .hasMessageContaining("존재하지 않는 쿠폰입니다.");
     }
 
     @Test
@@ -214,7 +224,7 @@ class CouponServiceImplTest {
         couponService.deleteCoupon(id);
 
         assertThatThrownBy(() -> couponService.getCouponById(id))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(CouponNotFoundException.class)
                 .hasMessageContaining("존재하지 않는 쿠폰");
     }
 

@@ -1,19 +1,25 @@
 package com.nhnacademy.illuwa.domain.coupons.service.impl;
 
+import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.BadRequestException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
+import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
+import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.IllegalCharsetNameException;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +28,45 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponRepository couponRepository;
     private final CouponPolicyRepository couponPolicyRepository;
+    private final ProductApiClient bookApiClient;
 
     @Override
     public CouponCreateResponse createCoupon(CouponCreateRequest request) {
+        Long bookId = null; // 도서 ID
+        String bookName = null;
+        Long categoryId = null; // 카테고리 ID
+        String categoryName = null;
+
+        // 1 -> 정책 코드 확인
         CouponPolicy policy = couponPolicyRepository.findByCode(request.getPolicyCode())
-                .orElseThrow(() -> new IllegalCharsetNameException("해당 정책코드는 존재하지 않습니다."));
+                .orElseThrow(() -> new CouponPolicyNotFoundException("해당 정책코드는 존재하지 않습니다."));
+
+        // 2 -> 쿠폰 타입 검증 로직
+        if (request.getCouponType() == CouponType.BOOKS) {
+            if (Objects.isNull(request.getBooksId())) {
+                throw new BadRequestException("도서 할인 쿠폰은 bookId 필드의 값이 필요합니다.");
+            } else {
+                bookId = bookApiClient.getBookById(request.getBooksId()).orElseThrow(
+                        () -> new NotFoundException("도서 정보를 가져올 수 없습니다.")
+                ).getBookId();
+            }
+        }else if(request.getCouponType() == CouponType.CATEGORY){
+            if (Objects.isNull(request.getCategoryId())) {
+                throw new BadRequestException("카테고리 할인 쿠폰은 categoryId 필드의 값이 필요합니다.");
+            } else {
+                categoryId = bookApiClient.getCategoryById(request.getCategoryId()).getCategoryId();
+                categoryName = bookApiClient.getCategoryById(request.getCategoryId()).getCategoryName();
+            }
+        } else {
+            bookId = request.getBooksId();
+            categoryId = request.getCategoryId();
+        }
+
+//        System.out.println(categoryName);
+//        System.out.println(bookName);
+
+
+        // 3 -> 정책이 활성화인지 비활성인지 체크
         if (!policy.getStatus().equals(CouponStatus.INACTIVE)) {
             Coupon coupon = Coupon.builder()
                     .couponName(request.getCouponName())
@@ -35,22 +75,26 @@ public class CouponServiceImpl implements CouponService {
                     .validTo(request.getValidTo())
                     .couponType(request.getCouponType())
                     .comment(request.getComment())
+                    .conditions(request.getConditions())
                     .issueCount(request.getIssueCount())
+                    .bookId(bookId)
+                    .categoryId(categoryId)
                     .build();
             Coupon save = couponRepository.save(coupon);
             return CouponCreateResponse.fromEntity(save);
-        } else {
-            throw new IllegalArgumentException("쿠폰 정책 상태가 비활성화이므로 생성 불가합니다.");
+        } else { // 비활성일시 에러 발생
+            throw new CouponPolicyInactiveException("쿠폰 정책 상태가 비활성화이므로 생성 불가합니다.");
         }
-
     }
+
+
 
     @Override
     public CouponResponse getCouponById(Long id) {
 
         return couponRepository.findById(id)
                 .map(CouponResponse::fromEntity)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰입니다. -> " + id));
+                .orElseThrow(() -> new CouponNotFoundException("존재하지 않는 쿠폰입니다. -> " + id));
     }
 
     @Override
@@ -62,7 +106,7 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public List<CouponResponse> getCouponsByType(CouponType type) {
-        return couponRepository.findByCouponType(type).stream()
+        return couponRepository.findCouponByCouponType(type).stream()
                 .map(CouponResponse::fromEntity)
                 .toList();
     }
@@ -84,7 +128,7 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public CouponUpdateResponse updateCoupon(Long id, CouponUpdateRequest request) {
         Coupon coupon = couponRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰ID 입니다. ->" + id));
+                .orElseThrow(() -> new CouponNotFoundException("존재하지 않는 쿠폰ID 입니다. ->" + id));
         if (request.getCouponName() != null) {
             coupon.setCouponName(request.getCouponName());
         }
@@ -111,7 +155,7 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public void deleteCoupon(Long id) {
         Coupon coupon = couponRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰 ID 입니다. -> " + id));
+                .orElseThrow(() -> new CouponNotFoundException("존재하지 않는 쿠폰 ID 입니다. -> " + id));
         couponRepository.delete(coupon);
     }
 

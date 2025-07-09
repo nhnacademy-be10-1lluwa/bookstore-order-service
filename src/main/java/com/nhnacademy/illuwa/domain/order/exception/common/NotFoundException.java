@@ -4,9 +4,15 @@ import lombok.Getter;
 
 @Getter
 public class NotFoundException extends RuntimeException {
-    private final long id;
+    private long id;
+
+    public NotFoundException(String message) {
+        super(message);
+    }
+
     public NotFoundException(String message, long id) {
         super(message + id);
         this.id = id;
     }
+
 }

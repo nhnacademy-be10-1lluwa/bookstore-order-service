@@ -1,34 +1,54 @@
 package com.nhnacademy.illuwa.domain.order.dto.order;
 
+import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
-import lombok.AllArgsConstructor;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class OrderResponseDto {
 
-    private long orderId;
-    private long memberId;
-    private ZonedDateTime orderDate;
-    private ZonedDateTime deliveryDate;
+    private Long orderId; // orderNumber
+    private String orderNumber;
+    private Long memberId; // 회원 넘버
+    private LocalDateTime orderDate; //
+    private LocalDate deliveryDate;
+    private BigDecimal shippingFee;
     private BigDecimal totalPrice;
     private OrderStatus orderStatus;
+    private List<OrderItemResponseDto> items;
+
+    @QueryProjection
+    public OrderResponseDto(Long orderId, String orderNumber, Long memberId, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal shippingFee, BigDecimal totalPrice, OrderStatus orderStatus, List<OrderItemResponseDto> items) {
+        this.orderId = orderId;
+        this.orderNumber = orderNumber;
+        this.memberId = memberId;
+        this.orderDate = orderDate;
+        this.deliveryDate = deliveryDate;
+        this.shippingFee = shippingFee;
+        this.totalPrice = totalPrice;
+        this.orderStatus = orderStatus;
+        this.items = items;
+    }
+
+
 
     public static OrderResponseDto orderResponseDto(Order order) {
          return OrderResponseDto.builder()
                  .orderId(order.getOrderId())
+                 .orderNumber(order.getOrderNumber())
                  .memberId(order.getMemberId())
                  .orderDate(order.getOrderDate())
                  .deliveryDate(order.getDeliveryDate())
+                 .shippingFee(order.getShippingFee())
                  .totalPrice(order.getTotalPrice())
                  .orderStatus(order.getOrderStatus())
                  .build();

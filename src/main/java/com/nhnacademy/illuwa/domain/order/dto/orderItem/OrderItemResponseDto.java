@@ -1,21 +1,41 @@
 package com.nhnacademy.illuwa.domain.order.dto.orderItem;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
+import com.querydsl.core.annotations.QueryProjection;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class OrderItemResponseDto {
 
-    private long orderItemId;
-    private long bookId;
+    private Long orderItemId;
+    private String title;
+    private Long bookId;
     private int quantity;
     private BigDecimal price;
-    private long packagingId;
+    private Long packagingId;
+    private BigDecimal totalPrice;
+    private PackagingResponseDto packaging; // <- 추가해야 프론트에서 출력 가능
+
+    @Builder
+    @QueryProjection
+    public OrderItemResponseDto(Long orderItemId,
+                                Long bookId,
+                                int quantity,
+                                BigDecimal price,
+                                Long packagingId,
+                                BigDecimal totalPrice,
+                                PackagingResponseDto packagingResponseDto) {
+        this.orderItemId = orderItemId;
+        this.bookId = bookId;
+        this.quantity = quantity;
+        this.price = price;
+        this.packagingId = packagingId;
+        this.totalPrice = totalPrice;
+        this.packaging = packagingResponseDto;
+    }
 }
 
 // order 서버 -> 프론트 (개별 주문 상품 조회 요청)

@@ -1,12 +1,12 @@
-name: Deploy Order-Service to Server
+name: Deploy Product-Service to Server
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
 
 jobs:
   deploy:
+    name: Build & Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -19,11 +19,8 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
-      - name: Build with Maven
+      - name: Build with Maven (skip tests)
         run: mvn clean package -DskipTests
-
-      - name: Run SonarQube
-        run: mvn sonar:sonar -Dsonar.projectKey=1lluwa-order-service -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.login=${{secrets.SONAR_TOKEN}}
 
       - name: Upload jar to server
         uses: appleboy/scp-action@v0.1.7
@@ -35,3 +32,14 @@ jobs:
           source: "target/order-service.jar"
           target: "~/deploy/order"
           rm: false
+
+      - name: Restart service via remote script
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_ID }}
+          password: ${{ secrets.REMOTE_PASS }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ~/deploy/order
+            ./start.sh

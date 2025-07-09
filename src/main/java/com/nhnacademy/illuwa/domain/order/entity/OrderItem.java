@@ -17,33 +17,38 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long orderItemId;
 
+    @Column(name = "book_id", nullable = false)
     private long bookId;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     @Setter
+    @Column(name = "quantity", nullable = false)
     private int quantity;
 
     @Setter
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    private long memberCouponId;
+    @Column(name = "member_coupon_id")
+    private Long memberCouponId;
 
+    @Column(name = "discount_price")
     private BigDecimal discountPrice;
 
+    @Column(name = "item_total_price", nullable = false)
     private BigDecimal itemTotalPrice;
 
     @ManyToOne
     @JoinColumn(name = "packaging_id")
     private Packaging packaging;
 
-    // 스냅샷용 포장 옵션
-    private BigDecimal packagingPrice;
 
     @Builder
-    public OrderItem(long bookId, Order order, int quantity, BigDecimal price, long memberCouponId, BigDecimal discountPrice, BigDecimal itemTotalPrice, Packaging packaging, BigDecimal packagingPrice) {
+    public OrderItem(long bookId, Order order, int quantity, BigDecimal price, Long memberCouponId, BigDecimal discountPrice, BigDecimal itemTotalPrice, Packaging packaging) {
         this.bookId = bookId;
         this.order = order;
         this.quantity = quantity;
@@ -52,6 +57,5 @@ public class OrderItem {
         this.discountPrice = discountPrice;
         this.itemTotalPrice = itemTotalPrice;
         this.packaging = packaging;
-        this.packagingPrice = packagingPrice;
     }
 }

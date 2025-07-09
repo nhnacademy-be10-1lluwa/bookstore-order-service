@@ -16,10 +16,13 @@ public class Packaging {
     @Column(name = "packaging_id")
     private long packagingId;
 
+    @Column(name = "packaging_name", nullable = false)
     private String packagingName;
 
+    @Column(name = "packaging_price", nullable = false)
     private BigDecimal packagingPrice;
 
+    @Column(name = "active", nullable = false)
     private Boolean active;
 
 

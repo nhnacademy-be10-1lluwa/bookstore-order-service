@@ -6,6 +6,7 @@ import com.nhnacademy.illuwa.domain.coupons.controller.CouponPolicyController;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyUpdateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyUpdateResponse;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponPolicyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,14 +46,14 @@ class CouponPolicyControllerTest {
     }
 
     @Test
-    @DisplayName("POST /coupon-policies")
+    @DisplayName("POST /admin/coupon-policies")
     void registerCouponPolicyTest() throws Exception {
         // given
         Mockito.when(couponPolicyService.createPolicy(Mockito.any()))
                 .thenReturn(createPolicyResponse());
 
         // when & then
-        mockMvc.perform(post("/coupon-policies")
+        mockMvc.perform(post("/admin/coupon-policies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(jsonPath("$.code").value("testCode"))
@@ -61,14 +62,14 @@ class CouponPolicyControllerTest {
     }
 
     @Test
-    @DisplayName("GET /coupon-policies/{id}")
+    @DisplayName("GET /admin/coupon-policies/{id}")
     void getCouponPolicyTest() throws Exception {
         // given
         Mockito.when(couponPolicyService.getPolicyById(Mockito.any()))
                 .thenReturn(policyResponse());
 
         // when & then
-        mockMvc.perform(get("/coupon-policies/1")
+        mockMvc.perform(get("/admin/coupon-policies/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(jsonPath("$.code").value("testCode"))
@@ -79,12 +80,12 @@ class CouponPolicyControllerTest {
     }
 
     @Test
-    @DisplayName("GET /coupon-policies?code={code}")
+    @DisplayName("GET /admin/coupon-policies?code={code}")
     void getByIdCouponPolicyTest() throws Exception {
         Mockito.when(couponPolicyService.getPolicyByCode(Mockito.any()))
                 .thenReturn(policyResponse());
 
-        mockMvc.perform(get("/coupon-policies?code=testCode")
+        mockMvc.perform(get("/admin/coupon-policies?code=testCode")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(jsonPath("$.id").value(policyResponse().getId()))
@@ -94,7 +95,7 @@ class CouponPolicyControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /coupon-policies/{code}")
+    @DisplayName("PUT /admin/coupon-policies/{code}")
     void updateCouponPolicy() throws Exception {
 
         // 업데이트 요청 객체
@@ -116,7 +117,7 @@ class CouponPolicyControllerTest {
 
         String tempJson = objectMapper.writeValueAsString(updateRequest);
 
-        mockMvc.perform(put("/coupon-policies/testCode")
+        mockMvc.perform(put("/admin/coupon-policies/testCode")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(tempJson))
                 .andExpect(status().isOk())
@@ -126,17 +127,17 @@ class CouponPolicyControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /coupon-policies/AMT15K_DC3K")
+    @DisplayName("DELETE /admin/coupon-policies/AMT15K_DC3K")
     void deletePolicy() throws Exception {
         Mockito.doNothing().when(couponPolicyService).deletePolicy("testCode");
 
-        mockMvc.perform(delete("/coupon-policies/testCode"))
+        mockMvc.perform(delete("/admin/coupon-policies/testCode"))
                 .andExpect(status().isNoContent());
     }
 
 
     @Test
-    @DisplayName("GET /coupon-policies")
+    @DisplayName("GET /admin/coupon-policies")
     void getAllCouponPolicyTest() throws Exception {
         List<CouponPolicyResponse> list = List.of(CouponPolicyResponse.builder()
                         .id(1L)
@@ -153,7 +154,7 @@ class CouponPolicyControllerTest {
 
         Mockito.when(couponPolicyService.getAllPolicies()).thenReturn(list);
 
-        mockMvc.perform(get("/coupon-policies"))
+        mockMvc.perform(get("/admin/coupon-policies"))
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("[0].id").value(1L))
                 .andExpect(jsonPath("[1].id").value(2L))

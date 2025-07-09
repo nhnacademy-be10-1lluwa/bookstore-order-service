@@ -26,46 +26,47 @@ public class PackagingServiceImpl implements PackagingService {
     @Override
     @Transactional(readOnly = true)
     public List<PackagingResponseDto> getAllPackaging() {
-        return packagingRepository.findAll().stream().map(this::toResponseDto).collect(Collectors.toList());
+        return packagingRepository.findPackagingDtos();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<PackagingResponseDto> getPackagingByActive() {
-        return packagingRepository.findByActive(true).stream().map(this::toResponseDto).collect(Collectors.toList());
+    public List<PackagingResponseDto> getPackagingByActive(boolean active) {
+        return packagingRepository.findPackagingDtosByActive(active);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public PackagingResponseDto getPackaging(String packagingId) {
-        long id = parseId(packagingId);
-        Packaging packaging = packagingRepository.findByPackagingId(id).orElseThrow(()
-                -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", id));
-        return toResponseDto(packaging);
+    public PackagingResponseDto getPackaging(Long packagingId) {
+        return packagingRepository.findPackagingDtoById(packagingId).orElseThrow(()
+                -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", packagingId));
     }
 
     @Override
-    public Packaging addPackaging(PackagingCreateRequestDto packagingCreateDto) {
+    public PackagingResponseDto addPackaging(PackagingCreateRequestDto packagingCreateDto) {
         Packaging pkg = Packaging.builder()
                 .packagingName(packagingCreateDto.getPackagingName())
                 .packagingPrice(packagingCreateDto.getPackagingPrice())
                 .active(true)
                 .build();
-        return packagingRepository.save(pkg);
+
+        Packaging packaging = packagingRepository.save(pkg);
+
+        return PackagingResponseDto.fromEntity(packaging);
     }
 
     @Override
-    public int removePackaging(String packagingId) {
-        long id = parseId(packagingId);
-        return packagingRepository.updateActiveByPackagingId(id, false);
+    public int removePackaging(Long packagingId) {
+        return packagingRepository.updateActiveByPackagingId(packagingId, false);
     }
 
     // fixme 삭제 로직 고려 후 수정
     @Override
-    public Packaging updatePackaging(String packagingId, PackagingCreateRequestDto packagingCreateDto) {
+    public PackagingResponseDto updatePackaging(Long packagingId, PackagingCreateRequestDto packagingCreateDto) {
+
         removePackaging(packagingId);
-        Packaging pkg = addPackaging(packagingCreateDto);
-        return packagingRepository.save(pkg);
+
+        return addPackaging(packagingCreateDto);
     }
 
 
