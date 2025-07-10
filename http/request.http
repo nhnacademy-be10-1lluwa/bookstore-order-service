@@ -203,7 +203,7 @@ POST http://localhost:10305/api/members/member-coupons/welcome?email=test@test.c
 ### (회원) -> 쿠폰 발급
 POST http://localhost:10305/api/member-coupons
 Content-Type: application/json
-X-USER-ID: 2
+X-USER-ID: 3
 
 {
   "couponName": "웰컴쿠폰"
@@ -215,7 +215,7 @@ X-USER-ID: 2
 ### (회원) -> 쿠폰 발급내역 (클라이언트 마이 쿠폰 확인용)
 GET http://localhost:10305/api/member-coupons
 Content-Type: application/json
-X-USER-ID: 2
+X-USER-ID: 3
 
 #### (회원) -> 쿠폰 정보 조회 (memberCouponId 조회)
 #GET http://localhost:10305/member-coupons/1
