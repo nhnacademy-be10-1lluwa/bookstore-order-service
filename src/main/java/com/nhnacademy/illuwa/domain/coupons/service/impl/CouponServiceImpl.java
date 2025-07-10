@@ -7,6 +7,7 @@ import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.exception.coupon.DuplicateCouponException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.BadRequestException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
@@ -40,6 +41,11 @@ public class CouponServiceImpl implements CouponService {
         // 1 -> 정책 코드 확인
         CouponPolicy policy = couponPolicyRepository.findByCode(request.getPolicyCode())
                 .orElseThrow(() -> new CouponPolicyNotFoundException("해당 정책코드는 존재하지 않습니다."));
+
+        // + -> 존재하는 쿠폰인지 확인
+        if (couponRepository.existsByCouponNameAndPolicy_CodeAndCouponType(request.getCouponName(), request.getPolicyCode(), request.getCouponType())) {
+            throw new DuplicateCouponException("이미 존재하는 쿠폰 입니다.");
+        }
 
         // 2 -> 쿠폰 타입 검증 로직
         if (request.getCouponType() == CouponType.BOOKS) {

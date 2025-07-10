@@ -25,6 +25,7 @@ public class CouponResponse {
     private String conditions;
     private BigDecimal issueCount;
     private Long bookId;
+    private Long categoryId;
 
 
     // 도서와 카테고리 연동시 주석해제
@@ -43,6 +44,7 @@ public class CouponResponse {
                 .conditions(coupon.getConditions())
                 .issueCount(coupon.getIssueCount())
                 .bookId(coupon.getBookId())
+                .categoryId(coupon.getCategoryId())
                 .build();
     }
 
