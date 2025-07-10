@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/member-coupons")
+@RequestMapping("/api/member-coupons")
 public class MemberCouponController {
 
     private final MemberCouponService memberCouponService;
@@ -40,8 +40,8 @@ public class MemberCouponController {
 //    }
 
     // 쿠폰 조회
-    @GetMapping(params = "memberId")
-    public ResponseEntity<List<MemberCouponResponse>> getAllMemberCouponsTest(@RequestParam Long memberId) {
+    @GetMapping
+    public ResponseEntity<List<MemberCouponResponse>> getAllMemberCouponsTest(@RequestHeader("X-USER-ID") Long memberId) {
         List<MemberCouponResponse> responses = memberCouponService.getAllMemberCoupons(memberId);
         return ResponseEntity.ok(responses);
     }
@@ -56,8 +56,8 @@ public class MemberCouponController {
     // 프론트 입장에서는 해당 url은 당연히 x
     // PutMapping("/member-coupons/{id}/use)
     // @AuthenticationPrincipal AuthUser authUser -> 이걸로 인증인가를 성공한 회원을 가져올꺼.
-    @PutMapping("/{memberId}/{memberCouponId}/use")
-    public ResponseEntity<MemberCouponUseResponse> useCoupon(@PathVariable Long memberId,
+    @PutMapping("/{memberCouponId}/use")
+    public ResponseEntity<MemberCouponUseResponse> useCoupon(@RequestHeader("X-USER-ID") Long memberId,
                                                              @PathVariable Long memberCouponId) {
 
         return ResponseEntity.ok(memberCouponService.useCoupon(memberId, memberCouponId));
