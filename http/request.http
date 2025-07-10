@@ -203,18 +203,17 @@ POST http://localhost:10305/members/member-coupons/welcome?email=test@test.com
 ### (회원) -> 쿠폰 발급
 POST http://localhost:10305/member-coupons
 Content-Type: application/json
+X-USER-ID: 2
 
 {
-  "memberEmail": "karina@naver.com",
-  "memberId": 2,
-  "couponName": "일반쿠폰"
+  "couponName": "웰컴쿠폰"
 }
 
 #### (회원) -> 쿠폰 발급내역
 #GET http://localhost:10305/members/member-coupons/test@test.com
 
 ### (회원) -> 쿠폰 발급내역 (클라이언트 마이 쿠폰 확인용)
-GET http://localhost:10305/member-coupons?memberId=3
+GET http://localhost:10305/member-coupons?memberId=2
 
 #### (회원) -> 쿠폰 정보 조회 (memberCouponId 조회)
 #GET http://localhost:10305/member-coupons/1

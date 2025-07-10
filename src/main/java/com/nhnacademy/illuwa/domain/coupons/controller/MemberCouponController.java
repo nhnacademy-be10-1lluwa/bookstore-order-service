@@ -27,9 +27,8 @@ public class MemberCouponController {
 
     // 쿠폰 발급
     @PostMapping
-    public ResponseEntity<MemberCouponResponse> issueCoupon(@RequestBody @Valid MemberCouponCreateRequest request) {
-        MemberCouponResponse response = memberCouponService.issueCoupon(request);
-//        MemberCouponResponse response = memberCouponService.issueCoupon(request);
+    public ResponseEntity<MemberCouponResponse> issueCoupon(@RequestHeader("X-USER-ID") Long memberId, @RequestBody @Valid MemberCouponCreateRequest request) {
+        MemberCouponResponse response = memberCouponService.issueCoupon(memberId, request);
         return ResponseEntity.ok(response);
     }
 

@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 public class MemberCouponCreateRequest {
 //    @NotBlank @Email
 //    private String memberEmail;
-    @NotNull
-    private long memberId;
+//    @NotNull
+//    private long memberId;
 
     private String couponCode;
 
