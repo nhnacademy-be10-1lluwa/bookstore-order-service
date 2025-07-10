@@ -15,7 +15,7 @@ import java.net.URI;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/order/admin")
+@RequestMapping("/api/order/admin")
 public class AdminOrderController {
 
     private final OrderService orderService;

@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/shipping-policy")
+@RequestMapping("/api/shipping-policy")
 public class ShippingPolicyController {
 
     private final ShippingPolicyService shippingPolicyService;
