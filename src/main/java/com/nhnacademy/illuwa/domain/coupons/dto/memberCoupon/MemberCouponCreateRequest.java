@@ -13,12 +13,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class MemberCouponCreateRequest {
-//    @NotBlank @Email
-//    private String memberEmail;
-//    @NotNull
-//    private long memberId;
-
-    private String couponCode;
-
     private String couponName;
 }

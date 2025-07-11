@@ -68,8 +68,6 @@ public class CouponServiceImpl implements CouponService {
             categoryId = request.getCategoryId();
         }
 
-//        System.out.println(categoryName);
-//        System.out.println(bookName);
 
 
         // 3 -> 정책이 활성화인지 비활성인지 체크

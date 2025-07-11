@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableFeignClients
 @SpringBootApplication
-public class IlluwaApplication {
+public class OrderServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(IlluwaApplication.class, args);
+        SpringApplication.run(OrderServiceApplication.class, args);
     }
 
 }

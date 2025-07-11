@@ -177,7 +177,7 @@ public class CouponPolicyTestUtils {
 //                .build();
 //
 //    }
-
+//
 //    public static MemberCoupon createMemberCoupon() {
 //        return MemberCoupon.builder()
 //                .id(1L)
@@ -206,7 +206,7 @@ public class CouponPolicyTestUtils {
 //                .couponName("테 스 트 쿠 폰 이 름 임")
 //                .build();
 //    }
-
+//
 //    public static MemberCouponResponse memberCouponResponse() {
 //        return MemberCouponResponse.fromEntity(createMemberCoupon());
 //    }

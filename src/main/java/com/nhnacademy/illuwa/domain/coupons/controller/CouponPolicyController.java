@@ -63,11 +63,5 @@ public class CouponPolicyController {
         return ResponseEntity.noContent().build();
     }
 
-    // 여러 쿠폰 정책 생성
-    // @PostMapping("/batch")
-    // public ResponseEntity<Void> createCouponPolicies(@RequestBody List<CouponPolicyCreateRequest> policies) {
-    //     couponPolicyService.createBatch(policies);
-    //     return ResponseEntity.ok().build();
-    // }
 
 }

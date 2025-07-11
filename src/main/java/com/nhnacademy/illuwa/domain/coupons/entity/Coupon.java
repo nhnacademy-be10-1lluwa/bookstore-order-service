@@ -18,26 +18,28 @@ public class Coupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "coupon_name", nullable = false, unique = true)
     private String couponName; // 쿠폰 이름
 
     @ManyToOne
     @JoinColumn(name = "policy_id")
     private CouponPolicy policy; // 정책
 
-    @Column(nullable = false)
+    @Column(name = "valid_from",nullable = false)
     private LocalDate validFrom; // 유효 시작
-    @Column(nullable = false)
+    @Column(name = "valid_to",nullable = false)
     private LocalDate validTo; // 유효 종료
 
-    @Column(nullable = false)
+    @Column(name = "coupon_type",nullable = false)
     private CouponType couponType; // 쿠폰 타입
 
+    @Column(name = "comment")
     private String comment; // 쿠폰 설명
 
+    @Column(name = "conditions")
     private String conditions; // 사용 조건
 
-    @Column(nullable = false)
+    @Column(name = "issue_count", nullable = false)
     private BigDecimal issueCount; // 쿠폰 갯수
 
     // 특정 도서에만 적용되는 경우

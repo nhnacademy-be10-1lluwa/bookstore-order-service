@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@FeignClient(
-        name = "user-service", url = "http://localhost:10303"
-)
+@FeignClient(name = "user-service")
 public interface UserApiClient {
 
     // 멤버 주소록 조회

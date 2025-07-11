@@ -178,4 +178,17 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    // 생일 쿠폰 미발급
+    @ExceptionHandler(MemberNotBirthdayMonthException.class)
+    public ResponseEntity<?> handleMemberCouponNotBirthdayMonthException(MemberNotBirthdayMonthException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "status", HttpStatus.BAD_REQUEST.value(),
+                        "error", HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        "code", "BIRTHDAY_COUPON_NOT_ELIGIBLE",
+                        "message", ex.getMessage()
+                ));
+    }
 }

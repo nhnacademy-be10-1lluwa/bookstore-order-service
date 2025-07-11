@@ -19,25 +19,12 @@ public class MemberCouponController {
 
     private final MemberCouponService memberCouponService;
 
-    // 웰컴 쿠폰 발급 (회원 서비스에서 해당 컨트롤러를 호출)
-//    @PostMapping(value = "/welcome", params = "email")
-//    public ResponseEntity<MemberCouponResponse> issueWelcomeCoupon(@RequestParam String email) {
-//        return ResponseEntity.ok(memberCouponService.issueWelcomeCoupon(email));
-//    }
-
     // 쿠폰 발급
     @PostMapping
     public ResponseEntity<MemberCouponResponse> issueCoupon(@RequestHeader("X-USER-ID") Long memberId, @RequestBody @Valid MemberCouponCreateRequest request) {
         MemberCouponResponse response = memberCouponService.issueCoupon(memberId, request);
         return ResponseEntity.ok(response);
     }
-
-    // 쿠폰 조회
-//    @GetMapping("/{email}")
-//    public ResponseEntity<List<MemberCouponResponse>> getAllMemberCoupons(@PathVariable String email) {
-//        List<MemberCouponResponse> responses = memberCouponService.getAllMemberCoupons(email);
-//        return ResponseEntity.ok(responses);
-//    }
 
     // 쿠폰 조회
     @GetMapping
