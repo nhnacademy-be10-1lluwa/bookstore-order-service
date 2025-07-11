@@ -45,7 +45,7 @@ public class AdminCouponControllerTest {
     }
 
     @Test
-    @DisplayName("POST /admin/coupons || (정책기반) 쿠폰 생성 테스트")
+    @DisplayName("POST /admin/coupons || (정책기반) 쿠폰 생성 테스트 ")
     void registerCouponTest() throws Exception {
         Mockito.when(couponService.createCoupon(Mockito.any()))
                 .thenReturn(createCouponResponse());
