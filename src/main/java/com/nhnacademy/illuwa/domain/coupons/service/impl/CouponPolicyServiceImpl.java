@@ -31,7 +31,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         DiscountPolicyStrategy validator = discountPolicyStrategies.stream()
                 .filter(strategy -> strategy.getType().equals(request.getDiscountType()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 할인 정책입니다."));
+                .orElseThrow(() -> new CouponPolicyNotFoundException("지원하지 않는 할인 정책입니다. -> " + request.getDiscountType()));
 
         validator.discountValidate(request);
 

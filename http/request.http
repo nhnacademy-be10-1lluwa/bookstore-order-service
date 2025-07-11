@@ -221,6 +221,6 @@ X-USER-ID: 3
 #GET http://localhost:10305/member-coupons/1
 
 ### (회원) -> 쿠폰 사용 (memberCouponId로 사용)
-PUT http://localhost:10305/api/member-coupons/2/use
+PUT http://localhost:10305/api/member-coupons/8/use
 Content-Type: application/json
 X-USER-ID: 1
