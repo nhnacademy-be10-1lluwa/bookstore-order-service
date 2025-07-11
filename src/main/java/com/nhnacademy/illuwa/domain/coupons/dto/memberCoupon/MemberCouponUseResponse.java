@@ -13,17 +13,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class MemberCouponUseResponse {
-//    private String memberName;
     private Long memberId;
-//    private String email;
     private String couponName;
     private boolean used;
     private LocalDate usedAt;
 
     public static MemberCouponUseResponse fromEntity(MemberCoupon memberCoupon) {
         return MemberCouponUseResponse.builder()
-//                .memberName("memberCoupon.getMember().getName()")
-//                .email("memberCoupon.getMember().getEmail()")
                 .memberId(memberCoupon.getMemberId())
                 .couponName(memberCoupon.getCoupon().getCouponName())
                 .used(memberCoupon.isUsed())

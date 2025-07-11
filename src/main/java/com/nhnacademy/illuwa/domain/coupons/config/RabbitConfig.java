@@ -35,7 +35,7 @@ public class RabbitConfig {
         factory.setAdviceChain(RetryInterceptorBuilder
                 .stateless()
                 .maxAttempts(100)
-//                .backOffOptions(5000L, 1.0, 5000L)
+//                .backOffOptions(5000L, 1.0, 5000L) // 테스트 용도
                 .backOffOptions(3_600_000L, 1.0, 3_600_000L)
                 .build());
         return factory;

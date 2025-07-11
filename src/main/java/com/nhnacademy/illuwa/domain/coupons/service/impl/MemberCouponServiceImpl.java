@@ -32,39 +32,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 
     private final MemberCouponRepository memberCouponRepository;
     private final CouponRepository couponRepository;
-    private final CouponPolicyRepository couponPolicyRepository;
     private final UserApiClient userApiClient;
-
-    // welcome 쿠폰 발급
-//    @Override
-//    public MemberCouponResponse issueWelcomeCoupon(String email) {
-//        Member member = memberRepository.findMemberByEmail(email).orElseThrow
-//                (() -> new IllegalArgumentException("해당 회원은 존재하지 않습니다."));
-//
-//        boolean bool = memberCouponRepository.existsByMemberIdAndCoupon_CouponType(member.getId(), CouponType.WELCOME);
-//        if (bool) {
-//            throw new IllegalArgumentException("해당 회원은 이미 웰컴 쿠폰을 지급받으셨습니다.");
-//        }
-//
-//        Coupon coupon = couponRepository.findByCouponType(CouponType.WELCOME).orElseThrow
-//                (() -> new IllegalArgumentException("WELCOME 쿠폰이 존재하지 않습니다."));
-//
-//        if (coupon.getIssueCount().compareTo(BigDecimal.ZERO) <= 0) {
-//            throw new MemberCouponQuantityFinishException("발급 가능한 쿠폰 수량이 마감 되었습니다.");
-//        }
-//
-//        MemberCoupon memberCoupon = MemberCoupon.builder()
-//                .member(member)
-//                .coupon(coupon)
-//                .issuedAt(LocalDate.now())
-//                .build();
-//
-//        coupon.setIssueCount(coupon.getIssueCount().subtract(BigDecimal.ONE));
-//
-//        MemberCoupon save = memberCouponRepository.save(memberCoupon);
-//        return MemberCouponResponse.fromEntity(save);
-//    }
-
 
     // 회원 생일 쿠폰 발급
     @Override
@@ -73,11 +41,11 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         List<MemberDto> members = userApiClient.getBirthDayMember(monthValue);
 
         if (members.isEmpty()) {
-            throw new IllegalArgumentException("당월 생일자에게만 발급되는 쿠폰입니다.");
+            throw new MemberNotBirthdayMonthException("당월 생일자에게만 발급되는 쿠폰입니다.");
         }
 
         Coupon birthDayCoupon = couponRepository.findCouponByCouponName("생일쿠폰")
-                .orElseThrow(() -> new IllegalArgumentException("생일 쿠폰이 존재하지 않습니다."));
+                .orElseThrow(() -> new CouponNotFoundException("생일 쿠폰이 존재하지 않습니다."));
 
         if (birthDayCoupon.getIssueCount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new MemberCouponQuantityFinishException("발급 가능한 쿠폰 수량이 마감 되었습니다.");
@@ -102,7 +70,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     // 쿠폰 발급
     @Override
     public MemberCouponResponse issueCoupon(Long memberId, MemberCouponCreateRequest request) {
-//         MemberDto member = userApiClient.getMember(request.getMemberId()); // 우선적으로 FeignClient를 통해 필요한 정보를 가져옴 || 여기서 못가져오면 존재하지 않는 회원이라 API통신에러라고 표시될꺼임
         Coupon coupon = couponRepository.findCouponByCouponName(request.getCouponName()).orElseThrow(() -> new CouponNotFoundException("해당 쿠폰은 존재하지 않습니다."));
         // 고려사항 + -> 쿠폰정책이 임시적으로 비활성화일시 (쿠폰의 발급 불가)
         if (coupon.getPolicy().getStatus().equals(CouponStatus.INACTIVE)) {
@@ -118,13 +85,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
             throw new MemberCouponInactiveException("이미 쿠폰을 발급받으셨습니다. -> " + coupon.getCouponName());
         }
 
-        // 고려사항 3 -> 만약 정책쪽에서 (=비활성화) or 쿠폰쪽에서 (삭제)라면?
-        // 정책쪽의 repo로 상태 비교후 생성? -> 이러면 회원 쿠폰이라는 엔티티가 정책쪽으로 직접 접근하게됌
-        // 쿠폰쪽의 상태로 비교후 생성?
-        // 그럼 쿠폰쪽의 상태를 무엇으로 관리할꺼냐 ? -> 정책(=비활성화) = 쿠폰(사용불가) || 정책(활성화) = 쿠폰(사용가능)
-
-
-//         고려사항 4 -> 생일 쿠폰
         if (coupon.getCouponType() == BIRTHDAY) {
             issueBirthDayCoupon();
             return null;
@@ -157,15 +117,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
                 -> new NotFoundException("해당 쿠폰을 찾지 못하였습니다.", memberCouponId));
     }
 
-    // 회원 소유 쿠폰 확인 (email)
-//    @Override
-//    public List<MemberCouponResponse> getAllMemberCoupons(String email) {
-//        return memberCouponRepository.findMemberCouponByMemberEmail(email)
-//                .stream()
-//                .map(MemberCouponResponse::fromEntity)
-//                .toList();
-//    }
-
 
 //    @Override
 //    public CouponInfoResponse getCouponInfoFromMemberCoupon(Long memberCouponId) {
@@ -175,12 +126,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 //        return CouponInfoResponse.fromEntity(coupon);
 //    }
 
-//    @Override
-//    public MemberCouponResponse getMemberCouponId(Long id) {
-//        MemberCoupon memberCoupon = memberCouponRepository.findMemberCouponById(id)
-//                .orElseThrow(() -> new MemberCouponNotFoundException("해당 쿠폰은 존재하지 않습니다."));
-//        return MemberCouponResponse.fromEntity(memberCoupon);
-//    }
 //
 //    @Override
 //    public List<MemberCouponResponseTest> getAllMemberCouponsTest(Long id) {
@@ -189,7 +134,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 //                .stream()
 //                .map(MemberCouponResponseTest::fromEntity)
 //                .toList();
-    // 특정 도서에 적용 -> 주문 + ()
+
 
     // 회원 소유 쿠폰 사용 ( 우선 이메일과 사용하고자하는 쿠폰이름을 매개변수로 가져옴 )
     // 그러면 우선적으로 회원이 있는지 확인부터 - > 아니지 회원자체는 발급쪽에서 검사를했으니
