@@ -50,7 +50,7 @@ public class AdminCouponControllerTest {
         Mockito.when(couponService.createCoupon(Mockito.any()))
                 .thenReturn(createCouponResponse());
 
-        mockMvc.perform(post("/admin/coupons")
+        mockMvc.perform(post("/api/admin/coupons")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(jsonPath("$.couponName").value("테 스 트 쿠 폰 이 름 임"))
@@ -63,7 +63,7 @@ public class AdminCouponControllerTest {
         Mockito.when(couponService.getCouponById(Mockito.any()))
                 .thenReturn(couponResponse());
 
-        mockMvc.perform(get("/admin/coupons/" + couponResponse().getId())
+        mockMvc.perform(get("/api/admin/coupons/" + couponResponse().getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.couponName").value("테 스 트 쿠 폰 이 름 임"))
                 .andExpect(jsonPath("$.code").value("testCode"))
@@ -80,7 +80,7 @@ public class AdminCouponControllerTest {
         Mockito.when(couponService.getCouponById(1L)).thenReturn(response);
 
         // 기존 쿠폰 정보 확인
-        mockMvc.perform(get("/admin/coupons/1")
+        mockMvc.perform(get("/api/admin/coupons/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.couponName").value("테 스 트 쿠 폰 이 름 임"))
@@ -101,7 +101,7 @@ public class AdminCouponControllerTest {
         Mockito.when(couponService.updateCoupon(Mockito.any(), Mockito.any())).thenReturn(updateResponse);
 
         // PUT 요청을 보내고 응답 확인
-        mockMvc.perform(put("/admin/coupons/" + response.getId())
+        mockMvc.perform(put("/api/admin/coupons/" + response.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest))) // updateRequest를 JSON으로 변환
                 .andExpect(status().isOk()) // 응답 상태가 200 OK
@@ -115,7 +115,7 @@ public class AdminCouponControllerTest {
 
         Mockito.doNothing().when(couponService).deleteCoupon(99L);
 
-        mockMvc.perform(delete("/admin/coupons/1"))
+        mockMvc.perform(delete("/api/admin/coupons/1"))
                 .andExpect(status().isNoContent());
     }
 }
