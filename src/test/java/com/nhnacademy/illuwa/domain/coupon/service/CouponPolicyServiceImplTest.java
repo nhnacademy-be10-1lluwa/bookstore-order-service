@@ -7,6 +7,7 @@ import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
+import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.impl.CouponPolicyServiceImpl;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,11 +37,14 @@ class CouponPolicyServiceImplTest {
     private CouponPolicyServiceImpl couponPolicyService;
     @Autowired
     private CouponRepository couponRepository;
+    @Autowired
+    private MemberCouponRepository memberCouponRepository;
 
     @BeforeEach
     void setup() {
         // 기존 데이터 삭제
-        couponRepository.deleteAll(); // ddl-auto -> update시
+        memberCouponRepository.deleteAll();// ddl-auto -> update시
+        couponRepository.deleteAll();
         couponPolicyRepository.deleteAll();
 
         CouponPolicyCreateRequest testRequest1 = CouponPolicyCreateRequest.builder()
