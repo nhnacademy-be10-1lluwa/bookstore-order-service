@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface MemberCouponService {
 
     // 쿠폰 발급
-    MemberCouponResponse issueCoupon(MemberCouponCreateRequest request);
+    MemberCouponResponse issueCoupon(Long memberId, MemberCouponCreateRequest request);
 //    MemberCouponResponse issueCouponTest(Long id);
 //    // 회원가입 쿠폰 발급
 //    MemberCouponResponse issueWelcomeCoupon(String email);

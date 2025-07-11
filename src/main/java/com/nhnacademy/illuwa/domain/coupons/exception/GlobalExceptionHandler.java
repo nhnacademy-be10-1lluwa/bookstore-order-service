@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.coupons.exception;
 
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.exception.coupon.DuplicateCouponException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.BadRequestException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyExistsByCodeException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
@@ -55,6 +56,20 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    // 쿠폰 중복
+    @ExceptionHandler(DuplicateCouponException.class)
+    public ResponseEntity<?> handleCouponExistsByCode(DuplicateCouponException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "status", HttpStatus.CONFLICT.value(),
+                        "error", HttpStatus.CONFLICT.getReasonPhrase(),
+                        "code", "COUPON_DUPLICATED",
+                        "message", ex.getMessage()
+                ));
+    }
+
 
     // DB 런타임 에러 -> 중복
     // 다른 에러처럼 커스텀 에러로 처리안한 이유는?

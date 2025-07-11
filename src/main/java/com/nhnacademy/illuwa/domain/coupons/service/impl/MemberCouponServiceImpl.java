@@ -101,9 +101,8 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 
     // 쿠폰 발급
     @Override
-    public MemberCouponResponse issueCoupon(MemberCouponCreateRequest request) {
-        MemberDto member = userApiClient.getMember(request.getMemberId()); // 우선적으로 FeignClient를 통해 필요한 정보를 가져옴 || 여기서 못가져오면 존재하지 않는 회원이라 API통신에러라고 표시될꺼임
-
+    public MemberCouponResponse issueCoupon(Long memberId, MemberCouponCreateRequest request) {
+//         MemberDto member = userApiClient.getMember(request.getMemberId()); // 우선적으로 FeignClient를 통해 필요한 정보를 가져옴 || 여기서 못가져오면 존재하지 않는 회원이라 API통신에러라고 표시될꺼임
         Coupon coupon = couponRepository.findCouponByCouponName(request.getCouponName()).orElseThrow(() -> new CouponNotFoundException("해당 쿠폰은 존재하지 않습니다."));
         // 고려사항 + -> 쿠폰정책이 임시적으로 비활성화일시 (쿠폰의 발급 불가)
         if (coupon.getPolicy().getStatus().equals(CouponStatus.INACTIVE)) {
@@ -115,7 +114,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
             throw new MemberCouponQuantityFinishException("발급 가능한 쿠폰 수량이 마감 되었습니다.");
         }
         // 고려사항 2 -> 이미 발급받은 쿠폰일때
-        if (memberCouponRepository.existsByMemberIdAndCouponId(member.getMemberId(), coupon.getId())) {
+        if (memberCouponRepository.existsByMemberIdAndCouponId(memberId, coupon.getId())) {
             throw new MemberCouponInactiveException("이미 쿠폰을 발급받으셨습니다. -> " + coupon.getCouponName());
         }
 
@@ -132,7 +131,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         }
 
         MemberCoupon memberCoupon = MemberCoupon.builder()
-                .memberId(member.getMemberId())
+                .memberId(memberId)
                 .coupon(coupon)
                 .issuedAt(LocalDate.now())
                 .build();

@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("admin/coupon-policies")
+@RequestMapping("/api/admin/coupon-policies")
 public class CouponPolicyController {
 
     private final CouponPolicyService couponPolicyService;

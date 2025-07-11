@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/coupons")
+@RequestMapping("/api/coupons")
 public class CouponController {
 
     private final CouponService couponService;

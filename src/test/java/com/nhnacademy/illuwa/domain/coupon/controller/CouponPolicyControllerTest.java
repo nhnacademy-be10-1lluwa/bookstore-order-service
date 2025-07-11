@@ -53,7 +53,7 @@ class CouponPolicyControllerTest {
                 .thenReturn(createPolicyResponse());
 
         // when & then
-        mockMvc.perform(post("/admin/coupon-policies")
+        mockMvc.perform(post("/api/admin/coupon-policies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(jsonPath("$.code").value("testCode"))
@@ -69,7 +69,7 @@ class CouponPolicyControllerTest {
                 .thenReturn(policyResponse());
 
         // when & then
-        mockMvc.perform(get("/admin/coupon-policies/1")
+        mockMvc.perform(get("/api/admin/coupon-policies/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(jsonPath("$.code").value("testCode"))
@@ -85,7 +85,7 @@ class CouponPolicyControllerTest {
         Mockito.when(couponPolicyService.getPolicyByCode(Mockito.any()))
                 .thenReturn(policyResponse());
 
-        mockMvc.perform(get("/admin/coupon-policies?code=testCode")
+        mockMvc.perform(get("/api/admin/coupon-policies?code=testCode")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(jsonPath("$.id").value(policyResponse().getId()))
@@ -117,7 +117,7 @@ class CouponPolicyControllerTest {
 
         String tempJson = objectMapper.writeValueAsString(updateRequest);
 
-        mockMvc.perform(put("/admin/coupon-policies/testCode")
+        mockMvc.perform(put("/api/admin/coupon-policies/testCode")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(tempJson))
                 .andExpect(status().isOk())
@@ -131,7 +131,7 @@ class CouponPolicyControllerTest {
     void deletePolicy() throws Exception {
         Mockito.doNothing().when(couponPolicyService).deletePolicy("testCode");
 
-        mockMvc.perform(delete("/admin/coupon-policies/testCode"))
+        mockMvc.perform(delete("/api/admin/coupon-policies/testCode"))
                 .andExpect(status().isNoContent());
     }
 
@@ -154,7 +154,7 @@ class CouponPolicyControllerTest {
 
         Mockito.when(couponPolicyService.getAllPolicies()).thenReturn(list);
 
-        mockMvc.perform(get("/admin/coupon-policies"))
+        mockMvc.perform(get("/api/admin/coupon-policies"))
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("[0].id").value(1L))
                 .andExpect(jsonPath("[1].id").value(2L))

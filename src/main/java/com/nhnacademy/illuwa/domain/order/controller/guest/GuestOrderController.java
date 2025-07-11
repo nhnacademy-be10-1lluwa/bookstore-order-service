@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping("/order/guest")
+@RequestMapping("/api/order/guest")
 public class GuestOrderController {
 
     private final OrderService orderService;

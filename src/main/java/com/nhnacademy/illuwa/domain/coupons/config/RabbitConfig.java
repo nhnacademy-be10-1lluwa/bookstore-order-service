@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupons.config;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -13,6 +14,11 @@ public class RabbitConfig {
     @Bean
     public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public Queue welcomeQueue() {
+        return new Queue("1lluwa_welcome_queue", true);
     }
 
     /**
