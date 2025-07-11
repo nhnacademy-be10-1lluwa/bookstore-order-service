@@ -24,7 +24,7 @@ public class RabbitConfig {
     /**
      * 최초 웰컴쿠폰이 발급 실패했을 시 1시간씩 텀을 두고
      * 재시도횟수(maxAttempts(?)만큼 시도)
-     * 시간은 최조 발급실패시의 시간과 같음
+     * 시간은 최최 발급실패시의 시간과 같음
      */
     @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
@@ -35,8 +35,8 @@ public class RabbitConfig {
         factory.setAdviceChain(RetryInterceptorBuilder
                 .stateless()
                 .maxAttempts(100)
-                .backOffOptions(5000L, 1.0, 5000L)
-//                .backOffOptions(3_600_000L, 1.0, 3_600_000L)
+//                .backOffOptions(5000L, 1.0, 5000L)
+                .backOffOptions(3_600_000L, 1.0, 3_600_000L)
                 .build());
         return factory;
     }

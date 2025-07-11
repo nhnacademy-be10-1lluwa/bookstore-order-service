@@ -37,9 +37,13 @@ public class MemberCoupon {
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
+    @Column(name = "used")
     private boolean used; // 사용여부
+    @Column(name = "used_at")
     private LocalDate usedAt; // 사용 일자
+    @Column(name = "issued_at")
     private LocalDate issuedAt; // 발급 일자
+    @Column(name = "expires_at")
     private LocalDate expiresAt; // 실제 유효기간
 
     // 발급과 동시에 유효기간 설정
