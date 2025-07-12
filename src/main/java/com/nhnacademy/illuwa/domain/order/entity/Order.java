@@ -78,7 +78,7 @@ public class Order {
     @Column(name = "recipient_contact", nullable = false)
     private String recipientContact;
 
-    @Column(name = "post-code", nullable = false)
+    @Column(name = "post_code", nullable = false)
     private String postCode;
 
     @Column(name = "read_address", nullable = false)
