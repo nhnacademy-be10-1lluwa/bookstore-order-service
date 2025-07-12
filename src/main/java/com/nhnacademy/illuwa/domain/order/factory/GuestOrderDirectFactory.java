@@ -66,6 +66,7 @@ public class GuestOrderDirectFactory extends AbstractOrderFactory<GuestOrderRequ
                 .deliveryDate(request.getDeliveryDate())
                 .recipientName(request.getRecipientName())
                 .recipientContact(request.getRecipientContact())
+                .postCode(request.getPostCode())
                 .readAddress(request.getReadAddress())
                 .detailAddress(request.getDetailAddress())
                 .build();

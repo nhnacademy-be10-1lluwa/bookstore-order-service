@@ -15,12 +15,14 @@ import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 
 @RequiredArgsConstructor
+@Transactional
 public abstract class AbstractOrderFactory<RQ> {
 
     protected final PackagingRepository packagingRepo;
@@ -43,6 +45,7 @@ public abstract class AbstractOrderFactory<RQ> {
      */
     protected Order.OrderBuilder initSkeleton() {
         Order.OrderBuilder builder = Order.builder()
+                .orderDate(null)
                 .orderNumber(generateOrderNumber(LocalDateTime.now()));
         initDefaultFields(builder);   // 할인·포인트·상태 초기화
         return builder;
