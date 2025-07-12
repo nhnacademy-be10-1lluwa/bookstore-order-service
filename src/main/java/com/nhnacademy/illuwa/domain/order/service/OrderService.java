@@ -14,15 +14,17 @@ import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public interface OrderService {
 
     // 전체 주문 내역 조회(ADMIN)
     Page<OrderListResponseDto> getAllOrders(Pageable pageable);
 
-    // id로 주문 내역 조회(ADMIN, MEMBERS)
-    OrderResponseDto getOrderById(Long orderId);
+    // orderId로 주문 내역 조회(ADMIN)
+    OrderResponseDto getOrderByOrderId(Long orderId);
+
+    // memberId, orderId로 주문 내역 조회(MEMBERS)
+    OrderResponseDto getOrderByMemberIdAndOrderId(Long memberId, Long orderId);
 
     // number 로 주문 내역 조회(ADMIN, MEMBERS)
     OrderResponseDto getOrderByNumber(String orderNumber);
@@ -50,7 +52,6 @@ public interface OrderService {
     // guest 주문하기 (direct)
     Order guestCreateOrderDirectWithItems(Long memberId, GuestOrderRequestDirect request);
 
-
     // id로 주문 취소하기(MEMBERS)
     void cancelOrderById(Long orderId);
 
@@ -77,4 +78,5 @@ public interface OrderService {
 
     // 주문 도서에 대한 구매 확정여부를 검사
     boolean isConfirmedOrder(Long memberId, Long bookId);
+
 }
