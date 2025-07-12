@@ -72,6 +72,7 @@ public class OrderServiceTest {
                 .readAddress("Seoul")
                 .detailAddress("Gangnam")
                 .memberCouponId(0L)
+                .postCode("222222")
                 .build();
     }
 
@@ -91,7 +92,7 @@ public class OrderServiceTest {
     @DisplayName("주문 ID로 조회")
     void testGetOrderById() {
         Order saved = repository.findAll().getFirst();
-        assertThat(service.getOrderById(saved.getOrderId()))
+        assertThat(service.getOrderByOrderId(saved.getOrderId()))
                 .extracting("orderId")
                 .isEqualTo(saved.getOrderId());
     }
@@ -107,7 +108,7 @@ public class OrderServiceTest {
                 .orElse(0L) + 10;
 
         Assertions.assertThrows(NotFoundException.class,
-                () -> service.getOrderById(orderId));
+                () -> service.getOrderByOrderId(orderId));
     }
 
     @Test
