@@ -12,6 +12,7 @@ import com.nhnacademy.illuwa.domain.order.entity.ShippingPolicy;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.common.external.product.dto.BookPriceDto;
+import com.nhnacademy.illuwa.domain.order.factory.strategy.ItemPriceProvider;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
@@ -72,12 +73,12 @@ public class OrderFactory {
         return dto.getItems().stream().map(req -> {
 
             // (1) 외부 Book API 호출
-            BookPriceDto priceDto = productApiClient.getBookPriceByBookId(req.getBookId())
-                    .orElseThrow(() -> new NotFoundException("도서 가격 정보를 찾을 수 없습니다.", req.getBookId()));
+            BookPriceDto priceDto = productApiClient.getBookPriceByBookId(req.getBookId()).orElseThrow(
+                    () -> new NotFoundException("해당 도서의 가격을 찾을 수 없습니다."));
 
-            BigDecimal unitPrice = priceDto.getPriceSales() != null
-                    ? priceDto.getPriceSales()
-                    : priceDto.getPriceStandard();          // 판매가 null → 정가 사용
+            BigDecimal unitPrice = priceDto.getSalePrice() != null
+                    ? priceDto.getSalePrice()
+                    : priceDto.getRegularPrice();          // 판매가 null → 정가 사용
 
 
             MemberCouponDiscountDto coupon = memberCouponService.getDiscountPrice(order.getMemberCouponId());

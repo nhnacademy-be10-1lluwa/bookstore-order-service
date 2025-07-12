@@ -5,28 +5,33 @@ import com.nhnacademy.illuwa.common.external.user.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+
 @FeignClient(name = "user-service")
+
 public interface UserApiClient {
 
     // 멤버 주소록 조회
     @GetMapping(value = "/api/members/addresses")
-    List<MemberAddressDto> getAddressByMemberId(@CurrentUserId Long memberId);
+    List<MemberAddressDto> getAddressByMemberId(@RequestHeader("X-USER-ID") Long memberId);
 
-    // 사용된 포인트 전송 todo 수정 필요 (주소)
-    @PostMapping(value = "/api/points/use")
-    MemberUsedPointDto sendUsedPointByMemberId(@RequestBody PointRequest request);
 
-    // 순수 금액 전송 (상품 구매시, 적립금 적용에 사용) todo 수정 필요 (주소)
-    @PostMapping(value = "/api/points/earn")
+    // 순수 금액 전송 (상품 구매시, 적립금 적용에 사용)
+    @PostMapping(value = "/api/members/points/order/earn")
     MemberSavePointDto sendTotalPrice(@RequestBody TotalRequest request);
 
+    // 사용된 포인트 전송
+    @PostMapping(value = "/api/members/points/order/use")
+    MemberUsedPointDto sendUsedPointByMemberId(@RequestBody PointRequest request);
 
-    // 해당 멤버의 포인트 조회 (쿼리 파라미터로 memberId 전달)
-    @GetMapping(value = "/api/points")
-    Optional<MemberPointDto> getPointByMemberId(@RequestParam("memberId") Long memberId);
+
+
+    // 해당 멤버의 포인트 조회 (RequestHeader 로 memberId 전달)
+    @GetMapping(value = "/api/members/points")
+    Optional<BigDecimal> getPointByMemberId(@RequestHeader("X-USER-ID") Long memberId);
 
     // 멤버들의 3개월간 순수 주문 금액 전송 (주문 상태: confirmed )
     @PostMapping(value = "/api/members/grades/update")

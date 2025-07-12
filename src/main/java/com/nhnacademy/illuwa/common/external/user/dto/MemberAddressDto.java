@@ -15,5 +15,5 @@ public class MemberAddressDto {
     private String address; // 주소
     private String postCode; // 우편 번호
     private String detailAddress; // 상세 주소
-    private Boolean defaultAddress; // 기본 주소 - true : 기본주소
+    private Boolean forcedDefaultAddress; // 기본 주소 - true : 기본주소
 }

@@ -42,4 +42,5 @@ public interface OrderRepository extends JpaRepository<Order, Long>, OrderQueryd
     @Transactional
     void updateOrderStatusByOrderId(long orderId, OrderStatus orderStatus);
 
+    Long orderId(long orderId);
 }

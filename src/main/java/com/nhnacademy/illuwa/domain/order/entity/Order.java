@@ -44,7 +44,7 @@ public class Order {
     @JoinColumn(name = "shipping_policy_id", referencedColumnName = "shipping_policy_id")
     private ShippingPolicy shippingPolicy;
 
-    @Column(name = "order_date", nullable = false)
+    @Column(name = "order_date")
     private LocalDateTime orderDate;
 
     @Column(name = "delivery_date", nullable = false)
@@ -78,6 +78,9 @@ public class Order {
     @Column(name = "recipient_contact", nullable = false)
     private String recipientContact;
 
+    @Column(name = "post_code", nullable = false)
+    private String postCode;
+
     @Column(name = "read_address", nullable = false)
     private String readAddress;
 
@@ -88,7 +91,7 @@ public class Order {
     private Long memberCouponId;
 
     @Builder
-    public Order(long orderId, String orderNumber, Long memberId, String guestId, BigDecimal shippingFee, ShippingPolicy shippingPolicy, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus, String recipientName, String recipientContact, String readAddress, String detailAddress, Long memberCouponId) {
+    public Order(long orderId, String orderNumber, Long memberId, String guestId, BigDecimal shippingFee, ShippingPolicy shippingPolicy, LocalDateTime orderDate, LocalDate deliveryDate, BigDecimal totalPrice, BigDecimal discountPrice, BigDecimal usedPoint, BigDecimal finalPrice, OrderStatus orderStatus, String recipientName, String recipientContact, String postCode, String readAddress, String detailAddress, Long memberCouponId) {
         this.orderId = orderId;
         this.orderNumber = orderNumber;
         this.memberId = memberId;
@@ -104,6 +107,7 @@ public class Order {
         this.orderStatus = orderStatus;
         this.recipientName = recipientName;
         this.recipientContact = recipientContact;
+        this.postCode = postCode;
         this.readAddress = readAddress;
         this.detailAddress = detailAddress;
         this.memberCouponId = memberCouponId;

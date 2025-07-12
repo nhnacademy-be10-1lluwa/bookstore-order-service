@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.dto.orderItem;
 
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
+import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
@@ -20,6 +21,18 @@ public class OrderItemResponseDto {
     private PackagingResponseDto packaging; // <- 추가해야 프론트에서 출력 가능
 
     @Builder
+    public OrderItemResponseDto(Long orderItemId, String title, Long bookId, int quantity, BigDecimal price, Long packagingId, BigDecimal totalPrice, PackagingResponseDto packaging) {
+        this.orderItemId = orderItemId;
+        this.title = title;
+        this.bookId = bookId;
+        this.quantity = quantity;
+        this.price = price;
+        this.packagingId = packagingId;
+        this.totalPrice = totalPrice;
+        this.packaging = packaging;
+    }
+
+    @Builder
     @QueryProjection
     public OrderItemResponseDto(Long orderItemId,
                                 Long bookId,
@@ -35,6 +48,20 @@ public class OrderItemResponseDto {
         this.packagingId = packagingId;
         this.totalPrice = totalPrice;
         this.packaging = packagingResponseDto;
+    }
+
+
+    public static OrderItemResponseDto FromOrderItemEntity(OrderItem orderItem) {
+        return OrderItemResponseDto.builder()
+                .orderItemId(orderItem.getOrderItemId())
+                .quantity(orderItem.getQuantity())
+                .bookId(orderItem.getBookId())
+                .price(orderItem.getPrice())
+                .packagingId(orderItem.getPackaging().getPackagingId())
+                .totalPrice(orderItem.getItemTotalPrice())
+                .packaging(PackagingResponseDto.fromEntity(orderItem.getPackaging()))
+                .build();
+
     }
 }
 

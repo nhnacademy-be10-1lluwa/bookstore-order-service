@@ -24,7 +24,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static com.nhnacademy.illuwa.domain.order.util.generator.NumberGenerator.generateGuestId;
 
 @Component
 public class MemberOrderDirectFactory extends AbstractOrderFactory<MemberOrderRequestDirect> {
@@ -52,8 +51,8 @@ public class MemberOrderDirectFactory extends AbstractOrderFactory<MemberOrderRe
         Order order = initSkeleton()
                 .memberId(memberId)
                 .shippingPolicy(pol)
-                .shippingFee(pol.getFee())
                 .deliveryDate(request.getDeliveryDate())
+                .postCode(request.getPostCode())
                 .recipientName(request.getRecipientName())
                 .recipientContact(request.getRecipientContact())
                 .readAddress(request.getReadAddress())
@@ -73,7 +72,7 @@ public class MemberOrderDirectFactory extends AbstractOrderFactory<MemberOrderRe
         return orderRepo.save(order);
     }
 
-    private OrderItem buildOrderItem(MemberOrderRequestDirect request, Order order) {
+    public OrderItem buildOrderItem(MemberOrderRequestDirect request, Order order) {
 
         OrderItemDto item = request.getItem();
         Long bookId = item.getBookId();
@@ -87,8 +86,13 @@ public class MemberOrderDirectFactory extends AbstractOrderFactory<MemberOrderRe
         BigDecimal unitPrice = ip.unitPrice();
         BigDecimal totalPrice = ip.netPrice();
 
-        Packaging packaging = packagingRepo.findByPackagingId(item.getPackagingId())
-                .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", item.getPackagingId()));
+        Packaging packaging;
+        if (request.getItem().getPackagingId() != null) {
+            packaging = packagingRepo.findByPackagingId(item.getPackagingId())
+                    .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", item.getPackagingId()));
+        } else {
+            packaging = null;
+        }
 
         return OrderItem.builder()
                 .bookId(item.getBookId())
@@ -103,7 +107,7 @@ public class MemberOrderDirectFactory extends AbstractOrderFactory<MemberOrderRe
 
     }
 
-    private void applyPriceSummary(Order order) {
+    public void applyPriceSummary(Order order) {
 
         BigDecimal totalPrice = order.getItems().stream().map(OrderItem::getItemTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
 

@@ -59,6 +59,7 @@ public class GuestOrderCartFactory extends AbstractOrderFactory<GuestOrderReques
                 .deliveryDate(request.getDeliveryDate())
                 .recipientName(request.getRecipientName())
                 .recipientContact(request.getRecipientContact())
+                .postCode(request.getPostCode())
                 .readAddress(request.getReadAddress())
                 .detailAddress(request.getDetailAddress())
                 .build();

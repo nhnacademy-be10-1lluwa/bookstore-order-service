@@ -14,6 +14,6 @@ import java.math.BigDecimal;
 public class TotalRequest {
 
     private Long memberId;
-    private BigDecimal totalPrice;
+    private BigDecimal netOrderAmount;
 
 }

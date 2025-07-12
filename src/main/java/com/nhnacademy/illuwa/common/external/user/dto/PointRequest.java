@@ -13,6 +13,6 @@ import java.math.BigDecimal;
 public class PointRequest {
 
     private Long memberId;
-    private BigDecimal pointAmount;
+    private BigDecimal usedPoint;
 
 }

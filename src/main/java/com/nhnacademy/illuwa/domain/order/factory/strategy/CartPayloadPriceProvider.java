@@ -24,12 +24,13 @@ public class CartPayloadPriceProvider implements ItemPriceProvider {
     public ItemPrice fetchPrice(Long bookId, int quantity, Long couponId, Optional<CartPayload> payload) {
         CartPayload p = payload.orElseGet(() -> {
             // 장바구니 Payload가 없으면 Cart API 호출로 보충
-            BookPriceDto dto = cartApiClient.getBookPriceByBookId(bookId)
-                    .orElseThrow(() -> new NotFoundException("Cart API에서 가격 정보를 찾을 수 없습니다.", bookId));
+            BookPriceDto dto = cartApiClient.getBookPriceByBookId(bookId).orElseThrow(()
+            -> new NotFoundException("해당 도서의 가격을 찾을 수 없습니다."));
 
-            BigDecimal unitPrice = dto.getPriceSales() != null
-                    ? dto.getPriceSales()
-                    : dto.getPriceStandard();
+            BigDecimal unitPrice = dto.getSalePrice() != null
+                    ? dto.getSalePrice()
+                    : dto.getRegularPrice();
+
 
             BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
             return new CartPayload(unitPrice, quantity, totalPrice);
