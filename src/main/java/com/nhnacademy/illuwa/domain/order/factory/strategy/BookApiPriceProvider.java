@@ -19,14 +19,17 @@ public class BookApiPriceProvider implements ItemPriceProvider {
     private final DiscountCalculator discountCalculator;
     private final MemberCouponService memberCouponService;
 
+
     @Override
     public ItemPrice fetchPrice(Long bookId, int quantity, Long couponId, Optional<CartPayload> payload) {
 
-        BookPriceDto dto = productApiClient.getBookPriceByBookId(bookId)
-                .orElseThrow(() -> new NotFoundException("도서 가격 정보를 찾을 수 없습니다.", bookId));
-        BigDecimal unit = dto.getPriceSales() != null
-                ? dto.getPriceSales()
-                : dto.getPriceStandard();
+        // todo Product BigDecimal 업데이트 되면 수정하기
+        BookPriceDto dto = productApiClient.getBookPriceByBookId(bookId).orElseThrow(() -> new NotFoundException("해당 도서의 가격을 찾을 수 없습니다."));
+        BigDecimal unit = dto.getSalePrice() != null
+                ? dto.getSalePrice()
+                : dto.getRegularPrice();
+
+
 
         BigDecimal discount = BigDecimal.ZERO;
         if (couponId != null) {
