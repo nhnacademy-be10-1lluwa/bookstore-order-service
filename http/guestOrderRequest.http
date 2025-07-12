@@ -17,3 +17,40 @@ X-USER-ID: 2
 Accept: application/json
 
 ###
+
+GET localhost:10305/order/member/orders/1
+X-USER-ID:1
+Accept: application/json
+
+###
+
+GET localhost:10305/order/admin/orders?status=Pending&page=1&size=10
+Accept: application/json
+
+###
+
+GET localhost:10305/order/admin/orders/3
+Accept: application/json
+
+###
+
+PATCH localhost:10305/order/admin/orders/1
+Content-Type: application/json
+
+{
+  "orderStatus": "Delivered"
+}
+
+###
+
+GET localhost:10305/api/order/member/init-member-info/books/60
+X-USER-ID: 2
+Accept: application/json
+
+###
+
+GET localhost:10305/api/order/member/init-member-info/books/60
+X-USER-ID: 2
+Accept: application/json
+
+###
