@@ -3,6 +3,8 @@ package com.nhnacademy.illuwa.domain.order.repository.custom;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
+import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
+import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,8 +18,14 @@ public interface OrderQuerydslRepository {
     // 모든 주문 가져오기
     Page<OrderListResponseDto> findOrderDtos(Pageable pageable);
 
-    // 주문 아이디로 주문 찾기
-    Optional<OrderResponseDto> findOrderDto(Long orderId);
+    // 주문 아이디로 주문 조회
+    Optional<OrderResponseDto> findOrderDtoByOrderId(Long OrderId);
+
+    // 주문/멤버 아이디로 주문 조회
+    Optional<OrderResponseDto> findOrderDtoByMemberIdAndOrderId(Long memberId, Long orderId);
+
+    // 주문 상태로 주문 찾기
+    Page<OrderListResponseDto> findOrdersDtoByOrderStatus(OrderStatus orderStatus, Pageable pageable);
 
     // 멤버별 3개원 간 순수 주문 금액 조회
     List<MemberGradeUpdateRequest> findAllGradeDto();
@@ -36,4 +44,7 @@ public interface OrderQuerydslRepository {
 
     // 주문한 책이 구매 확정상태인지 확인
     boolean existsConfirmedOrderByMemberIdAndBookId(Long memberId, Long bookId);
+
+    // 주문 상태 변경하기
+    void updateStatusByOrderId(Long orderId, OrderUpdateStatusDto dto);
 }
