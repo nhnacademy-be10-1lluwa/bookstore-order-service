@@ -1,15 +1,12 @@
 package com.nhnacademy.illuwa.domain.order.repository.impl;
 
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.repository.custom.OrderQuerydslRepository;
 import com.nhnacademy.illuwa.domain.order.entity.QOrder;
 import com.nhnacademy.illuwa.domain.order.entity.QOrderItem;
-import com.nhnacademy.illuwa.domain.order.dto.order.QOrderListResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.QOrderResponseDto;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
@@ -22,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -48,12 +46,16 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
         JPAQuery<OrderListResponseDto> query = queryFactory
                 .select(new QOrderListResponseDto(
                         order.orderId,
+                        order.orderNumber,
                         order.orderDate,
+                        order.deliveryDate,
                         order.totalPrice,
                         order.orderStatus
                 ))
                 .from(order)
-                .orderBy(order.orderDate.desc());
+                .orderBy(order.orderDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
 
         if (pageable.isPaged()) {
             query.offset(pageable.getOffset()).limit(pageable.getPageSize());
@@ -73,9 +75,8 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     }
 
     @Override
-    public Optional<OrderResponseDto> findOrderDto(Long orderId) {
-
-        OrderResponseDto result =  queryFactory
+    public Optional<OrderResponseDto> findOrderDtoByOrderId(Long orderId) {
+        OrderResponseDto result = queryFactory
                 .select(new QOrderResponseDto(
                         order.orderId,
                         order.orderNumber,
@@ -89,8 +90,61 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 .from(order)
                 .where(order.orderId.eq(orderId))
                 .fetchOne();
+        return Optional.ofNullable(result);
+    }
+
+    @Override
+    public Optional<OrderResponseDto> findOrderDtoByMemberIdAndOrderId(Long memberId, Long orderId) {
+
+        OrderResponseDto result = queryFactory
+                .select(new QOrderResponseDto(
+                        order.orderId,
+                        order.orderNumber,
+                        order.memberId,
+                        order.orderDate,
+                        order.deliveryDate,
+                        order.shippingFee,
+                        order.totalPrice,
+                        order.orderStatus,
+                        Expressions.nullExpression()))
+                .from(order)
+                .where(order.orderId.eq(orderId).and(order.memberId.eq(memberId)))
+                .fetchOne();
 
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public Page<OrderListResponseDto> findOrdersDtoByOrderStatus(OrderStatus orderStatus, Pageable pageable) {
+
+        JPAQuery<OrderListResponseDto> query = queryFactory
+                .select(new QOrderListResponseDto(
+                        order.orderId,
+                        order.orderNumber,
+                        order.orderDate,
+                        order.deliveryDate,
+                        order.totalPrice,
+                        order.orderStatus
+                ))
+                .from(order)
+                .where(order.orderStatus.eq(orderStatus))
+                .orderBy(order.orderDate.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+
+        List<OrderListResponseDto> content = query.fetch();
+
+        Long totalWrapper = queryFactory.select(order.count())
+                .from(order)
+                .where(order.orderStatus.eq(orderStatus))
+                .fetchOne();
+
+        long total = totalWrapper != null ? totalWrapper : 0L;
+
+
+        return new PageImpl<>(content,
+                pageable,
+                total);
     }
 
     @Override
@@ -114,18 +168,23 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
         JPAQuery<OrderListResponseDto> query = queryFactory
                 .select(new QOrderListResponseDto(
                         order.orderId,
+                        order.orderNumber,
                         order.orderDate,
+                        order.deliveryDate,
                         order.totalPrice,
                         order.orderStatus
                 ))
                 .from(order)
                 .where(order.memberId.eq(memberId))
-                .orderBy(order.orderDate.desc());
+                .orderBy(order.orderDate.desc(), order.orderId.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
 
         List<OrderListResponseDto> contents = query.fetch();
 
         Long totalWrapper = queryFactory.select(order.count())
                 .from(order)
+                .where(order.memberId.eq(memberId))
                 .fetchOne();
 
         long total = totalWrapper != null ? totalWrapper : 0L;
@@ -137,7 +196,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
 
     @Override
     public Optional<OrderResponseDto> findOrderDtoByOrderNumber(String orderNumber) {
-        OrderResponseDto result =  queryFactory
+        OrderResponseDto result = queryFactory
                 .select(new QOrderResponseDto(
                         order.orderId,
                         order.orderNumber,
@@ -157,7 +216,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
 
     @Override
     public Optional<OrderResponseDto> findOrderDtoByOrderNumberAndContact(String orderNumber, String recipientContact) {
-        OrderResponseDto result =  queryFactory
+        OrderResponseDto result = queryFactory
                 .select(new QOrderResponseDto(
                         order.orderId,
                         order.orderNumber,
@@ -181,15 +240,15 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
 
         // 여기서는 하나의 통합된 요청 객체를 생성하는 방식으로 구성한다고 가정
         return queryFactory
-            .from(order)
-            .where(order.orderStatus.eq(OrderStatus.Confirmed)
-                .and(order.orderDate.after(threeMonthsAgo)))
-            .transform(GroupBy.groupBy(order.memberId)
-                .list(Projections.constructor(
-                    MemberGradeUpdateRequest.class,
-                    order.memberId,
-                    GroupBy.list(order.totalPrice)
-                )));
+                .from(order)
+                .where(order.orderStatus.eq(OrderStatus.Confirmed)
+                        .and(order.orderDate.after(threeMonthsAgo)))
+                .transform(GroupBy.groupBy(order.memberId)
+                        .list(Projections.constructor(
+                                MemberGradeUpdateRequest.class,
+                                order.memberId,
+                                GroupBy.list(order.totalPrice)
+                        )));
     }
 
     @Override
@@ -205,5 +264,14 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                         orderItem.bookId.eq(bookId)
                 )
                 .fetchFirst() != null;
+    }
+
+    @Override
+    public void updateStatusByOrderId(Long orderId, OrderUpdateStatusDto dto) {
+        queryFactory.update(order)
+                .set(order.orderStatus, dto.getOrderStatus())
+                .set(order.deliveryDate, LocalDate.now())
+                .where(order.orderId.eq(orderId))
+                .execute();
     }
 }
