@@ -9,9 +9,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-@FeignClient(
-        name = "user-service"
-)
+
+@FeignClient(name = "user-service")
+
 public interface UserApiClient {
 
     // 멤버 주소록 조회

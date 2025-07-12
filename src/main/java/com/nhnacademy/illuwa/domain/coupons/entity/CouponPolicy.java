@@ -15,36 +15,41 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "coupon_policy")
 public class CouponPolicy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 30)
+    @Column(name = "code", nullable = false, unique = true, length = 30)
     private String code; // 고유 id 식별 x -> 코드로 식별o
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
+    @Column(name = "status", nullable = false, length = 10)
     private CouponStatus status; // 상태
 
-    @Column(nullable = false)
+    @Column(name = "min_order_amount",nullable = false)
     private BigDecimal minOrderAmount; // 최소 주문 금액
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
+    @Column(name = "discount_type", nullable = false, length = 10)
     private DiscountType discountType; // 할인타입 선정
 
     // 이부분을 둘다 기본적으로 Null로 놔두는것보다
     // enum으로 (금액, 퍼센트)로 설정하여서 하는게 더 좋긴할듯
+    @Column(name = "discount_amount")
     private BigDecimal discountAmount; // 할인 금액
+    @Column(name = "discount_percent")
     private BigDecimal discountPercent; // 할인 퍼센트
 
-
+    @Column(name = "max_discount_amount")
     private BigDecimal maxDiscountAmount; // 최대 할인 금액
 
     // 정책의 수정 여부를 확인 (솔직히 해당사항이 꼭 필요한건 아니지만 있으면 좋을것 같은 기능이라서 넣음)
+    @Column(name = "create_at")
     private LocalDateTime createAt;
+    @Column(name = "update_at")
     private LocalDateTime updateAt;
 
     @PrePersist // DB 저장하기전 자동 호출

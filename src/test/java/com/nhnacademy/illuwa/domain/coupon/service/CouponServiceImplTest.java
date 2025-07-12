@@ -11,6 +11,7 @@ import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyI
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
+import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.impl.CouponServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,9 +49,12 @@ class CouponServiceImplTest {
 
     private CouponCreateRequest request1;
     private CouponCreateRequest request2;
+    @Autowired
+    private MemberCouponRepository memberCouponRepository;
 
     @BeforeEach
     void setup() {
+        memberCouponRepository.deleteAll();
         couponRepository.deleteAll(); // ddl-auto -> update시
         couponPolicyRepository.deleteAll();
 

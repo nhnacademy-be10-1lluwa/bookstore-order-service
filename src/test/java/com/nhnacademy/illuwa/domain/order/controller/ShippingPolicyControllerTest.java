@@ -52,7 +52,7 @@ class ShippingPolicyControllerTest {
         Mockito.when(shippingPolicyService.addShippingPolicy(Mockito.any(ShippingPolicyCreateRequestDto.class)))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(post("/shipping-policy")
+        mockMvc.perform(post("/api/shipping-policy")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
                 .andDo(print())
@@ -68,7 +68,7 @@ class ShippingPolicyControllerTest {
     void getShippingPolicy() throws Exception {
         Mockito.when(shippingPolicyService.getShippingPolicy(1L)).thenReturn(responseDto);
 
-        mockMvc.perform(get("/shipping-policy/{id}", 1L))
+        mockMvc.perform(get("/api/shipping-policy/{id}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.shippingPolicyId").value(1L))
@@ -82,7 +82,7 @@ class ShippingPolicyControllerTest {
         Mockito.when(shippingPolicyService.getShippingPolicyByActive(true))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(get("/shipping-policy"))
+        mockMvc.perform(get("/api/shipping-policy"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("shippingPolicyId").value(1L));
@@ -101,7 +101,7 @@ class ShippingPolicyControllerTest {
                 Mockito.any(ShippingPolicyCreateRequestDto.class)))
                 .thenReturn(updatedResponse);
 
-        mockMvc.perform(put("/shipping-policy/{id}", 1L)
+        mockMvc.perform(put("/api/shipping-policy/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andDo(print())
@@ -115,7 +115,7 @@ class ShippingPolicyControllerTest {
     void deleteShippingPolicy() throws Exception {
         Mockito.when(shippingPolicyService.removeShippingPolicy(1L)).thenReturn(1);
 
-        mockMvc.perform(delete("/shipping-policy/{id}", 1L))
+        mockMvc.perform(delete("/api/shipping-policy/{id}", 1L))
                 .andExpect(status().isNoContent());
     }
 }

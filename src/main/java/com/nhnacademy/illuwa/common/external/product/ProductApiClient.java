@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Optional;
 
-@FeignClient(
-        name = "product-service"
-)
+@FeignClient(name = "product-service")
 public interface ProductApiClient {
 
 

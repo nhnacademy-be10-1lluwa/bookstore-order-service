@@ -53,7 +53,7 @@ class CouponControllerTest {
         Mockito.when(couponService.getCouponsByPolicyCode("testCode"))
                 .thenReturn(responseList);
 
-        mockMvc.perform(get("/coupons?policyCode=testCode")
+        mockMvc.perform(get("/api/coupons?policyCode=testCode")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()").value(3))
                 .andExpect(jsonPath("$[0].code").value("testCode"))
@@ -69,7 +69,7 @@ class CouponControllerTest {
         Mockito.when(couponService.getCouponsByType(CouponType.GENERAL))
                 .thenReturn(responseList);
 
-        mockMvc.perform(get("/coupons?type=GENERAL")
+        mockMvc.perform(get("/api/coupons?type=GENERAL")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()").value(3))
                 .andExpect(jsonPath("$[0].couponType").value("GENERAL"))
@@ -85,7 +85,7 @@ class CouponControllerTest {
         Mockito.when(couponService.getCouponsByName("couponTestName"))
                 .thenReturn(responseList);
 
-        mockMvc.perform(get("/coupons?name=couponTestName")
+        mockMvc.perform(get("/api/coupons?name=couponTestName")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].couponName").value("couponTestName"))
@@ -99,7 +99,7 @@ class CouponControllerTest {
 
         Mockito.when(couponService.getAllCoupons()).thenReturn(responseList);
 
-        mockMvc.perform(get("/coupons")
+        mockMvc.perform(get("/api/coupons")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()").value(5));
     }
