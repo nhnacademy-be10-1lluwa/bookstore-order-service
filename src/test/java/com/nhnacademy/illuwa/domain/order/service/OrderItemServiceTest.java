@@ -87,6 +87,7 @@ public class OrderItemServiceTest {
                 .readAddress("Seoul")
                 .detailAddress("GangNam")
                 .memberCouponId(0L)
+                .postCode("222222")
                 .build();
     }
 
