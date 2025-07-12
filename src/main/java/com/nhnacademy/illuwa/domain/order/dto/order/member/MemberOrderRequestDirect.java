@@ -7,16 +7,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
 import java.math.BigDecimal;
-import java.time.LocalDate;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberOrderRequestDirect extends BaseOrderRequest {
 
     private OrderItemDto item;
-    private BigDecimal usedPoint;
     private Long memberCouponId;
+    private BigDecimal usedPoint;
 }
