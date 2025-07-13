@@ -1,7 +1,9 @@
 package com.nhnacademy.illuwa.common.external.user;
 
-import com.nhnacademy.illuwa.common.annotation.CurrentUserId;
 import com.nhnacademy.illuwa.common.external.user.dto.*;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestCreateRequest;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestCreateResponse;
+import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +29,6 @@ public interface UserApiClient {
     @PostMapping(value = "/api/members/points/order/use")
     MemberUsedPointDto sendUsedPointByMemberId(@RequestBody PointRequest request);
 
-
-
     // 해당 멤버의 포인트 조회 (RequestHeader 로 memberId 전달)
     @GetMapping(value = "/api/members/points")
     Optional<BigDecimal> getPointByMemberId(@RequestHeader("X-USER-ID") Long memberId);
@@ -36,6 +36,9 @@ public interface UserApiClient {
     // 멤버들의 3개월간 순수 주문 금액 전송 (주문 상태: confirmed )
     @PostMapping(value = "/api/members/grades/update")
     List<MemberGradeUpdateRequest> sendNetOrderAmount(@RequestBody List<MemberGradeUpdateRequest> request);
+
+    @PostMapping(value = "/api/guests/create")
+    Optional<GuestCreateResponse> resisterGuest(@RequestBody @Valid GuestCreateRequest request);
 
     @GetMapping("/api/members")
     MemberDto getMember(@RequestHeader("X-USER-ID") long memberId);

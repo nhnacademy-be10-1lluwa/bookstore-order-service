@@ -1,11 +1,14 @@
 package com.nhnacademy.illuwa.domain.order.controller.guest;
 
 import com.nhnacademy.illuwa.common.annotation.CurrentUserId;
+import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
+import com.nhnacademy.illuwa.common.external.product.dto.BookDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitDirectResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
+import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
@@ -23,6 +26,7 @@ import java.math.BigDecimal;
 public class GuestOrderController {
 
     private final OrderService orderService;
+    private final ProductApiClient productApiClient;
 
     @GetMapping("/init-from-cart")
     public ResponseEntity<GuestOrderInitFromCartResponseDto> getOrderInitFromCart(
@@ -41,28 +45,24 @@ public class GuestOrderController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/init-member-info/books/{book-id}")
-    public ResponseEntity<GuestOrderInitDirectResponseDto> getOrderInitDirect(@PathVariable("book-id") Long bookId, @CurrentUserId Long memberId) {
-        GuestOrderInitDirectResponseDto response = orderService.getGuestOrderInitDirectData(bookId, memberId);
-        return ResponseEntity.ok(response);
-    }
-
-    // 비회원 장바구니 주문
-    @PostMapping("/submit")
-    public ResponseEntity<OrderCreateResponseDto> guestOrderRequest(@RequestBody @Valid GuestOrderRequest guestOrderRequest) {
-        /*Order order = orderService.guestCreateOrderFromCartWithItems(guestOrderRequest);*/
-        Order order = orderService.guestCreateOrderFromCartWithItems(null, guestOrderRequest);
-        OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
+    @GetMapping("/init-guest-info/books/{book-id}")
+    public ResponseEntity<GuestOrderInitDirectResponseDto> getOrderInitDirect(@PathVariable("book-id") Long bookId) {
+        GuestOrderInitDirectResponseDto response = orderService.getGuestOrderInitDirectData(bookId);
         return ResponseEntity.ok(response);
     }
 
     // 비회원 바로 구매
     @PostMapping("/submit-direct")
     public ResponseEntity<OrderCreateResponseDto> guestOrderRequestDirect(@RequestBody @Valid GuestOrderRequestDirect guestOrderRequestDirect) {
-        /*Order order = orderService.guestCreateOrderDirectWithItems(guestOrderRequestDirect);*/
-        Order order = orderService.guestCreateOrderDirectWithItems(null, guestOrderRequestDirect);
-        OrderCreateResponseDto responseDto = OrderCreateResponseDto.fromEntity(order);
-        return ResponseEntity.ok(responseDto);
+        Order order = orderService.guestCreateOrderDirectWithItems(guestOrderRequestDirect);
+        OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
+
+        for (OrderItemResponseDto item : response.getItems()) {
+            BookDto bookDto = productApiClient.getBookById(item.getBookId())
+                    .orElseThrow(() -> new NotFoundException("해당 도서를 찾을 수 없습니다.", item.getBookId()));
+            item.setTitle(bookDto.getTitle());
+        }
+        return ResponseEntity.ok(response);
     }
 
 
