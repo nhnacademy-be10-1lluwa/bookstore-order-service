@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.util.generator;
 
 
+import com.github.f4b6a3.ulid.UlidCreator;
 
 
 import java.time.LocalDateTime;
@@ -25,12 +26,8 @@ public class NumberGenerator {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }
 
-    // 비회원 번호 생성 (20자리, 숫자만)
+    // 비회원 번호 생성 (ULID 26자)
     public static String generateGuestId() {
-        StringBuilder uuid = new StringBuilder(UUID.randomUUID().toString().replaceAll("[^0-9]", ""));
-        while (uuid.length() < 20) {
-            uuid.append("0"); // pad if too short
-        }
-        return uuid.substring(0, 20);
+        return UlidCreator.getUlid().toString();   // 예: 01HACVG2D8VY7P1JEP2JRM9R3N 26자리 비회원
     }
 }

@@ -8,10 +8,7 @@ import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
-import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitDirectResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
-import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
+import com.nhnacademy.illuwa.domain.order.dto.order.guest.*;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitDirectResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
@@ -72,6 +69,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OrderResponseDto getOrderByOrderId(Long orderId) {
         OrderResponseDto orderResponseDto = orderRepository.findOrderDtoByOrderId(orderId)
                 .orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다."));
@@ -123,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact) {
         OrderResponseDto orderResponseDto = orderRepository.findOrderDtoByOrderNumberAndContact(orderNumber, recipientContact)
-            .orElseThrow(() -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+                .orElseThrow(() -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
 
         List<OrderItemResponseDto> items = orderItemRepository.findOrderItemDtosByOrderNumber(orderNumber);
 
@@ -186,8 +184,11 @@ public class OrderServiceImpl implements OrderService {
 
     // guest 주문하기 (direct)
     @Override
-    public Order guestCreateOrderDirectWithItems(Long memberId, GuestOrderRequestDirect request) {
+    public Order guestCreateOrderDirectWithItems(GuestOrderRequestDirect request) {
         Order order = guestOrderDirectFactory.create(null, request);
+        GuestCreateRequest guestCreateRequest = GuestCreateRequest.fromGuestOrderRequestDirect(request, order);
+        userApiClient.resisterGuest(guestCreateRequest).orElseThrow(()
+                -> new BadRequestException("비회원을 등록하지 못하였습니다."));
         return orderRepository.save(order);
     }
 
@@ -255,9 +256,9 @@ public class OrderServiceImpl implements OrderService {
         if (item.getCount() <= 0) {
             throw new BadRequestException("품절입니다.");
         }
-        Long categoryId = item.getCategoryId();
+        /*Long categoryId = item.getCategoryId();
         Long level1 = item.getLevel1();
-        long level2 = item.getLevel2();
+        long level2 = item.getLevel2();*/
 
         List<MemberAddressDto> addresses = userApiClient.getAddressByMemberId(memberId);
         List<MemberCouponResponse> coupons = memberCouponService.getAllMemberCoupons(memberId);
@@ -269,8 +270,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public GuestOrderInitDirectResponseDto getGuestOrderInitDirectData(Long bookId, Long memberId) {
-        BookDto item = productApiClient.getBookById(bookId).orElseThrow(
+    public GuestOrderInitDirectResponseDto getGuestOrderInitDirectData(Long bookId) {
+        BookItemOrderDto item = productApiClient.getOrderBookById(bookId).orElseThrow(
                 () -> new NotFoundException("해당 도서를 찾을 수 없습니다.", bookId));
         List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
         return new GuestOrderInitDirectResponseDto(item, packaging);
