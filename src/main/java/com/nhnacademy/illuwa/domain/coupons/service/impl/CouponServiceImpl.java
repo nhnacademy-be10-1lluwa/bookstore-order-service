@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,6 +69,9 @@ public class CouponServiceImpl implements CouponService {
             categoryId = request.getCategoryId();
         }
 
+        if (request.getValidFrom().isAfter(request.getValidTo())) {
+            throw new BadRequestException("유효 시작일은 유효 종료일 이전이어야 합니다.");
+        }
 
 
         // 3 -> 정책이 활성화인지 비활성인지 체크
@@ -133,6 +137,14 @@ public class CouponServiceImpl implements CouponService {
     public CouponUpdateResponse updateCoupon(Long id, CouponUpdateRequest request) {
         Coupon coupon = couponRepository.findById(id)
                 .orElseThrow(() -> new CouponNotFoundException("존재하지 않는 쿠폰ID 입니다. ->" + id));
+
+        LocalDate validFrom = request.getValidFrom() != null ? request.getValidFrom() : coupon.getValidFrom();
+        LocalDate validTo = request.getValidTo() != null ? request.getValidTo() : coupon.getValidTo();
+
+        if (validFrom.isAfter(validTo)) {
+            throw new BadRequestException("유효 시작일은 유효 종료일 이전이어야 합니다.");
+        }
+
         if (request.getCouponName() != null) {
             coupon.setCouponName(request.getCouponName());
         }
