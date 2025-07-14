@@ -2,7 +2,6 @@ package com.nhnacademy.illuwa.domain.coupons.service.impl;
 
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberDto;
-import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponInfoResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
@@ -116,24 +115,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         return memberCouponRepository.findDtoByMemberCouponId(memberCouponId).orElseThrow(()
                 -> new NotFoundException("해당 쿠폰을 찾지 못하였습니다.", memberCouponId));
     }
-
-
-//    @Override
-//    public CouponInfoResponse getCouponInfoFromMemberCoupon(Long memberCouponId) {
-//        MemberCoupon membercoupon = memberCouponRepository.findById(memberCouponId)
-//                .orElseThrow(() -> new CouponNotFoundException("쿠폰이 존재하지 않습니다."));
-//        Coupon coupon = membercoupon.getCoupon();
-//        return CouponInfoResponse.fromEntity(coupon);
-//    }
-
-//
-//    @Override
-//    public List<MemberCouponResponseTest> getAllMemberCouponsTest(Long id) {
-//        return null;
-//        return memberCouponRepository.findMemberById(id)
-//                .stream()
-//                .map(MemberCouponResponseTest::fromEntity)
-//                .toList();
 
 
     // 회원 소유 쿠폰 사용 ( 우선 이메일과 사용하고자하는 쿠폰이름을 매개변수로 가져옴 )
