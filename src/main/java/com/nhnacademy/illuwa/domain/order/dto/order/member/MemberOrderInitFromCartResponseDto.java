@@ -1,7 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.dto.order.member;
 
+import com.nhnacademy.illuwa.common.external.product.dto.CartResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
-import com.nhnacademy.illuwa.common.external.product.dto.CartOrderItemDto;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberAddressDto;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberOrderInitFromCartResponseDto {
-    private List<CartOrderItemDto> cartItems;
+
+     /* API로 불러오는 부분 */
+   private CartResponse cartResponse;
+    /*ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
+
     private List<MemberAddressDto> recipients;
     private List<MemberCouponResponse> availableCoupons;
     private List<PackagingResponseDto> packaging;

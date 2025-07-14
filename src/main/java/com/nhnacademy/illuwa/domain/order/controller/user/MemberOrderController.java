@@ -72,9 +72,10 @@ public class MemberOrderController {
         return ResponseEntity.ok(body);
     }
 
+
+    // 이거 확인해라 또 딴거 보지말고
     @PostMapping("/submit")
     public ResponseEntity<OrderCreateResponseDto> sendOrderRequest(@RequestHeader("X-USER-ID") Long memberId, @RequestBody @Valid MemberOrderRequest memberOrderRequest) {
-        /*Order order = orderService.memberCreateOrderFromCartWithItems(memberId, memberOrderRequest);*/
         Order order = orderService.memberCreateOrderFromCartWithItems(memberId, memberOrderRequest);
         OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
         return ResponseEntity.ok(response);

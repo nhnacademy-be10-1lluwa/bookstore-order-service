@@ -107,7 +107,7 @@ public class MemberOrderDirectFactory extends AbstractOrderFactory<MemberOrderRe
 
     }
 
-    public void applyPriceSummary(Order order) {
+    /*public void applyPriceSummary(Order order) {
 
         BigDecimal totalPrice = order.getItems().stream().map(OrderItem::getItemTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -144,5 +144,5 @@ public class MemberOrderDirectFactory extends AbstractOrderFactory<MemberOrderRe
         order.setUsedPoint(usedPoint);
         order.setFinalPrice(payableAmount);
         order.setShippingFee(shippingFee);
-    }
+    }*/
 }

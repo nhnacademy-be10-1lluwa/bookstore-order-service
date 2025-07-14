@@ -1,16 +1,10 @@
 package com.nhnacademy.illuwa.common.external.product;
 
 
-import com.nhnacademy.illuwa.common.external.product.dto.BookDto;
-import com.nhnacademy.illuwa.common.external.product.dto.BookPriceDto;
-import com.nhnacademy.illuwa.common.external.product.dto.CategoryDto;
-import com.nhnacademy.illuwa.common.external.product.dto.CreateOrderFromCartRequest;
+import com.nhnacademy.illuwa.common.external.product.dto.*;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.BookItemOrderDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +21,7 @@ public interface ProductApiClient {
     @GetMapping("/api/books/{bookId}")
     Optional<BookDto> getBookById(@PathVariable("bookId") Long bookId);
 
+
     @GetMapping("/api/admin/books/{bookId}/detail")
     Optional<BookItemOrderDto> getOrderBookById(@PathVariable("bookId") Long bookId);
 
@@ -36,8 +31,8 @@ public interface ProductApiClient {
 
 
     // 카트 조회 (Member)
-    @GetMapping(value = "/api/members/{memberId}/cart")
-    Optional<CreateOrderFromCartRequest> getCart(@PathVariable Long memberId);
+    @GetMapping(value = "/api/cart")
+    Optional<CartResponse> getCart(@RequestHeader("X-USER-ID") Long memberId);
 
     // 카트 조회 (Guest)
     @GetMapping(value = "/api/guest/cart/{cartId}")

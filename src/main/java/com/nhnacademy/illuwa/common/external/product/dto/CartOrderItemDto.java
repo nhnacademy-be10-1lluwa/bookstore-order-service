@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.common.external.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class CartOrderItemDto {
+    @JsonProperty("id")
     private Long bookId;
     private Integer quantity;
     private BigDecimal price;
