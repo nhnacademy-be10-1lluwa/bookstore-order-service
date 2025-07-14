@@ -120,8 +120,8 @@ Content-Type: application/json
   "couponName": "일반쿠폰",
   "couponType": "GENERAL",
   "policyCode": "ABC",
-  "validTo": "2025-01-01",
-  "validFrom": "2025-12-31",
+  "validFrom": "2025-01-01",
+  "validTo": "2025-12-31",
   "comment": "모든 상품에 대해서 가격의 50%할인 (첫 회원가입 대상자 전용)",
   "conditions": "최소주문 금액 10,000원 이상 시 50%할인,",
   "issueCount": 100
@@ -135,8 +135,8 @@ Content-Type: application/json
   "couponName": "웰컴쿠폰",
   "couponType": "WELCOME",
   "policyCode": "WELCOME_DC50P",
-  "validTo": "2025-01-01",
-  "validFrom": "2025-12-31",
+  "validFrom": "2025-01-01",
+  "validTo": "2025-12-31",
   "comment": "모든 상품에 대해서 가격의 50%할인 (첫 회원가입 대상자 전용)",
   "conditions": "최소주문 금액 10,000원 이상 시 50%할인,",
   "issueCount": 100
@@ -150,8 +150,8 @@ Content-Type: application/json
   "couponName": "생일쿠폰",
   "couponType": "BIRTHDAY",
   "policyCode": "BIRTHDAY_DC30P",
-  "validTo": "2025-01-01",
-  "validFrom": "2025-12-31",
+  "validFrom": "2025-01-01",
+  "validTo": "2025-12-31",
   "comment": "모든 상품에 대해서 가격의 30%할인 (당월 생일자 전용)",
   "conditions": "최소주문 금액 10,000원 이상 시 30%할인,",
   "issueCount": 100

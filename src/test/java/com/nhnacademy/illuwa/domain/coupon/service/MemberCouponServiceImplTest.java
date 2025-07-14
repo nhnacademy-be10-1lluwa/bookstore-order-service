@@ -65,7 +65,7 @@ class MemberCouponServiceImplTest {
         couponPolicyRepository.deleteAll();
 
         couponPolicy = couponPolicyRepository.save(CouponPolicy.builder()
-                .code("TEST")
+                .code("TEST_" + System.currentTimeMillis())
                 .minOrderAmount(BigDecimal.valueOf(10000))
                 .discountType(DiscountType.AMOUNT)
                 .discountAmount(BigDecimal.valueOf(3000))
