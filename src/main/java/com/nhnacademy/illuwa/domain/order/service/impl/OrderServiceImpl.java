@@ -2,6 +2,7 @@ package com.nhnacademy.illuwa.domain.order.service.impl;
 
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
 import com.nhnacademy.illuwa.common.external.product.dto.BookDto;
+import com.nhnacademy.illuwa.common.external.product.dto.CartResponse;
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.PointRequest;
 import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
@@ -224,17 +225,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public MemberOrderInitFromCartResponseDto getOrderInitFromCartData(Long memberId) {
-        CreateOrderFromCartRequest request = productApiClient.getCart(memberId).orElseThrow(()
+        CartResponse request = productApiClient.getCart(memberId).orElseThrow(()
                 -> new NotFoundException("장바구니를 찾을 수 없습니다.", memberId));
 
-        List<CartOrderItemDto> cartItems = request.getItems();
+        // 쿠폰 로직 생각 해보기
+
         List<MemberAddressDto> addresses = userApiClient.getAddressByMemberId(memberId);
         List<MemberCouponResponse> coupons = memberCouponService.getAllMemberCoupons(memberId);
         List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
         BigDecimal pointBalance = userApiClient.getPointByMemberId(memberId).orElseThrow(()
                 -> new NotFoundException("보유 포인트를 찾을 수 없습니다.", memberId));
 
-        return new MemberOrderInitFromCartResponseDto(cartItems, addresses, coupons, packaging, pointBalance);
+        return new MemberOrderInitFromCartResponseDto(request, addresses, coupons, packaging, pointBalance);
     }
 
     @Override

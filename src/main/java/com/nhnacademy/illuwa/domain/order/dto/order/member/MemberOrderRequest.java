@@ -9,17 +9,17 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberOrderRequest extends BaseOrderRequest {
     private String cartId;
 
-    private List<CartOrderItemDto> cartItem;
-    private BigDecimal totalPrice; // 전체 금액
+    private List<CartOrderItemDto> cartItems;
     private BigDecimal usedPoint; // 사용 포인트
     private Long memberCouponId; // 사용한 member 쿠폰
 

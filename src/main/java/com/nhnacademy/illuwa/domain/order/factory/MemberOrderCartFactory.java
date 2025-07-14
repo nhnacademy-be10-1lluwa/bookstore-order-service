@@ -1,5 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.factory;
 
+import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
+import com.nhnacademy.illuwa.common.external.product.dto.BookCartResponse;
 import com.nhnacademy.illuwa.domain.coupons.factory.DiscountCalculator;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
@@ -33,15 +35,18 @@ import java.util.Optional;
 public class MemberOrderCartFactory extends AbstractOrderFactory<MemberOrderRequest> {
     private final DiscountCalculator discountCalculator;
     private final MemberCouponService memberCouponService;
+    private final ProductApiClient productApiClient;
+
     public MemberOrderCartFactory(PackagingRepository packagingRepo,
                                   ShippingPolicyRepository shippingRepo,
                                   OrderRepository orderRepo,
                                   @Qualifier("cartPayloadProvider") ItemPriceProvider priceProvider,
                                   DiscountCalculator discountCalculator,
-                                  MemberCouponService memberCouponService) {
+                                  MemberCouponService memberCouponService, ProductApiClient productApiClient) {
         super(packagingRepo, shippingRepo, orderRepo, priceProvider);
         this.discountCalculator = discountCalculator;
         this.memberCouponService = memberCouponService;
+        this.productApiClient = productApiClient;
     }
 
 
@@ -74,7 +79,8 @@ public class MemberOrderCartFactory extends AbstractOrderFactory<MemberOrderRequ
 
 
     private List<OrderItem> buildOrderItems(MemberOrderRequest request, Order order) {
-        return request.getCartItem().stream().map(item -> {
+
+        return request.getCartItems().stream().map(item -> {
             ItemPriceProvider.CartPayload payload = new ItemPriceProvider.CartPayload(
                     item.getPrice(),
                     item.getQuantity(),
@@ -85,7 +91,7 @@ public class MemberOrderCartFactory extends AbstractOrderFactory<MemberOrderRequ
                     item.getBookId(),
                     item.getQuantity(),
                     item.getCouponId(),
-                    Optional.of(payload)
+                    Optional.empty()
             );
 
             Packaging packaging = packagingRepo.findByPackagingId(item.getPackagingId())
