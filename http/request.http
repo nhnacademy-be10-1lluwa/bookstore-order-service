@@ -203,10 +203,10 @@ POST http://localhost:10309/api/members/member-coupons/welcome?email=test@test.c
 ### (회원) -> 쿠폰 발급
 POST http://localhost:10309/api/member-coupons
 Content-Type: application/json
-X-USER-ID: 3
+X-USER-ID: 2
 
 {
-  "couponName": "웰컴쿠폰"
+  "couponName": "IT/컴퓨터 카테고리 쿠폰"
 }
 
 #### (회원) -> 쿠폰 발급내역
@@ -215,12 +215,21 @@ X-USER-ID: 3
 ### (회원) -> 쿠폰 발급내역 (클라이언트 마이 쿠폰 확인용)
 GET http://localhost:10309/api/member-coupons
 Content-Type: application/json
-X-USER-ID: 3
+X-USER-ID: 2
 
-#### (회원) -> 쿠폰 정보 조회 (memberCouponId 조회)
-#GET http://localhost:10305/member-coupons/1
+#### (회원) -> 쿠폰 조회(타입) ()
 
 ### (회원) -> 쿠폰 사용 (memberCouponId로 사용)
 PUT http://localhost:10309/api/member-coupons/8/use
 Content-Type: application/json
 X-USER-ID: 1
+
+### 적용가능한 카테고리 쿠폰
+GET http://localhost:10309/api/member-coupons/category/8?couponType=CATEGORY
+Content-Type: application/json
+X-USER-ID: 2
+
+### 적용가능한 특정도서 쿠폰
+GET http://localhost:10309/api/member-coupons/book/1?couponType=BOOKS
+Content-Type: application/json
+X-USER-ID: 2

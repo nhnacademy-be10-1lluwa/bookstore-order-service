@@ -3,6 +3,7 @@ package com.nhnacademy.illuwa.domain.coupons.service;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponInfoResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.*;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,6 +26,12 @@ public interface MemberCouponService {
 //    MemberCouponResponse getMemberCouponId(Long id);
 //
 //    List<MemberCouponResponseTest> getAllMemberCouponsTest(Long id);
+
+    // 특정 도서 쿠폰 조회
+    List<MemberCouponDto> getAvailableCouponsForBook(Long memberId, Long bookId, CouponType couponType);
+
+    // 특정 카테고리 쿠폰 조회
+    List<MemberCouponDto> getAvailableCouponsForCategory(Long memberId, Long categoryId, CouponType couponType);
 //
 //    // 쿠폰 사용
     MemberCouponUseResponse useCoupon(Long memberId, Long memberCouponId);

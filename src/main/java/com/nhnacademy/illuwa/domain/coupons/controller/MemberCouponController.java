@@ -2,8 +2,10 @@ package com.nhnacademy.illuwa.domain.coupons.controller;
 
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponInfoResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDto;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResponse;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -49,6 +51,33 @@ public class MemberCouponController {
 
         return ResponseEntity.ok(memberCouponService.useCoupon(memberId, memberCouponId));
     }
+
+    /**
+     * 특정 책에 적용 가능한 쿠폰 조회
+     * GET /api/member-coupons/book/{bookId}?couponType=GENERAL
+     */
+    @GetMapping("/book/{bookId}")
+    public ResponseEntity<List<MemberCouponDto>> getBookCoupons(
+            @RequestHeader("X-USER-ID") Long memberId,
+            @PathVariable Long bookId,
+            @RequestParam CouponType couponType) {
+        List<MemberCouponDto> result = memberCouponService.getAvailableCouponsForBook(memberId, bookId, couponType);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 특정 카테고리에 적용 가능한 쿠폰 조회
+     * GET /api/member-coupons/category/{categoryId}?couponType=GENERAL
+     */
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<MemberCouponDto>> getCategoryCoupons(
+            @RequestHeader("X-USER-ID") Long memberId,
+            @PathVariable Long categoryId,
+            @RequestParam CouponType couponType) {
+        List<MemberCouponDto> result = memberCouponService.getAvailableCouponsForCategory(memberId, categoryId, couponType);
+        return ResponseEntity.ok(result);
+    }
+
 
 
 }
