@@ -6,6 +6,7 @@ import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
 import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.*;
@@ -132,13 +133,27 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         if (memberCoupon.isUsed()) {
             throw new MemberCouponIsUsed("이미 사용한 쿠폰입니다.");
         }
+
         if (memberCoupon.getExpiresAt().isBefore(LocalDate.now())) {
             throw new MemberCouponExpiredException("쿠폰의 유효기간이 만료되었습니다.");
         }
+
         memberCoupon.setUsed(true);
         memberCoupon.setUsedAt(LocalDate.now());
 
         return MemberCouponUseResponse.fromEntity(memberCoupon);
+    }
+
+    // 특정 도서에 사용 가능한 쿠폰 목록 조회
+    @Override
+    public List<MemberCouponDto> getAvailableCouponsForBook(Long memberId, Long bookId, CouponType couponType) {
+        return memberCouponRepository.findAvailableCouponsForBook(memberId, bookId, couponType);
+    }
+
+    // 특정 카테고리에 사용 가능한 쿠폰 목록 조회
+    @Override
+    public List<MemberCouponDto> getAvailableCouponsForCategory(Long memberId, Long categoryId, CouponType couponType) {
+        return memberCouponRepository.findAvailableCouponsForCategory(memberId, categoryId, couponType);
     }
 }
 
