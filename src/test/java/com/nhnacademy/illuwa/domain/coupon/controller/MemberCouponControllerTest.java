@@ -3,8 +3,10 @@ package com.nhnacademy.illuwa.domain.coupon.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.illuwa.domain.coupons.controller.MemberCouponController;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDto;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResponse;
+import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,9 +18,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -122,4 +126,67 @@ class MemberCouponControllerTest {
                 .andExpect(jsonPath("$.usedAt").exists());
     }
 
+    @Test
+    @DisplayName("GET /api/member-coupons/book/{bookId}?couponType=BOOKS - 특정 도서에 적용 가능한 쿠폰 조회")
+    void getBookCouponTest() throws Exception {
+        MemberCouponDto dto = new MemberCouponDto(
+                1L,
+                10L,
+                "자바쿠폰",
+                CouponType.BOOKS
+                , new BigDecimal("3000"),
+                null
+        );
+
+        List<MemberCouponDto> dtos = List.of(dto);
+
+        Mockito.when(memberCouponService.getAvailableCouponsForBook(
+                eq(1L),
+                eq(10L),
+                eq(CouponType.BOOKS)
+        )).thenReturn(dtos);
+
+        mockMvc.perform(get("/api/member-coupons/book/{bookId}", 10L)
+                        .header("X-USER-ID", 1L)
+                        .param("couponType", "BOOKS"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].memberCouponId").value(1))
+                .andExpect(jsonPath("$[0].couponId").value(10))
+                .andExpect(jsonPath("$[0].couponName").value("자바쿠폰"))
+                .andExpect(jsonPath("$[0].couponType").value("BOOKS"))
+                .andExpect(jsonPath("$[0].discountAmount").value(3000));
+    }
+
+    @Test
+    @DisplayName("GET /api/member-coupons/category/{categoryId}?couponType=CATEGORY - 특정 카테고리에 적용 가능한 쿠폰 조회")
+    void getCategoryCouponTest() throws Exception {
+        MemberCouponDto dto = new MemberCouponDto(
+                1L,
+                11L,
+                "프로그래밍쿠폰",
+                CouponType.CATEGORY,
+                new BigDecimal("3000"),
+                null
+        );
+
+        List<MemberCouponDto> dtos = List.of(dto);
+
+        Mockito.when(memberCouponService.getAvailableCouponsForCategory(
+                eq(1L),
+                eq(11L),
+                eq(CouponType.CATEGORY)
+        )).thenReturn(dtos);
+
+        mockMvc.perform(get("/api/member-coupons/category/{categoryId}", 11L)
+                        .header("X-USER-ID", 1L)
+                        .param("couponType", "CATEGORY"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].memberCouponId").value(1))
+                .andExpect(jsonPath("$[0].couponId").value(11))
+                .andExpect(jsonPath("$[0].couponName").value("프로그래밍쿠폰"))
+                .andExpect(jsonPath("$[0].couponType").value("CATEGORY"))
+                .andExpect(jsonPath("$[0].discountAmount").value(3000));
+    }
 }

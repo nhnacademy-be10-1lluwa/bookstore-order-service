@@ -27,7 +27,7 @@ public interface ProductApiClient {
 
     // 카테고리 가져오기
     @GetMapping("/api/categories/{categoryId}")
-    CategoryDto getCategoryById(@PathVariable("categoryId") Long categoryId);
+    Optional<CategoryDto> getCategoryById(@PathVariable("categoryId") Long categoryId);
 
 
     // 카트 조회 (Member)

@@ -26,6 +26,10 @@ public class MemberCoupon {
     private Long id;
 
     // 쿠폰을 가진 사용자
+    /**
+     * 추후 회원 이름 / 이메일 등 다양한 활용 / JPA 쿼리 최적화까지 생각한다면
+     * 실 객체 연관이 좋음
+     */
 //    @ManyToOne
 //    @JoinColumn(name = "member_id")
     @Column(name = "member_id")

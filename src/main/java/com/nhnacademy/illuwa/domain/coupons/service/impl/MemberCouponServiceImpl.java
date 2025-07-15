@@ -104,6 +104,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MemberCouponResponse> getAllMemberCoupons(Long memberId) {
         return memberCouponRepository.findMemberCouponsByMemberId(memberId)
                 .stream()
@@ -112,6 +113,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MemberCouponDiscountDto getDiscountPrice(Long memberCouponId) {
         return memberCouponRepository.findDtoByMemberCouponId(memberCouponId).orElseThrow(()
                 -> new NotFoundException("해당 쿠폰을 찾지 못하였습니다.", memberCouponId));
@@ -146,18 +148,21 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 
     // 모든 도서에 사용 가능한 쿠폰 목록 조회
     @Override
+    @Transactional(readOnly = true)
     public List<MemberCouponDto> getAvailableCouponsAll(Long memberId) {
         return memberCouponRepository.findAvailableCouponsWelcome(memberId, CouponType.WELCOME);
     }
 
     // 특정 도서에 사용 가능한 쿠폰 목록 조회
     @Override
+    @Transactional(readOnly = true)
     public List<MemberCouponDto> getAvailableCouponsForBook(Long memberId, Long bookId, CouponType couponType) {
         return memberCouponRepository.findAvailableCouponsForBook(memberId, bookId, couponType);
     }
 
     // 특정 카테고리에 사용 가능한 쿠폰 목록 조회
     @Override
+    @Transactional(readOnly = true)
     public List<MemberCouponDto> getAvailableCouponsForCategory(Long memberId, Long categoryId, CouponType couponType) {
         return memberCouponRepository.findAvailableCouponsForCategory(memberId, categoryId, couponType);
     }

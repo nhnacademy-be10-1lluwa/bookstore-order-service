@@ -53,20 +53,20 @@ public class MemberCouponController {
 
     /**
      * 특정 책에 적용 가능한 쿠폰 조회
-     * GET /api/member-coupons/book/{bookId}?couponType=GENERAL
+     * GET /api/member-coupons/book/{bookId}?couponType=BOOKS
      */
     @GetMapping("/book/{bookId}")
     public ResponseEntity<List<MemberCouponDto>> getBookCoupons(
             @RequestHeader("X-USER-ID") Long memberId,
             @PathVariable Long bookId,
-            @PathVariable CouponType couponType) {
+            @RequestParam CouponType couponType) {
         List<MemberCouponDto> result = memberCouponService.getAvailableCouponsForBook(memberId, bookId, couponType);
         return ResponseEntity.ok(result);
     }
 
     /**
      * 특정 카테고리에 적용 가능한 쿠폰 조회
-     * GET /api/member-coupons/category/{categoryId}?couponType=GENERAL
+     * GET /api/member-coupons/category/{categoryId}?couponType=CATEGORY
      */
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<MemberCouponDto>> getCategoryCoupons(

@@ -1,5 +1,7 @@
 package com.nhnacademy.illuwa.domain.coupon.service;
 
+import com.nhnacademy.illuwa.common.external.user.UserApiClient;
+import com.nhnacademy.illuwa.common.external.user.dto.MemberDto;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponUseResponse;
@@ -11,10 +13,7 @@ import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyInactiveException;
-import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponExpiredException;
-import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponInactiveException;
-import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponIsUsed;
-import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.MemberCouponQuantityFinishException;
+import com.nhnacademy.illuwa.domain.coupons.exception.memberCoupon.*;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
@@ -22,9 +21,11 @@ import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -57,6 +58,11 @@ class MemberCouponServiceImplTest {
     private Coupon coupon;
 
     private MemberCouponCreateRequest request;
+
+    @MockBean
+    UserApiClient userApiClient;
+
+    private final int thisMonth = LocalDate.now().getMonthValue();
 
     @BeforeEach
     void setup() {
@@ -223,5 +229,22 @@ class MemberCouponServiceImplTest {
         assertThatThrownBy(() -> memberCouponService.useCoupon(mr.getMemberId(), mr.getMemberCouponId()))
                 .isInstanceOf(MemberCouponExpiredException.class)
                 .hasMessage("쿠폰의 유효기간이 만료되었습니다.");
+    }
+
+    @Test
+    @DisplayName("생일 쿠폰 발급 -> 해당 월 생일자가 없으면 예외")
+    void memberNotFoundBirthdayTest() {
+        Mockito.when(userApiClient.getBirthDayMember(thisMonth))
+                .thenReturn(List.of());
+
+        assertThatThrownBy(() -> memberCouponService.issueBirthDayCoupon())
+                .isInstanceOf(MemberNotBirthdayMonthException.class)
+                .hasMessage("당월 생일자에게만 발급되는 쿠폰입니다.");
+    }
+
+    @Test
+    @DisplayName("생일 쿠폰 발급 -> 생일 쿠폰 존재 X")
+    void birthdayCouponNotFoundTest() {
+
     }
 }
