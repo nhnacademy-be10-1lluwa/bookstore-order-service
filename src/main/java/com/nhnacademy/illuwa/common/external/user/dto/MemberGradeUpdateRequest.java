@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.common.external.user.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,10 +13,11 @@ import java.util.List;
 public class MemberGradeUpdateRequest {
 
     private Long memberId;
-    private List<BigDecimal> netOrderAmount;
+    private BigDecimal netOrderAmount;
+
 
     @QueryProjection
-    public MemberGradeUpdateRequest(Long memberId, List<BigDecimal> netOrderAmount) {
+    public MemberGradeUpdateRequest(Long memberId, BigDecimal netOrderAmount) {
         this.memberId = memberId;
         this.netOrderAmount = netOrderAmount;
     }

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Optional;
 
 
 // custom repository 생성 시에는 JPA 레포지토리를 상속 받은 클래스명에 "Impl"을 postfix 로 붙여야 함
+
 @Repository
 public class OrderRepositoryImpl extends QuerydslRepositorySupport implements OrderQuerydslRepository {
 
@@ -160,6 +162,9 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                                 order.memberId,
                                 GroupBy.list(order.totalPrice)
                         )));
+
+
+
     }
 
     @Override
@@ -238,17 +243,16 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     public List<MemberGradeUpdateRequest> buildMemberGradeUpdateRequest() {
         LocalDateTime threeMonthsAgo = LocalDateTime.now().minusMonths(3);
 
-        // 여기서는 하나의 통합된 요청 객체를 생성하는 방식으로 구성한다고 가정
         return queryFactory
+                .select(Projections.constructor(
+                        MemberGradeUpdateRequest.class,
+                        order.memberId,
+                        order.totalPrice.sum().coalesce(Expressions.constant(BigDecimal.ZERO))
+                ))
                 .from(order)
-                .where(order.orderStatus.eq(OrderStatus.Confirmed)
-                        .and(order.orderDate.after(threeMonthsAgo)))
-                .transform(GroupBy.groupBy(order.memberId)
-                        .list(Projections.constructor(
-                                MemberGradeUpdateRequest.class,
-                                order.memberId,
-                                GroupBy.list(order.totalPrice)
-                        )));
+                .where(order.orderStatus.eq(OrderStatus.Confirmed).and(order.orderDate.after(threeMonthsAgo)))
+                .groupBy(order.memberId)
+                .fetch();
     }
 
     @Override

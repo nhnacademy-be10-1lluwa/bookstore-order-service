@@ -174,6 +174,7 @@ public class OrderServiceImpl implements OrderService {
             memberCouponService.useCoupon(memberId, couponId);
         }
 
+        // 품절 로직 추가하기
 
         Order order = memberOrderCartFactory.create(memberId, request);
         return orderRepository.save(order);

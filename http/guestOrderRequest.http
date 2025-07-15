@@ -54,3 +54,7 @@ X-USER-ID: 2
 Accept: application/json
 
 ###
+
+POST localhost:10309/api/order/common/send-net-order-amount
+
+###
