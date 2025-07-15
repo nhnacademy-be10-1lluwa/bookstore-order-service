@@ -9,13 +9,15 @@ import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.MemberCouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.impl.CouponPolicyServiceImpl;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -38,12 +40,18 @@ class CouponPolicyServiceImplTest {
     @Autowired
     private MemberCouponRepository memberCouponRepository;
 
+    @PersistenceContext
+    private EntityManager em;
+
     @BeforeEach
     void setup() {
         // 기존 데이터 삭제
         memberCouponRepository.deleteAll();// ddl-auto -> update시
         couponRepository.deleteAll();
         couponPolicyRepository.deleteAll();
+
+        em.flush();
+        em.clear();
 
         CouponPolicyCreateRequest testRequest1 = CouponPolicyCreateRequest.builder()
                 .code("AMT15K_DC3K")
