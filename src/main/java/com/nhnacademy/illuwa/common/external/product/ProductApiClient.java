@@ -4,6 +4,7 @@ package com.nhnacademy.illuwa.common.external.product;
 import com.nhnacademy.illuwa.common.external.product.dto.*;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.BookItemOrderDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,4 +42,7 @@ public interface ProductApiClient {
     // 카트 비우기 요청
     @DeleteMapping(value = "/api/members/{memberId}/cart")
     void sendRemoveCartItem(@PathVariable Long memberId);
+
+    @PutMapping("/api/admin/books/update/bookCount")
+    void sendUpdateBooksCount(List<BookCountUpdateRequest> request);
 }

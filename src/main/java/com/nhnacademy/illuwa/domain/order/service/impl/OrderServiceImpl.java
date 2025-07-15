@@ -6,9 +6,7 @@ import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.PointRequest;
 import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDto;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
-import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.*;
@@ -17,7 +15,6 @@ import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCa
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDirect;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.BookItemOrderDto;
-import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
@@ -61,7 +58,6 @@ public class OrderServiceImpl implements OrderService {
     private final PackagingService packagingService;
     private final GuestOrderDirectFactory guestOrderDirectFactory;
     private final MemberOrderDirectFactory memberOrderDirectFactory;
-    private final CouponService couponService;
 
 
     @Override
@@ -77,15 +73,8 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다."));
 
         List<OrderItemResponseDto> items = orderItemRepository.findOrderItemDtosByOrderId(orderId);
-
-        for (OrderItemResponseDto item : items) {
-            BookDto bookDto = productApiClient.getBookById(item.getBookId())
-                    .orElseThrow(() -> new NotFoundException("해당 도서를 찾을 수 없습니다.", item.getBookId()));
-            item.setTitle(bookDto.getTitle());
-        }
-
+        setBookTitles(items); // 제목 설정
         orderResponseDto.setItems(items);
-
         return orderResponseDto;
     }
 
@@ -96,16 +85,8 @@ public class OrderServiceImpl implements OrderService {
                 -> new AccessDeniedException("해당 주문에 접근할 수 없습니다."));
 
         List<OrderItemResponseDto> items = orderItemRepository.findOrderItemDtosByOrderId(orderId);
-
-        // 책 제목 조회 및 설정
-        for (OrderItemResponseDto item : items) {
-            BookDto bookDto = productApiClient.getBookById(item.getBookId())
-                    .orElseThrow(() -> new NotFoundException("해당 도서를 찾을 수 없습니다.", item.getBookId()));
-            item.setTitle(bookDto.getTitle());
-        }
-
+        setBookTitles(items);
         orderResponseDto.setItems(items);
-
         return orderResponseDto;
     }
 
@@ -126,14 +107,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
 
         List<OrderItemResponseDto> items = orderItemRepository.findOrderItemDtosByOrderNumber(orderNumber);
-
-        // 책 제목 조회 및 설정
-        for (OrderItemResponseDto item : items) {
-            BookDto bookDto = productApiClient.getBookById(item.getBookId())
-                    .orElseThrow(() -> new NotFoundException("해당 도서를 찾을 수 없습니다.", item.getBookId()));
-            item.setTitle(bookDto.getTitle());
-        }
-
+        setBookTitles(items);
         orderResponseDto.setItems(items);
 
         return orderResponseDto;
@@ -161,22 +135,22 @@ public class OrderServiceImpl implements OrderService {
                 .filter(Objects::nonNull)
                 .toList();
 
-        // couponIds를 Set으로 변환 (= 자동중복제거)
-        Set<Long> uniqueCouponIds = new HashSet<>(couponIds);
-
-        // set의 크기와 원래 couponIds의 크기가 다르면 중복적용이 있다고 판단
-        if (uniqueCouponIds.size() != couponIds.size()) {
-            throw new BadRequestException("동일한 쿠폰을 여러 상품에 중복 적용할 수 없습니다.");
-        }
-
-        // 회원이 소유한 쿠폰 사용 처리
-        for (Long couponId : couponIds) {
-            memberCouponService.useCoupon(memberId, couponId);
-        }
-
-        // 품절 로직 추가하기
+        handleCoupons(memberId, couponIds);
 
         Order order = memberOrderCartFactory.create(memberId, request);
+
+        // 포인트 사용 처리
+        handleUsedPoint(memberId, order.getUsedPoint());
+
+        // 재고 확인 및 처리
+        List<BookCountUpdateRequest> booksToUpdate = collectBookCountRequests(
+                request.getCartItems().stream()
+                        .map(item -> new BookQuantity(item.getBookId(), item.getQuantity()))
+                        .toList()
+        );
+        productApiClient.sendUpdateBooksCount(booksToUpdate);
+
+        order = memberOrderCartFactory.create(memberId, request);
         return orderRepository.save(order);
     }
 
@@ -184,34 +158,24 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order memberCreateOrderDirectWithItems(Long memberId, MemberOrderRequestDirect request) {
 
-        // 바로 쿠폰 사용 처리
-        if (request.getMemberCouponId() != null) {
-            memberCouponService.useCoupon(memberId, request.getMemberCouponId());
-        }
+        handleCoupons(memberId,
+                request.getMemberCouponId() == null ? Collections.emptyList() : List.of(request.getMemberCouponId()));
 
         Order order = memberOrderDirectFactory.create(memberId, request);
-        if (!Objects.equals(order.getUsedPoint(), BigDecimal.ZERO)) {
-            BigDecimal pointBalance = userApiClient.getPointByMemberId(memberId).orElseThrow(()
-                    -> new NotFoundException("보유 포인트를 찾을 수 없습니다.", memberId));
+        // 포인트 사용 처리
+        handleUsedPoint(memberId, order.getUsedPoint());
+        // 재고 확인 및 처리
+        List<BookCountUpdateRequest> booksToUpdate = collectBookCountRequests(
+                List.of(new BookQuantity(request.getItem().getBookId(),
+                        request.getItem().getQuantity()))
+        );
+        productApiClient.sendUpdateBooksCount(booksToUpdate);
 
-            if (order.getUsedPoint().compareTo(pointBalance) >= 1) {
-                throw new BadRequestException("소유 포인트를 넘겼습니다.");
-            }
-
-            PointRequest pointRequest = new PointRequest(memberId, order.getUsedPoint());
-            userApiClient.sendUsedPointByMemberId(pointRequest);
-        }
         TotalRequest totalRequest = new TotalRequest(memberId, order.getTotalPrice());
         userApiClient.sendTotalPrice(totalRequest);
         return orderRepository.save(order);
     }
 
-    // guest 주문하기 (cart)
-    @Override
-    public Order guestCreateOrderFromCartWithItems(Long memberId, GuestOrderRequest request) {
-        Order order = guestOrderCartFactory.create(null, request);
-        return orderRepository.save(order);
-    }
 
     // guest 주문하기 (direct)
     @Override
@@ -220,6 +184,15 @@ public class OrderServiceImpl implements OrderService {
         GuestCreateRequest guestCreateRequest = GuestCreateRequest.fromGuestOrderRequestDirect(request, order);
         userApiClient.resisterGuest(guestCreateRequest).orElseThrow(()
                 -> new BadRequestException("비회원을 등록하지 못하였습니다."));
+
+        // 재고 확인 및 처리
+        List<BookCountUpdateRequest> booksToUpdate = collectBookCountRequests(
+                List.of(new BookQuantity(request.getItem().getBookId(),
+                        request.getItem().getQuantity()))
+        );
+        productApiClient.sendUpdateBooksCount(booksToUpdate);
+
+
         return orderRepository.save(order);
     }
 
@@ -340,5 +313,64 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean isConfirmedOrder(Long memberId, Long bookId) {
         return orderRepository.existsConfirmedOrderByMemberIdAndBookId(memberId, bookId);
+    }
+
+    private record BookQuantity(Long bookId, int quantity) {}
+
+
+    // 책 수량 조회 및 처리
+    private List<BookCountUpdateRequest> collectBookCountRequests(List<BookQuantity> items) {
+        List<BookCountUpdateRequest> books = new ArrayList<>();
+        for (BookQuantity item : items) {
+            BookItemOrderDto bookInfo = productApiClient.getOrderBookById(item.bookId())
+                    .orElseThrow(() -> new NotFoundException("도서를 찾을 수 없습니다.", item.bookId));
+            if (bookInfo.getCount() < item.quantity()) {
+                throw new BadRequestException("도서 재고 부족 " + "요청 : "
+                        + item.quantity + ", 현재 : " + bookInfo.getCount() + "개");
+            }
+            books.add(new BookCountUpdateRequest(item.bookId(), item.quantity()));
+        }
+        return books;
+    }
+
+    // 책 제목 설정
+    private void setBookTitles(List<OrderItemResponseDto> items) {
+        for (OrderItemResponseDto item : items) {
+            BookDto bookDto = productApiClient.getBookById(item.getBookId())
+                    .orElseThrow(() -> new NotFoundException("해당 도서를 찾을 수 없습니다.", item.getBookId()));
+            item.setTitle(bookDto.getTitle());
+        }
+    }
+
+    // 공통 포인트 사용 처리
+    private void handleUsedPoint(Long memberId, BigDecimal usedPoint) {
+        if (Objects.equals(usedPoint, BigDecimal.ZERO)) {
+            return; // 포인트 사용 안함
+        }
+        BigDecimal pointBalance = userApiClient.getPointByMemberId(memberId)
+                .orElseThrow(() -> new NotFoundException("보유 포인트를 찾을 수 없습니다.", memberId));
+
+        if (usedPoint.compareTo(pointBalance) > 0) {
+            throw new BadRequestException("소유 포인트를 넘겼습니다.");
+        }
+
+        PointRequest pointRequest = new PointRequest(memberId, usedPoint);
+        userApiClient.sendUsedPointByMemberId(pointRequest);
+    }
+
+    // 쿠폰 검증 및 사용 처리
+    private void handleCoupons(Long memberId, List<Long> couponIds) {
+        if (couponIds == null || couponIds.isEmpty()) {
+            return;
+        }
+
+        Set<Long> unique = new HashSet<>(couponIds);
+        if (unique.size() != couponIds.size()) {
+            throw new BadRequestException("동일한 쿠폰을 여러 상품에 중복 적용할 수 없습니다.");
+        }
+
+        for (Long couponId : couponIds) {
+            memberCouponService.useCoupon(memberId, couponId);
+        }
     }
 }

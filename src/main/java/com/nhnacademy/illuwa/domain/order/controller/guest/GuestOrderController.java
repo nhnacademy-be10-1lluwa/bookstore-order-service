@@ -1,14 +1,10 @@
 package com.nhnacademy.illuwa.domain.order.controller.guest;
 
-import com.nhnacademy.illuwa.common.annotation.CurrentUserId;
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
-import com.nhnacademy.illuwa.common.external.product.dto.BookDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitDirectResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
-import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
-import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
@@ -18,15 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-
 @Controller
 @AllArgsConstructor
 @RequestMapping("/api/order/guest")
 public class GuestOrderController {
 
     private final OrderService orderService;
-    private final ProductApiClient productApiClient;
 
     @GetMapping("/init-from-cart")
     public ResponseEntity<GuestOrderInitFromCartResponseDto> getOrderInitFromCart(
@@ -39,9 +32,9 @@ public class GuestOrderController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/order-history/{orderNumber}")
-    public ResponseEntity<OrderResponseDto> getOrderHistory(@PathVariable("orderNumber") String orderNumber, @RequestParam("contact") String recipientContact) {
-        OrderResponseDto response = orderService.getOrderByNumberAndContact(orderNumber, recipientContact);
+    @GetMapping("/order-history/{orderId}")
+    public ResponseEntity<OrderResponseDto> getOrderHistory(@PathVariable("orderId") Long orderId) {
+        OrderResponseDto response = orderService.getOrderByOrderId(orderId);
         return ResponseEntity.ok(response);
     }
 
@@ -53,24 +46,9 @@ public class GuestOrderController {
 
     // 비회원 바로 구매
     @PostMapping("/submit-direct")
-    public ResponseEntity<OrderCreateResponseDto> guestOrderRequestDirect(@RequestBody @Valid GuestOrderRequestDirect guestOrderRequestDirect) {
-        Order order = orderService.guestCreateOrderDirectWithItems(guestOrderRequestDirect);
+    public ResponseEntity<OrderCreateResponseDto> guestOrderRequestDirect(@RequestBody @Valid GuestOrderRequestDirect request) {
+        Order order = orderService.guestCreateOrderDirectWithItems(request);
         OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
-
-        for (OrderItemResponseDto item : response.getItems()) {
-            BookDto bookDto = productApiClient.getBookById(item.getBookId())
-                    .orElseThrow(() -> new NotFoundException("해당 도서를 찾을 수 없습니다.", item.getBookId()));
-            item.setTitle(bookDto.getTitle());
-        }
         return ResponseEntity.ok(response);
     }
-
-
-    // 비회원 주문내역 확인
-    @GetMapping("/orders/{orderNumber}")
-    public ResponseEntity<OrderResponseDto> getOrder(@PathVariable String orderNumber) {
-        OrderResponseDto response = orderService.getOrderByNumber(orderNumber);
-        return ResponseEntity.ok(response);
-    }
-
 }

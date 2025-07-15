@@ -46,9 +46,6 @@ public interface OrderService {
     // member 주문하기 (direct)
     Order memberCreateOrderDirectWithItems(Long memberId, MemberOrderRequestDirect request);
 
-    // guest 주문하기 (cart)
-    Order guestCreateOrderFromCartWithItems(Long memberId, GuestOrderRequest request);
-
     // guest 주문하기 (direct)
     Order guestCreateOrderDirectWithItems(GuestOrderRequestDirect request);
 

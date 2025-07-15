@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class CommonOrderController {
 
     private final OrderService orderService;
-    private final MonthlyNetOrderAmountScheduler scheduler;
     private final MemberGradeService memberGradeService;
 
     @PostMapping("/payment-success/{orderNumber}")
