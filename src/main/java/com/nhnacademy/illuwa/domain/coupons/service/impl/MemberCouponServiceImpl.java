@@ -144,6 +144,12 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         return MemberCouponUseResponse.fromEntity(memberCoupon);
     }
 
+    // 모든 도서에 사용 가능한 쿠폰 목록 조회
+    @Override
+    public List<MemberCouponDto> getAvailableCouponsAll(Long memberId) {
+        return memberCouponRepository.findAvailableCouponsWelcome(memberId, CouponType.WELCOME);
+    }
+
     // 특정 도서에 사용 가능한 쿠폰 목록 조회
     @Override
     public List<MemberCouponDto> getAvailableCouponsForBook(Long memberId, Long bookId, CouponType couponType) {

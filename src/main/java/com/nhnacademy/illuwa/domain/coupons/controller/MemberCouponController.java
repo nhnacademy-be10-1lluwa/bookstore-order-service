@@ -1,6 +1,5 @@
 package com.nhnacademy.illuwa.domain.coupons.controller;
 
-import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponInfoResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDto;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
@@ -60,7 +59,7 @@ public class MemberCouponController {
     public ResponseEntity<List<MemberCouponDto>> getBookCoupons(
             @RequestHeader("X-USER-ID") Long memberId,
             @PathVariable Long bookId,
-            @RequestParam CouponType couponType) {
+            @PathVariable CouponType couponType) {
         List<MemberCouponDto> result = memberCouponService.getAvailableCouponsForBook(memberId, bookId, couponType);
         return ResponseEntity.ok(result);
     }

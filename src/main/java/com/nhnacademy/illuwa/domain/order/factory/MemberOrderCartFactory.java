@@ -94,6 +94,7 @@ public class MemberOrderCartFactory extends AbstractOrderFactory<MemberOrderRequ
                     Optional.empty()
             );
 
+
             Packaging packaging = packagingRepo.findByPackagingId(item.getPackagingId())
                     .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", item.getPackagingId()));
 

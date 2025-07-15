@@ -49,6 +49,34 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
     }
 
     @Override
+    public List<MemberCouponDto> findAvailableCouponsWelcome(Long memberId, CouponType couponType) {
+        QMemberCoupon mc = QMemberCoupon.memberCoupon;
+        QCoupon c = QCoupon.coupon;
+        QCouponPolicy cp = QCouponPolicy.couponPolicy;
+
+        return queryFactory
+                .select(new QMemberCouponDto(
+                        mc.id,
+                        c.id,
+                        c.couponName,
+                        c.couponType,
+                        cp.discountAmount,
+                        cp.discountPercent
+                ))
+                .from(mc)
+                .join(mc.coupon, c)
+                .join(c.policy, cp)
+                .where(
+                        mc.memberId.eq(memberId) // 해당 회원
+                                .and(mc.used.eq(false)) // 미사용 쿠폰
+                                .and(c.couponType.eq(couponType))
+                                .and(cp.status.eq(CouponStatus.ACTIVE)) // 정책 활성화
+                                .and(mc.expiresAt.goe(LocalDate.now())) // 유효기간 내
+                )
+                .fetch();
+    }
+
+    @Override
     public List<MemberCouponDto> findAvailableCouponsForBook(Long memberId, Long bookId, CouponType couponType) {
         QMemberCoupon mc = QMemberCoupon.memberCoupon;
         QCoupon c = QCoupon.coupon;

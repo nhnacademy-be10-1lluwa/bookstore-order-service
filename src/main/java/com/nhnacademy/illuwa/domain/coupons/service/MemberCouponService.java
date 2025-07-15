@@ -27,6 +27,9 @@ public interface MemberCouponService {
 //
 //    List<MemberCouponResponseTest> getAllMemberCouponsTest(Long id);
 
+    // 모든 도서 쿠폰 조회
+    List<MemberCouponDto> getAvailableCouponsAll(Long memberId);
+
     // 특정 도서 쿠폰 조회
     List<MemberCouponDto> getAvailableCouponsForBook(Long memberId, Long bookId, CouponType couponType);
 

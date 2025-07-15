@@ -2,11 +2,14 @@ package com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon;
 
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Getter
+@NoArgsConstructor
 public class MemberCouponDto {
     private Long memberCouponId;
     private Long couponId;
