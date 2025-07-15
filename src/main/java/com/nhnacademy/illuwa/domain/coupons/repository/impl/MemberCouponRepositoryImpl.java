@@ -39,8 +39,7 @@ public class MemberCouponRepositoryImpl extends QuerydslRepositorySupport implem
                 .select(new QMemberCouponDiscountDto(
                         cp.maxDiscountAmount,
                         cp.discountAmount,
-                        cp.discountPercent,
-                        cp.maxDiscountAmount))
+                        cp.discountPercent))
                 .from(mc)
                 .join(mc.coupon, c)
                 .join(c.policy, cp)
