@@ -8,6 +8,7 @@ import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDto;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.*;
@@ -16,6 +17,7 @@ import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCa
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDirect;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.BookItemOrderDto;
+import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
@@ -59,6 +61,7 @@ public class OrderServiceImpl implements OrderService {
     private final PackagingService packagingService;
     private final GuestOrderDirectFactory guestOrderDirectFactory;
     private final MemberOrderDirectFactory memberOrderDirectFactory;
+    private final CouponService couponService;
 
 
     @Override
@@ -151,6 +154,27 @@ public class OrderServiceImpl implements OrderService {
     // member 주문하기 (cart)
     @Override
     public Order memberCreateOrderFromCartWithItems(Long memberId, MemberOrderRequest request) {
+
+        // 주문 요청(reqeust)에서 각 장바구니 아이템에 적용된 couponId를 추출
+        List<Long> couponIds = request.getCartItems().stream()
+                .map(CartOrderItemDto::getCouponId)
+                .filter(Objects::nonNull)
+                .toList();
+
+        // couponIds를 Set으로 변환 (= 자동중복제거)
+        Set<Long> uniqueCouponIds = new HashSet<>(couponIds);
+
+        // set의 크기와 원래 couponIds의 크기가 다르면 중복적용이 있다고 판단
+        if (uniqueCouponIds.size() != couponIds.size()) {
+            throw new BadRequestException("동일한 쿠폰을 여러 상품에 중복 적용할 수 없습니다.");
+        }
+
+        // 회원이 소유한 쿠폰 사용 처리
+        for (Long couponId : couponIds) {
+            memberCouponService.useCoupon(memberId, couponId);
+        }
+
+
         Order order = memberOrderCartFactory.create(memberId, request);
         return orderRepository.save(order);
     }
@@ -158,6 +182,12 @@ public class OrderServiceImpl implements OrderService {
     // member 주문하기 (direct)
     @Override
     public Order memberCreateOrderDirectWithItems(Long memberId, MemberOrderRequestDirect request) {
+
+        // 바로 쿠폰 사용 처리
+        if (request.getMemberCouponId() != null) {
+            memberCouponService.useCoupon(memberId, request.getMemberCouponId());
+        }
+
         Order order = memberOrderDirectFactory.create(memberId, request);
         if (!Objects.equals(order.getUsedPoint(), BigDecimal.ZERO)) {
             BigDecimal pointBalance = userApiClient.getPointByMemberId(memberId).orElseThrow(()
