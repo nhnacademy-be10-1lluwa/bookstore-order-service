@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.dto.order.member;
 
 import com.nhnacademy.illuwa.common.external.product.dto.CartResponse;
+import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDto;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponResponse;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberAddressDto;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +23,7 @@ public class MemberOrderInitFromCartResponseDto {
     /*ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
 
     private List<MemberAddressDto> recipients;
-    private List<MemberCouponResponse> availableCoupons;
+    private Map<Long, List<MemberCouponDto>> couponMap;
     private List<PackagingResponseDto> packaging;
     private BigDecimal pointBalance;
 }

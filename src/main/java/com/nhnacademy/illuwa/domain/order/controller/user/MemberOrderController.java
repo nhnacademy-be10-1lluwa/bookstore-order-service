@@ -49,13 +49,6 @@ public class MemberOrderController {
         return ResponseEntity.ok(response);
     }
 
-
-    /*@GetMapping(value = "/orders/{orderNumber}")
-    public ResponseEntity<OrderResponseDto> getOrderByOrderNumber(@PathVariable("orderNumber") String orderNumber) {
-        OrderResponseDto response = orderService.getOrderByNumber(orderNumber);
-        return ResponseEntity.ok(response);
-    }*/
-
     @GetMapping("/orders/history")
     public ResponseEntity<Map<String, Object>> getOrdersHistory(@RequestHeader("X-USER-ID") Long memberId,
                                                                 @PageableDefault(size = 10, sort = "orderDate") Pageable pageable) {

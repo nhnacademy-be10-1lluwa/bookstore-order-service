@@ -14,6 +14,7 @@ import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.repository.PackagingRepository;
 import com.nhnacademy.illuwa.domain.order.repository.ShippingPolicyRepository;
+import org.bouncycastle.util.Pack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -94,14 +95,19 @@ public class GuestOrderDirectFactory extends AbstractOrderFactory<GuestOrderRequ
                 item.getCouponId(),
                 Optional.empty());
 
+        Packaging packaging;
         BigDecimal unitPrice = ip.unitPrice();
-        BigDecimal totalPrice = ip.netPrice();   // 할인 후 금액
+        BigDecimal totalPrice = BigDecimal.ZERO;
 
-        Packaging packaging = packagingRepository.findByPackagingId(item.getPackagingId())
-                .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", item.getPackagingId()));
+        if (request.getItem().getPackagingId() != null) {
+            packaging = packagingRepo.findByPackagingId(item.getPackagingId())
+                    .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", item.getPackagingId()));
 
-        totalPrice = packaging.getPackagingPrice().multiply(BigDecimal.valueOf(item.getQuantity())).add(ip.netPrice());
-
+            totalPrice = ip.netPrice().add(packaging.getPackagingPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+        } else {
+            packaging = null;
+            totalPrice = ip.netPrice();
+        }
         return OrderItem.builder()
                 .bookId(item.getBookId())
                 .order(order)

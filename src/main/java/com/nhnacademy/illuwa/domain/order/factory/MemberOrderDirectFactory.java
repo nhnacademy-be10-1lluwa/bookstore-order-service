@@ -83,16 +83,20 @@ public class MemberOrderDirectFactory extends AbstractOrderFactory<MemberOrderRe
                 item.getCouponId(),
                 Optional.empty());
 
-        BigDecimal unitPrice = ip.unitPrice();
-        BigDecimal totalPrice = ip.netPrice();
-
         Packaging packaging;
+        BigDecimal unitPrice = ip.unitPrice();
+        BigDecimal totalPrice = BigDecimal.ZERO;
         if (request.getItem().getPackagingId() != null) {
             packaging = packagingRepo.findByPackagingId(item.getPackagingId())
                     .orElseThrow(() -> new NotFoundException("해당 포장 옵션을 찾을 수 없습니다.", item.getPackagingId()));
+
+            totalPrice = ip.netPrice().add(packaging.getPackagingPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
         } else {
             packaging = null;
+            totalPrice = ip.netPrice();
         }
+
+
 
         return OrderItem.builder()
                 .bookId(item.getBookId())
