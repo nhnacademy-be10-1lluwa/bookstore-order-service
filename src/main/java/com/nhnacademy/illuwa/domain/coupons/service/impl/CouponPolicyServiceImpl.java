@@ -7,10 +7,10 @@ import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyE
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponPolicyService;
-import com.nhnacademy.illuwa.domain.coupons.strategy.DiscountPolicyStrategy;
-import jakarta.transaction.Transactional;
+import com.nhnacademy.illuwa.domain.coupons.strategy.DiscountPolicyStrategyRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,20 +20,15 @@ import java.util.List;
 public class CouponPolicyServiceImpl implements CouponPolicyService {
 
     private final CouponPolicyRepository couponPolicyRepository;
-    private final List<DiscountPolicyStrategy> discountPolicyStrategies;
+    private final DiscountPolicyStrategyRegistry discountPolicyStrategyRegistry;
 
     @Override
     public CouponPolicyCreateResponse createPolicy(CouponPolicyCreateRequest request) {
 
-        /**
-         * 쿠폰 타입검증 -> %, $
-         */
-        DiscountPolicyStrategy validator = discountPolicyStrategies.stream()
-                .filter(strategy -> strategy.getType().equals(request.getDiscountType()))
-                .findFirst()
-                .orElseThrow(() -> new CouponPolicyNotFoundException("지원하지 않는 할인 정책입니다. -> " + request.getDiscountType()));
-
-        validator.discountValidate(request);
+        // 할인타입 검증
+        discountPolicyStrategyRegistry
+                .getStrategy(request.getDiscountType())
+                .discountValidate(request);
 
         if (couponPolicyRepository.existsByCode(request.getCode())) {
             throw new CouponPolicyExistsByCodeException("해당 정책코드는 중복으로 인해 사용이 불가능합니다.");
@@ -55,6 +50,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CouponPolicyResponse getPolicyById(Long id) {
         return couponPolicyRepository.findById(id)
                 .map(CouponPolicyResponse::fromEntity)
@@ -62,6 +58,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CouponPolicyResponse getPolicyByCode(String code) {
 
         return couponPolicyRepository.findByCode(code)
@@ -70,6 +67,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CouponPolicyResponse> getAllPolicies() {
         return couponPolicyRepository.findAll().stream()
                 .map(CouponPolicyResponse::fromEntity)

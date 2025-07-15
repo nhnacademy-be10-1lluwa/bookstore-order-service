@@ -14,14 +14,13 @@ import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyN
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
-import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
-import jakarta.transaction.Transactional;
+import com.nhnacademy.illuwa.domain.coupons.strategy.CouponTypeValidatorRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,51 +29,47 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponRepository couponRepository;
     private final CouponPolicyRepository couponPolicyRepository;
-    private final ProductApiClient bookApiClient;
+    private final ProductApiClient productApiClient;
+    private final CouponTypeValidatorRegistry couponTypeValidatorRegistry;
+
+    /**
+     * 해당 createCoupon에 대한 문제점
+     * SRP(단일 책임 원칙) 위배 -> createCoupon이라는 메서드가 너무 많은 역할을 맡고 있음
+     * 담당 책임 :
+     * 1. 정책 조회 & 예외 처리
+     * 2. 중복 쿠폰 체크
+     * 3. 쿠폰 타입에 따른 외부 데이터 조회 검증 (book/category)
+     * 4. 유효기간 검증
+     * 5. 정책 상태 체크
+     * 6. 엔티티 생성 및 저장
+     * 7. DTO 변환 및 반환
+     * = 비즈니스 로직 + 유효성 검사 + 외부 시스템 연동이 짬뽕적으로 섞임
+     */
 
     @Override
     public CouponCreateResponse createCoupon(CouponCreateRequest request) {
-        Long bookId = null; // 도서 ID
-        String bookName = null;
-        Long categoryId = null; // 카테고리 ID
-        String categoryName = null;
 
         // 1 -> 정책 코드 확인
         CouponPolicy policy = couponPolicyRepository.findByCode(request.getPolicyCode())
                 .orElseThrow(() -> new CouponPolicyNotFoundException("해당 정책코드는 존재하지 않습니다."));
 
-        // + -> 존재하는 쿠폰인지 확인
+        // 2 -> 쿠폰 중복 여부 확인
         if (couponRepository.existsByCouponNameAndPolicy_CodeAndCouponType(request.getCouponName(), request.getPolicyCode(), request.getCouponType())) {
             throw new DuplicateCouponException("이미 존재하는 쿠폰 입니다.");
         }
 
-        // 2 -> 쿠폰 타입 검증 로직
-        if (request.getCouponType() == CouponType.BOOKS) {
-            if (Objects.isNull(request.getBooksId())) {
-                throw new BadRequestException("도서 할인 쿠폰은 bookId 필드의 값이 필요합니다.");
-            } else {
-                bookId = bookApiClient.getBookById(request.getBooksId()).orElseThrow(
-                        () -> new NotFoundException("도서 정보를 가져올 수 없습니다.")
-                ).getBookId();
-            }
-        }else if(request.getCouponType() == CouponType.CATEGORY){
-            if (Objects.isNull(request.getCategoryId())) {
-                throw new BadRequestException("카테고리 할인 쿠폰은 categoryId 필드의 값이 필요합니다.");
-            } else {
-                categoryId = bookApiClient.getCategoryById(request.getCategoryId()).getCategoryId();
-                categoryName = bookApiClient.getCategoryById(request.getCategoryId()).getCategoryName();
-            }
-        } else {
-            bookId = request.getBooksId();
-            categoryId = request.getCategoryId();
-        }
+        // 3 -> 쿠폰 타입에 따른 검증 로직
+        couponTypeValidatorRegistry
+                .getValidator(request.getCouponType())
+                .validate(request, productApiClient);
 
+        // 4 -> 쿠폰 생성 날짜에 대한 검증 로직
         if (request.getValidFrom().isAfter(request.getValidTo())) {
             throw new BadRequestException("유효 시작일은 유효 종료일 이전이어야 합니다.");
         }
 
 
-        // 3 -> 정책이 활성화인지 비활성인지 체크
+        // 5 -> 정책이 활성화인지 비활성인지 체크
         if (!policy.getStatus().equals(CouponStatus.INACTIVE)) {
             Coupon coupon = Coupon.builder()
                     .couponName(request.getCouponName())
@@ -85,8 +80,8 @@ public class CouponServiceImpl implements CouponService {
                     .comment(request.getComment())
                     .conditions(request.getConditions())
                     .issueCount(request.getIssueCount())
-                    .bookId(bookId)
-                    .categoryId(categoryId)
+                    .bookId(request.getBooksId())
+                    .categoryId(request.getCategoryId())
                     .build();
             Coupon save = couponRepository.save(coupon);
             return CouponCreateResponse.fromEntity(save);
@@ -96,8 +91,19 @@ public class CouponServiceImpl implements CouponService {
     }
 
 
+    /**
+     * 1. JPA(하이버네이트) 영속성 컨텍스트 최적화
+     * -> 쓰기"관련 기능 (Dirty Checking, 스냅샷 등) 비활성화
+     * -> 엔티티 변경 감지(변수 변경 추적)을 아예 안함 -> 불필요한 오버헤드 감소
+     * 2. 데이터베이스(물리적 DB) 쿼리 최적화
+     * -> 일부 DB(MySQL, Oracle등) 쓰기 락, 트랜잭션 로그 기록 등을 더 가볍게 처리
+     * -> 쓸 일 없는 변경/커밋에 대한 처리 자체를 줄여줌
+     * 3. 불필요한 Flush, Lock 방지
+     * -> readOnly 트랜잭션은 flush(쓰기 쿼리 동기화)처리 X, 성능이 더 좋고, 트랜잭션 Lock도 최소화
+     */
 
     @Override
+    @Transactional(readOnly = true)
     public CouponResponse getCouponById(Long id) {
 
         return couponRepository.findById(id)
@@ -106,6 +112,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CouponResponse> getCouponsByPolicyCode(String code) {
         return couponRepository.findByPolicy_Code(code).stream()
                 .map(CouponResponse::fromEntity)
@@ -113,6 +120,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CouponResponse> getCouponsByType(CouponType type) {
         return couponRepository.findCouponByCouponType(type).stream()
                 .map(CouponResponse::fromEntity)
@@ -120,6 +128,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CouponResponse> getCouponsByName(String name) {
         return couponRepository.findByCouponName(name).stream()
                 .map(CouponResponse::fromEntity)
@@ -127,6 +136,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CouponResponse> getAllCoupons() {
         return couponRepository.findAll().stream()
                 .map(CouponResponse::fromEntity)

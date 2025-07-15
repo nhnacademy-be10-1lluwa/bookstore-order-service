@@ -14,9 +14,9 @@ POST http://localhost:10309/api/admin/coupon-policies
 Content-Type: application/json
 
 {
-  "code": "ABC",
+  "code": "TESTTESTESTSETSETSET",
   "minOrderAmount": 10000,
-  "discountType": "PERCENT",
+  "discountType": "AMOUNT",
   "discountPercent": 30
 }
 
@@ -148,6 +148,21 @@ Content-Type: application/json
 
 {
   "couponName": "생일쿠폰",
+  "couponType": "BIRTHDAY",
+  "policyCode": "BIRTHDAY_DC30P",
+  "validFrom": "2025-01-01",
+  "validTo": "2025-12-31",
+  "comment": "모든 상품에 대해서 가격의 30%할인 (당월 생일자 전용)",
+  "conditions": "최소주문 금액 10,000원 이상 시 30%할인,",
+  "issueCount": 100
+}
+
+### (테스트)
+POST http://localhost:10309/api/admin/coupons
+Content-Type: application/json
+
+{
+  "couponName": "생일쿠폰TEST",
   "couponType": "BIRTHDAY",
   "policyCode": "BIRTHDAY_DC30P",
   "validFrom": "2025-01-01",
