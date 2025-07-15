@@ -274,4 +274,12 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 .where(order.orderId.eq(orderId))
                 .execute();
     }
+
+    @Override
+    public void updateStatusByOrderNumber(String orderNumber) {
+        queryFactory.update(order)
+                .set(order.orderStatus, OrderStatus.Pending)
+                .where(order.orderNumber.eq(orderNumber))
+                .execute();
+    }
 }

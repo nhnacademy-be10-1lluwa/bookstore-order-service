@@ -64,6 +64,9 @@ public interface OrderService {
     // number로 주문 상태 변경하기 (ADMIN)
     void updateOrderStatusByOrderNumber(String orderNumber, OrderUpdateStatusDto orderUpdateDto);
 
+    // 결제 완료
+    void updateOrderPaymentByOrderNumber(String orderNumber);
+
     // 주문 초기 데이터 조회(member, 장바구니용)
     MemberOrderInitFromCartResponseDto getOrderInitFromCartData(Long memberId);
 

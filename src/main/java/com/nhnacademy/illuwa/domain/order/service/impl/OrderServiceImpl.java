@@ -253,6 +253,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public void updateOrderPaymentByOrderNumber(String orderNumber) {
+        orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
+                -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+
+        orderRepository.updateStatusByOrderNumber(orderNumber);
+    }
+
+    @Override
     public MemberOrderInitFromCartResponseDto getOrderInitFromCartData(Long memberId) {
         CartResponse cart = productApiClient.getCart(memberId).orElseThrow(()
                 -> new NotFoundException("장바구니를 찾을 수 없습니다.", memberId));
