@@ -25,14 +25,20 @@ public class DiscountCalculator {
 
     public BigDecimal calculate(BigDecimal orderAmount, MemberCouponDiscountDto dto) {
         if (dto.getDiscountAmount() != null) {
-            return orderAmount.subtract(dto.getMaxDiscountAmount());
+            BigDecimal discounted = orderAmount.subtract(dto.getDiscountAmount());
+            return discounted.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : discounted;
         } else if (dto.getDiscountPercent() != null) {
             BigDecimal rate = dto.getDiscountPercent().divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
 
-            if (dto.getMaxDiscountAmount().compareTo(orderAmount.multiply(rate)) <= 0) {
-                return orderAmount.subtract(dto.getMaxDiscountAmount());
+            BigDecimal percentDiscount = orderAmount.multiply(rate);
+
+            BigDecimal maxDiscount = dto.getMaxDiscountAmount();
+            if (maxDiscount != null && percentDiscount.compareTo(maxDiscount) > 0) {
+                percentDiscount = maxDiscount;
             }
-            return orderAmount.subtract(orderAmount.multiply(rate));
+
+            BigDecimal discounted = orderAmount.subtract(percentDiscount);
+            return discounted.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : discounted;
         }
         return orderAmount;
     }
