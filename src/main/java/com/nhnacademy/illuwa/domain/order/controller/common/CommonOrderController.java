@@ -22,7 +22,6 @@ public class CommonOrderController {
         return ResponseEntity.ok().build();
     }
 
-
     // 주문 취소 - 배송 전
     @GetMapping("/orders/{orderId}/cancel")
     public ResponseEntity<Void> orderCancel(@PathVariable("orderId") Long orderId) {
