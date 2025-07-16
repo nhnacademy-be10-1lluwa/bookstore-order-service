@@ -25,6 +25,7 @@ public class CouponEventConsumer {
     private final MemberCouponRepository memberCouponRepository;
     private final UserApiClient userApiClient;
     private MemberDto member;
+    //
     // RabbitListenner 어노테이션으로 welcome-coupon-queue에 쌓인 메시지를 자동 수신
     // 해당 큐에 들어있는 이메일의 정보로 회원을 찾음
     @RabbitListener(queues = "1lluwa_welcome_queue", containerFactory = "rabbitListenerContainerFactory")
