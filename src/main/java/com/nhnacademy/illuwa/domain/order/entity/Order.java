@@ -3,7 +3,6 @@ package com.nhnacademy.illuwa.domain.order.entity;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.constraints.Currency;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,7 +23,7 @@ public class Order {
 
 
     // 양방향 매핑 : order 삽입 -> orderItem 삽입
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private final List<OrderItem> items = new ArrayList<>();
 
     @Column(name = "order_number", nullable = false)

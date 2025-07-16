@@ -8,8 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +43,25 @@ public interface OrderRepository extends JpaRepository<Order, Long>, OrderQueryd
     @Modifying
     @Transactional
     void updateOrderStatusByOrderId(long orderId, OrderStatus orderStatus);
+
+    // 3일 동안 AwaitingPayment 에 머물러 있는 order item 데이터 삭제
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM OrderItem oi WHERE oi.order.orderId IN (" +
+            "  SELECT o.orderId FROM Order o WHERE o.orderStatus = :status AND o.orderDate < :threshold" +
+            ")")
+    int deleteItemsBefore(@Param("status") OrderStatus status,
+                          @Param("threshold")LocalDateTime threshold);
+
+    // 3일동안 AwaitingPayment 에 머물러 있는 order 데이터 삭제
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Order o " +
+            "WHERE o.orderStatus = :status " +
+            "AND o.orderDate < :threshold")
+    int deleteByOrderStatusAndOrderDateBefore(
+            @Param("status") OrderStatus status,
+            @Param("threshold")LocalDateTime threshold);
 
     Long orderId(long orderId);
 }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,7 +19,9 @@ public class MonthlyNetOrderAmountScheduler {
     private final UserApiClient userApiClient;
     private final OrderRepository orderRepository;
 
+
     @Scheduled(cron = "0 0 10 1 * ?", zone = "Asia/Seoul")
+    @Transactional
     public void scheduledSendNetOrderAmount() {
         try {
             List<MemberGradeUpdateRequest> request = orderRepository.buildMemberGradeUpdateRequest();
