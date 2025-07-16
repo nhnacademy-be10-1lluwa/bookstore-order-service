@@ -44,5 +44,8 @@ public interface ProductApiClient {
     void sendRemoveCartItem(@PathVariable Long memberId);
 
     @PutMapping("/api/admin/books/update/bookCount")
-    void sendUpdateBooksCount(List<BookCountUpdateRequest> request);
+    void sendUpdateBooksCount(@RequestBody List<BookCountUpdateRequest> request);
+
+    @PutMapping("/api/admin/books/restore/bookCount")
+    void sendRestoreBooksCount(@RequestBody List<BookCountUpdateRequest> request);
 }

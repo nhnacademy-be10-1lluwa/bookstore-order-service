@@ -6,14 +6,12 @@ import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import lombok.AllArgsConstructor;
-import org.hibernate.annotations.Fetch;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
 import java.net.URI;
-import java.net.URL;
 import java.util.Map;
 
 @RestController

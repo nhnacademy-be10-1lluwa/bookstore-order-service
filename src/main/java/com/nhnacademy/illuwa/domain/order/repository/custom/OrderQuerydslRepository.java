@@ -49,6 +49,15 @@ public interface OrderQuerydslRepository {
     // 주문 상태 변경하기
     void updateStatusByOrderId(Long orderId, OrderUpdateStatusDto dto);
 
+
     // 주문 상태 변경하기 (주문번호)
     void updateStatusByOrderNumber(String orderNumber);
+
+
+
+    /*-----------  배송 전 결제 취소 ------------*/
+    // 주문 상태 변경하기
+    void updateStatusByOrderId(Long orderId, OrderStatus status);
+
+
 }

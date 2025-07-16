@@ -12,12 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 public class MemberGradeUpdateRequest {
 
-    private Long memberId;
+    private long memberId;
     private BigDecimal netOrderAmount;
 
 
     @QueryProjection
-    public MemberGradeUpdateRequest(Long memberId, BigDecimal netOrderAmount) {
+    public MemberGradeUpdateRequest(long memberId, BigDecimal netOrderAmount) {
         this.memberId = memberId;
         this.netOrderAmount = netOrderAmount;
     }

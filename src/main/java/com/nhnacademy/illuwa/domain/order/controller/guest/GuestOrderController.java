@@ -62,11 +62,4 @@ public class GuestOrderController {
         }
         return ResponseEntity.ok(response);
     }
-
-    @PutMapping("/refund/{orderId}")
-    public ResponseEntity<Void> guestOrderRequestRefund(@PathVariable Long orderId) {
-        OrderUpdateStatusDto dto = new OrderUpdateStatusDto(OrderStatus.Refund);
-        orderService.updateOrderStatus(orderId, dto);
-        return ResponseEntity.noContent().build();
-    }
 }

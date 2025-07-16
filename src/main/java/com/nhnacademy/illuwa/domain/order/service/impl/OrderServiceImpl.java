@@ -18,14 +18,15 @@ import com.nhnacademy.illuwa.domain.order.dto.orderItem.BookItemOrderDto;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
+import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
+import com.nhnacademy.illuwa.domain.order.entity.types.ReturnReason;
 import com.nhnacademy.illuwa.domain.order.exception.common.AccessDeniedException;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundStringException;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberAddressDto;
-import com.nhnacademy.illuwa.domain.order.factory.GuestOrderCartFactory;
 import com.nhnacademy.illuwa.domain.order.factory.GuestOrderDirectFactory;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderCartFactory;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderDirectFactory;
@@ -40,6 +41,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -50,7 +53,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
-    private final GuestOrderCartFactory guestOrderCartFactory;
     private final MemberOrderCartFactory memberOrderCartFactory;
     private final ProductApiClient productApiClient;
     private final MemberCouponService memberCouponService;
@@ -198,19 +200,68 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public void cancelOrderById(Long orderId) {
-        orderRepository.findByOrderId(orderId).orElseThrow(()
+    public OrderResponseDto cancelOrderById(Long orderId) {
+        Order order = orderRepository.findByOrderId(orderId).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
 
-        orderRepository.updateOrderStatusByOrderId(orderId, OrderStatus.Cancelled);
+        long daysSinceDelivery = getDaysSinceDelivery(order.getDeliveryDate(), LocalDate.now());
 
+        if (daysSinceDelivery > 10) {
+            throw new BadRequestException("결제 취소를 할 수 있는 날짜를 지났습니다.");
+        }
+
+        TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice().add(order.getUsedPoint()).add(order.getShippingFee()));
+        userApiClient.sendTotalPrice(totalRequest);
+
+        // 수량 증가 로직 추가
+        List<BookCountUpdateRequest> bookCount = new ArrayList<>();
+        order.getItems().forEach(item ->
+                bookCount.add(new BookCountUpdateRequest(item.getBookId(), item.getQuantity())));
+        productApiClient.sendRestoreBooksCount(bookCount);
+
+        orderRepository.updateStatusByOrderId(orderId, OrderStatus.Cancelled);
+
+        return orderRepository.findOrderDtoByOrderId(orderId).orElseThrow(
+                () -> new NotFoundException("Order not found: " + orderId)
+        );
     }
 
     @Override
+    public OrderResponseDto refundOrderById(Long orderId, ReturnRequestCreateRequestDto dto) {
+        Order order = orderRepository.findByOrderId(orderId).orElseThrow(()
+                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
+
+
+        long daysSinceDelivery = getDaysSinceDelivery(order.getDeliveryDate(), LocalDate.now());
+
+        if (daysSinceDelivery > 30) {
+            throw new BadRequestException("반품 할 수 없습니다.");
+        } else if (dto.getReason().equals(ReturnReason.Defective_Item) || dto.getReason().equals(ReturnReason.Item_Damaged)) {
+            TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice().add(order.getUsedPoint()).add(order.getShippingFee()));
+            userApiClient.sendTotalPrice(totalRequest);
+        } else {
+            TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice().add(order.getUsedPoint()));
+            userApiClient.sendTotalPrice(totalRequest);
+        }
+
+        orderRepository.updateOrderStatusByOrderId(orderId, OrderStatus.Refund);
+
+        // 수량 증가 로직 추가
+        List<BookCountUpdateRequest> bookCount = new ArrayList<>();
+        order.getItems().forEach(item ->
+                bookCount.add(new BookCountUpdateRequest(item.getBookId(), item.getQuantity())));
+        productApiClient.sendRestoreBooksCount(bookCount);
+
+        return orderRepository.findOrderDtoByOrderId(orderId).orElseThrow(
+                () -> new NotFoundException("Order not found: " + orderId)
+        );
+    }
+
+    /*@Override
     public void cancelOrderByOrderNumber(String orderNumber) {
         orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
                 -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
-    }
+    }*/
 
     @Override
     public void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto) {
@@ -315,7 +366,8 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.existsConfirmedOrderByMemberIdAndBookId(memberId, bookId);
     }
 
-    private record BookQuantity(Long bookId, int quantity) {}
+    private record BookQuantity(Long bookId, int quantity) {
+    }
 
 
     // 책 수량 조회 및 처리
@@ -372,5 +424,10 @@ public class OrderServiceImpl implements OrderService {
         for (Long couponId : couponIds) {
             memberCouponService.useCoupon(memberId, couponId);
         }
+    }
+
+    // 반품 및 취소 날짜 로직
+    private long getDaysSinceDelivery(LocalDate localDate, LocalDate localDate2) {
+        return ChronoUnit.DAYS.between(localDate, localDate2);
     }
 }

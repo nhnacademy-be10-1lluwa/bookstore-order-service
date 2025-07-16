@@ -9,6 +9,8 @@ import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitDirect
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDirect;
+import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestCreateRequestDto;
+import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestCreateResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import org.springframework.data.domain.Page;
@@ -49,11 +51,11 @@ public interface OrderService {
     // guest 주문하기 (direct)
     Order guestCreateOrderDirectWithItems(GuestOrderRequestDirect request);
 
-    // id로 주문 취소하기(MEMBERS)
-    void cancelOrderById(Long orderId);
+    // id로 주문 취소하기(MEMBERS, GUEST) - 재고 수량 상승, -> 현재 final_price = (단가(price) + 포장비(package_fee)) * 수량(quantity) - 할인(discount_price) - 포인트(used_point) + 배송비(shipping_fee)
+    OrderResponseDto cancelOrderById(Long orderId);
 
-    // number로 주문 취소하기(MEMBERS)
-    void cancelOrderByOrderNumber(String orderNumber);
+   // id로 주문 환불하기(MEMBERS, GUEST)
+    OrderResponseDto refundOrderById(Long orderId, ReturnRequestCreateRequestDto dto);
 
     // id로 주문 상태 변경하기(ADMIN)
     void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto);
