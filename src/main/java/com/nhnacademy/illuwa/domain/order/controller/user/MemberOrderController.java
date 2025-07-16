@@ -96,11 +96,11 @@ public class MemberOrderController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/orders/{orderNumber}/cancel")
+    /*@PatchMapping("/orders/{orderNumber}/cancel")
     public ResponseEntity<Void> orderCancel(@PathVariable String orderNumber) {
         orderService.cancelOrderByOrderNumber(orderNumber);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 
     @GetMapping("/confirmed")
     public ResponseEntity<Boolean> isConfirmedOrder(@RequestHeader("X-USER-ID") Long memberId, @RequestParam Long bookId) {

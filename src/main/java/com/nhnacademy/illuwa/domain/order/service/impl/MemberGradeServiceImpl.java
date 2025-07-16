@@ -18,6 +18,6 @@ public class MemberGradeServiceImpl implements MemberGradeService {
     @Override
     public int sendMonthlyNetOrderAmount() {
         List<MemberGradeUpdateRequest> reqs = orderRepository.buildMemberGradeUpdateRequest();
-        return userApiClient.sendNetOrderAmount(reqs).size();
+        return userApiClient.sendNetOrderAmount(reqs);
     }
 }

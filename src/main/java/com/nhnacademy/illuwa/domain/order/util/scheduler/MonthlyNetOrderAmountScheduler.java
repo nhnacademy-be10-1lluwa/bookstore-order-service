@@ -22,7 +22,7 @@ public class MonthlyNetOrderAmountScheduler {
     public void scheduledSendNetOrderAmount() {
         try {
             List<MemberGradeUpdateRequest> request = orderRepository.buildMemberGradeUpdateRequest();
-            int count = userApiClient.sendNetOrderAmount(request).size();
+            int count = userApiClient.sendNetOrderAmount(request);
             log.info("월간 순주문 금액 전송 완료 - {}건", count);
         } catch (Exception e) {
             log.error("월간 순주문 금액 전송 실패 - {}", e.getMessage(), e);

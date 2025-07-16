@@ -280,6 +280,14 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     }
 
     @Override
+    public void updateStatusByOrderId(Long orderId, OrderStatus status) {
+        queryFactory.update(order)
+                .set(order.orderStatus, status)
+                .where(order.orderId.eq(orderId))
+                .execute();
+    }
+
+    @Override
     public void updateStatusByOrderNumber(String orderNumber) {
         queryFactory.update(order)
                 .set(order.orderStatus, OrderStatus.Pending)

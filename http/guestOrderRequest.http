@@ -56,5 +56,6 @@ Accept: application/json
 ###
 
 POST localhost:10309/api/order/common/send-net-order-amount
+Content-Type: application/json
 
 ###
