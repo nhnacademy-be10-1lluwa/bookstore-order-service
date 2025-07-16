@@ -55,7 +55,13 @@ Accept: application/json
 
 ###
 
-POST localhost:10309/api/order/common/send-net-order-amount
+POST localhost:10309/api/order/admin/send-net-order-amount
 Content-Type: application/json
+
+###
+
+POST localhost:10309/api/order/admin/delete-awaiting-orders
+Content-Type: application/json
+
 
 ###

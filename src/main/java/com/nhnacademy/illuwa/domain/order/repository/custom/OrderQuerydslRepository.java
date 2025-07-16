@@ -24,7 +24,6 @@ public interface OrderQuerydslRepository {
     // 주문/멤버 아이디로 주문 조회
     Optional<OrderResponseDto> findOrderDtoByMemberIdAndOrderId(Long memberId, Long orderId);
 
-
     // 주문 상태로 주문 찾기
     Page<OrderListResponseDto> findOrdersDtoByOrderStatus(OrderStatus orderStatus, Pageable pageable);
 
