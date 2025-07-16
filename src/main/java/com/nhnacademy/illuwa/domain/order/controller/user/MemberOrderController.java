@@ -7,6 +7,7 @@ import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitDirect
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDirect;
+import com.nhnacademy.illuwa.domain.order.dto.orderItem.BookItemOrderDto;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
@@ -20,6 +21,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Book;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -66,11 +69,13 @@ public class MemberOrderController {
     }
 
 
-    // 이거 확인해라 또 딴거 보지말고
     @PostMapping("/submit")
     public ResponseEntity<OrderCreateResponseDto> sendOrderRequest(@RequestHeader("X-USER-ID") Long memberId, @RequestBody @Valid MemberOrderRequest memberOrderRequest) {
         Order order = orderService.memberCreateOrderFromCartWithItems(memberId, memberOrderRequest);
         OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
+
+        // 책 제목 조회 및 설정
+        setTitle(response.getItems());
         return ResponseEntity.ok(response);
     }
 
@@ -79,11 +84,7 @@ public class MemberOrderController {
         Order order = orderService.memberCreateOrderDirectWithItems(memberId, memberOrderRequestDirect);
         OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
         // 책 제목 조회 및 설정
-        for (OrderItemResponseDto item : response.getItems()) {
-            BookDto bookDto = productApiClient.getBookById(item.getBookId())
-                    .orElseThrow(() -> new NotFoundException("해당 도서를 찾을 수 없습니다.", item.getBookId()));
-            item.setTitle(bookDto.getTitle());
-        }
+        setTitle(response.getItems());
         return ResponseEntity.ok(response);
     }
 
@@ -104,5 +105,16 @@ public class MemberOrderController {
     @GetMapping("/confirmed")
     public ResponseEntity<Boolean> isConfirmedOrder(@RequestHeader("X-USER-ID") Long memberId, @RequestParam Long bookId) {
         return ResponseEntity.ok(orderService.isConfirmedOrder(memberId, bookId));
+    }
+
+
+    /*ㅡㅡㅡㅡㅡ 헬퍼 ㅡㅡㅡㅡㅡㅡ*/
+
+    private void setTitle(List<OrderItemResponseDto> items) {
+        for (OrderItemResponseDto item : items) {
+            BookDto bookDto = productApiClient.getBookById(item.getBookId())
+                    .orElseThrow(() -> new NotFoundException("해당 도서를 찾을 수 없습니다.", item.getBookId()));
+            item.setTitle(bookDto.getTitle());
+        }
     }
 }
