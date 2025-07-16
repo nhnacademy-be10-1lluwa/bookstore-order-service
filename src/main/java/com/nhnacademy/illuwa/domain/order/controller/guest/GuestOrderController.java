@@ -1,11 +1,14 @@
 package com.nhnacademy.illuwa.domain.order.controller.guest;
 
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
+import com.nhnacademy.illuwa.common.external.product.dto.BookDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitDirectResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderInitFromCartResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestOrderRequestDirect;
+import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
+import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import jakarta.validation.Valid;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class GuestOrderController {
 
     private final OrderService orderService;
+    private final ProductApiClient productApiClient;
 
     @GetMapping("/init-from-cart")
     public ResponseEntity<GuestOrderInitFromCartResponseDto> getOrderInitFromCart(
@@ -49,6 +53,20 @@ public class GuestOrderController {
     public ResponseEntity<OrderCreateResponseDto> guestOrderRequestDirect(@RequestBody @Valid GuestOrderRequestDirect request) {
         Order order = orderService.guestCreateOrderDirectWithItems(request);
         OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
+
+        // 책 제목 조회 및 설정
+        for (OrderItemResponseDto item : response.getItems()) {
+            BookDto bookDto = productApiClient.getBookById(item.getBookId())
+                    .orElseThrow(() -> new NotFoundException("해당 도서를 찾을 수 없습니다.", item.getBookId()));
+            item.setTitle(bookDto.getTitle());
+        }
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/refund/{orderId}")
+    public ResponseEntity<Void> guestOrderRequestRefund(@PathVariable Long orderId) {
+        OrderUpdateStatusDto dto = new OrderUpdateStatusDto(OrderStatus.Refund);
+        orderService.updateOrderStatus(orderId, dto);
+        return ResponseEntity.noContent().build();
     }
 }
