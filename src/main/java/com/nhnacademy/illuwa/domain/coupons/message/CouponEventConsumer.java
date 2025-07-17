@@ -29,7 +29,7 @@ public class CouponEventConsumer {
     private final ApiErrorHistoryService apiErrorHistoryService;
     private MemberDto member;
 
-    // RabbitListenner 어노테이션으로 book1lluwa_welcome_queue에 쌓인 메시지를 자동 수신
+    // RabbitListener 어노테이션으로 book1lluwa_welcome_queue에 쌓인 메시지를 자동 수신
     @RabbitListener(queues = "book1lluwa_welcome_queue", containerFactory = "rabbitListenerContainerFactory")
     public void handleWelcomeCoupon(MemberDto memberDto) {
         try {
