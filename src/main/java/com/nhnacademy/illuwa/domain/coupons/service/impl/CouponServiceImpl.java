@@ -14,7 +14,7 @@ import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyN
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
-import com.nhnacademy.illuwa.domain.coupons.strategy.CouponTypeValidatorRegistry;
+import com.nhnacademy.illuwa.domain.coupons.strategy.registry.CouponTypeValidatorRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

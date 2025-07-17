@@ -1,6 +1,7 @@
-package com.nhnacademy.illuwa.domain.coupons.strategy;
+package com.nhnacademy.illuwa.domain.coupons.strategy.registry;
 
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.strategy.CouponTypeValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
