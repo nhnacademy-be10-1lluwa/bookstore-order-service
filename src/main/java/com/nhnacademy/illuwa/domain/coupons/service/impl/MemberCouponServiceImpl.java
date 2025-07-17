@@ -36,6 +36,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     private final UserApiClient userApiClient;
     private final ApiErrorHistoryService ApiErrorHistoryService;
 
+    //
     // 회원 생일 쿠폰 발급
     @Override
     public void issueBirthDayCoupon() {
