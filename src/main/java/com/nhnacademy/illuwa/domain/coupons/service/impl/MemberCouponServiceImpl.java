@@ -3,6 +3,7 @@ package com.nhnacademy.illuwa.domain.coupons.service.impl;
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberDto;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.*;
+import com.nhnacademy.illuwa.domain.coupons.entity.ApiErrorHistory;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.MemberCoupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponStatus;
@@ -33,12 +34,21 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     private final MemberCouponRepository memberCouponRepository;
     private final CouponRepository couponRepository;
     private final UserApiClient userApiClient;
+    private final ApiErrorHistoryService ApiErrorHistoryService;
 
     // 회원 생일 쿠폰 발급
     @Override
     public void issueBirthDayCoupon() {
         int monthValue = LocalDate.now().getMonthValue();
-        List<MemberDto> members = userApiClient.getBirthDayMember(monthValue);
+        List<MemberDto> members;
+
+        try {
+            members = userApiClient.getBirthDayMember(monthValue);
+        } catch (Exception e) {
+            log.error("[생일쿠폰] UserAPI 호출 실패 - month: {}, 원인: {}", monthValue, e.getMessage());
+            ApiErrorHistoryService.save("BIRTHDAY_COUPON", e);
+            return;
+        }
 
         if (members.isEmpty()) {
             throw new MemberNotBirthdayMonthException("당월 생일자에게만 발급되는 쿠폰입니다.");

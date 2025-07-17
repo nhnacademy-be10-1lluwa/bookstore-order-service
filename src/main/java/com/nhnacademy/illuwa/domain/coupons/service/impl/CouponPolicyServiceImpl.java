@@ -7,7 +7,7 @@ import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyE
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponPolicyService;
-import com.nhnacademy.illuwa.domain.coupons.strategy.DiscountPolicyStrategyRegistry;
+import com.nhnacademy.illuwa.domain.coupons.strategy.registry.DiscountPolicyStrategyRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

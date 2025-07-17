@@ -123,7 +123,7 @@ Content-Type: application/json
   "validFrom": "2025-01-01",
   "validTo": "2025-12-31",
   "comment": "모든 상품에 대해서 가격의 50%할인 (첫 회원가입 대상자 전용)",
-  "conditions": "최소주문 금액 10,000원 이상 시 50%할인,",
+  "conditions": "최소주문 금액 20,000원 이상 시 50%할인 (최대 10,000원)",
   "issueCount": 100
 }
 
@@ -224,15 +224,10 @@ X-USER-ID: 2
   "couponName": "IT/컴퓨터 카테고리 쿠폰"
 }
 
-#### (회원) -> 쿠폰 발급내역
-#GET http://localhost:10305/members/member-coupons/test@test.com
-
 ### (회원) -> 쿠폰 발급내역 (클라이언트 마이 쿠폰 확인용)
 GET http://localhost:10309/api/member-coupons
 Content-Type: application/json
 X-USER-ID: 2
-
-#### (회원) -> 쿠폰 조회(타입) ()
 
 ### (회원) -> 쿠폰 사용 (memberCouponId로 사용)
 PUT http://localhost:10309/api/member-coupons/8/use
