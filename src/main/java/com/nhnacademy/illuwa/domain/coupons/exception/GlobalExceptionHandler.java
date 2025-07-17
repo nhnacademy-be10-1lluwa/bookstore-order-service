@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupons.exception;
 
+import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponExpiredException;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.CouponNotFoundException;
 import com.nhnacademy.illuwa.domain.coupons.exception.coupon.DuplicateCouponException;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.BadRequestException;
@@ -113,7 +114,21 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // 쿠폰 유효기간 만료
+    // 쿠폰 발급 유효기간 만료
+    @ExceptionHandler(CouponExpiredException.class)
+    public ResponseEntity<?> handleCouponExpiredException(CouponExpiredException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "status", HttpStatus.CONFLICT.value(),
+                        "error", HttpStatus.CONFLICT.getReasonPhrase(),
+                        "code", "COUPON_ISSUE_EXPIRED",
+                        "message", ex.getMessage()
+
+                ));
+    }
+
+    // 쿠폰 사용 유효기간 만료
     @ExceptionHandler(MemberCouponExpiredException.class)
     public ResponseEntity<?> handleMemberCouponExpiredException(MemberCouponExpiredException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -121,15 +136,15 @@ public class GlobalExceptionHandler {
                         "timestamp", LocalDateTime.now(),
                         "status", HttpStatus.CONFLICT.value(),
                         "error", HttpStatus.CONFLICT.getReasonPhrase(),
-                        "code", "COUPON_EXPIRED",
+                        "code", "COUPON_USAGE_EXPIRED",
                         "message", ex.getMessage()
 
                 ));
     }
 
     // 쿠폰 중복 발급
-    @ExceptionHandler(MemberCouponInactiveException.class)
-    public ResponseEntity<?> handleMemberCouponInactiveException(MemberCouponInactiveException ex) {
+    @ExceptionHandler(MemberCouponExistsException.class)
+    public ResponseEntity<?> handleMemberCouponExistsException(MemberCouponExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of(
                         "timestamp", LocalDateTime.now(),

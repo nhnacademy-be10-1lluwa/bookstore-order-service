@@ -218,16 +218,16 @@ POST http://localhost:10309/api/members/member-coupons/welcome?email=test@test.c
 ### (회원) -> 쿠폰 발급
 POST http://localhost:10309/api/member-coupons
 Content-Type: application/json
-X-USER-ID: 2
+X-USER-ID: 1395
 
 {
-  "couponName": "IT/컴퓨터 카테고리 쿠폰"
+  "couponName": "생일쿠폰"
 }
 
 ### (회원) -> 쿠폰 발급내역 (클라이언트 마이 쿠폰 확인용)
 GET http://localhost:10309/api/member-coupons
 Content-Type: application/json
-X-USER-ID: 2
+X-USER-ID: 1395
 
 ### (회원) -> 쿠폰 사용 (memberCouponId로 사용)
 PUT http://localhost:10309/api/member-coupons/8/use

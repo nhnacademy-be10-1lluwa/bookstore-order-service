@@ -138,7 +138,7 @@ class MemberCouponServiceImplTest {
         memberCouponService.issueCoupon(1L, request);
 
         assertThatThrownBy(() -> memberCouponService.issueCoupon(1L, request))
-                .isInstanceOf(MemberCouponInactiveException.class)
+                .isInstanceOf(MemberCouponExistsException.class)
                 .hasMessage("이미 쿠폰을 발급받으셨습니다. -> 테스트쿠폰");
     }
 

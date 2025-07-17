@@ -9,8 +9,12 @@ public interface MemberCouponService {
 
     // 쿠폰 발급
     MemberCouponResponse issueCoupon(Long memberId, MemberCouponCreateRequest request);
+
     // 생일 쿠폰 발급(스케쥴러)
     void issueBirthDayCoupon();
+
+    // 생일 쿠폰 발급 (명시적)
+    void issueBirthDayCouponForMember(Long memberId);
 
     // 모든 도서 쿠폰 조회
     List<MemberCouponDto> getAvailableCouponsAll(Long memberId);
