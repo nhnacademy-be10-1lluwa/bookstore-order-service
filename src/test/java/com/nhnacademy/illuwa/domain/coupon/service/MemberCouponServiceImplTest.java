@@ -153,8 +153,8 @@ class MemberCouponServiceImplTest {
                 .couponName("테스트쿠폰2")
                 .policy(couponPolicy)
                 .couponType(CouponType.GENERAL)
-                .validTo(LocalDate.now())
-                .validFrom(LocalDate.now().plusYears(1))
+                .validFrom(LocalDate.now())
+                .validTo(LocalDate.now().plusYears(1))
                 .issueCount(BigDecimal.valueOf(100))
                 .build());
 
