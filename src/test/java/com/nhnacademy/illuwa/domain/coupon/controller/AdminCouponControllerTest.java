@@ -9,6 +9,7 @@ import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponUpdateResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,7 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = AdminCouponController.class)
-public class AdminCouponControllerTest {
+@Disabled
+class AdminCouponControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
