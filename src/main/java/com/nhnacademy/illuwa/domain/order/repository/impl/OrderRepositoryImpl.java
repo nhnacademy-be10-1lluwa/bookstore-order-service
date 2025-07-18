@@ -96,6 +96,16 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     }
 
     @Override
+    public Optional<Order> findOrderByOrderNumber(String orderNumber) {
+        return Optional.ofNullable(queryFactory.selectFrom(order)
+                .leftJoin(order.items, orderItem).fetchJoin()
+                .where(order.orderNumber.eq(orderNumber))
+                .fetchOne());
+    }
+
+
+
+    @Override
     public Optional<OrderResponseDto> findOrderDtoByMemberIdAndOrderId(Long memberId, Long orderId) {
 
         OrderResponseDto result = queryFactory
