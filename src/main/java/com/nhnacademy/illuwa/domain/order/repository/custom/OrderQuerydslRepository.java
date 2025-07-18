@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +59,9 @@ public interface OrderQuerydslRepository {
     /*-----------  배송 전 결제 취소 ------------*/
     // 주문 상태 변경하기
     void updateStatusByOrderId(Long orderId, OrderStatus status);
+
+    // 주문 배송 날짜 변경
+    void updateDeliveryDateByOrderId(Long orderId, LocalDate localDate);
 
 
 }

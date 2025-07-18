@@ -69,3 +69,11 @@ POST localhost:10309/api/admin/batch/order-cleanup
 Content-Type: application/json
 
 ###
+
+POST localhost:10309/api/admin/batch/member-grade-update
+Content-Type: application/json
+
+###
+
+POST localhost:10309/api/admin/batch/order-confirmed-update
+Content-Type: application/json

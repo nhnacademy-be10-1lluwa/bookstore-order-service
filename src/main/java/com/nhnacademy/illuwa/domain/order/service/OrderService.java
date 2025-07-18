@@ -16,6 +16,9 @@ import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 
 public interface OrderService {
 
@@ -24,6 +27,8 @@ public interface OrderService {
 
     // orderId로 주문 내역 조회(ADMIN)
     OrderResponseDto getOrderByOrderId(Long orderId);
+
+    void updateOrderDeliveryDate(Long orderId, LocalDate localDate);
 
     // memberId, orderId로 주문 내역 조회(MEMBERS)
     OrderResponseDto getOrderByMemberIdAndOrderId(Long memberId, Long orderId);
