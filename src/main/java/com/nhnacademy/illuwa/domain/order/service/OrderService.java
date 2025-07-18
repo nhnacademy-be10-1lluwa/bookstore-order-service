@@ -51,8 +51,8 @@ public interface OrderService {
     // guest 주문하기 (direct)
     Order guestCreateOrderDirectWithItems(GuestOrderRequestDirect request);
 
-    // id로 주문 취소하기(MEMBERS, GUEST) - 재고 수량 상승, -> 현재 final_price = (단가(price) + 포장비(package_fee)) * 수량(quantity) - 할인(discount_price) - 포인트(used_point) + 배송비(shipping_fee)
-    OrderResponseDto cancelOrderById(Long orderId);
+    // orderNumber로 주문 취소하기(MEMBERS, GUEST) - 재고 수량 상승, -> 현재 final_price = (단가(price) + 포장비(package_fee)) * 수량(quantity) - 할인(discount_price) - 포인트(used_point) + 배송비(shipping_fee)
+    OrderResponseDto cancelOrderByOrderNumber(String orderNumber);
 
    // id로 주문 환불하기(MEMBERS, GUEST)
     OrderResponseDto refundOrderById(Long orderId, ReturnRequestCreateRequestDto dto);

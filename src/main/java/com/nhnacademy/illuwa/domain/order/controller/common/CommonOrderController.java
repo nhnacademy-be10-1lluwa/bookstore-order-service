@@ -23,9 +23,9 @@ public class CommonOrderController {
     }
 
     // 주문 취소 - 배송 전
-    @GetMapping("/orders/{orderId}/cancel")
-    public ResponseEntity<Void> orderCancel(@PathVariable("orderId") Long orderId) {
-        orderService.cancelOrderById(orderId);
+    @PostMapping("/orders/{orderNumber}/cancel")
+    public ResponseEntity<Void> orderCancel(@PathVariable("orderNumber") String orderNumber) {
+        orderService.cancelOrderByOrderNumber(orderNumber);
         return ResponseEntity.noContent().build();
     }
 
