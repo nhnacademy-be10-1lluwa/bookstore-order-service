@@ -2,6 +2,8 @@ package com.nhnacademy.illuwa.domain.order.controller.user;
 
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
 import com.nhnacademy.illuwa.common.external.product.dto.BookDto;
+import com.nhnacademy.illuwa.common.external.user.UserApiClient;
+import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitDirectResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderInitFromCartResponseDto;
@@ -10,6 +12,7 @@ import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDir
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.BookItemOrderDto;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
+import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.service.OrderItemService;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
@@ -33,6 +36,7 @@ public class MemberOrderController {
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final ProductApiClient productApiClient;
+    private final UserApiClient userApiClient;
 
     @GetMapping(value = "/init-from-cart")
     public ResponseEntity<MemberOrderInitFromCartResponseDto> getOrderInitFromCart(@RequestHeader("X-USER-ID") Long memberId) {
@@ -92,6 +96,14 @@ public class MemberOrderController {
     public ResponseEntity<OrderItemResponseDto> getOrderItemByOrderItemId(@PathVariable String orderNumber, @PathVariable Long orderItemId) {
         OrderItemResponseDto response = orderItemService.getOrderItemById(orderItemId);
         return ResponseEntity.ok(response);
+    }
+
+    // 주문 확정
+    @PutMapping("/orders/{orderId}/Confirmed")
+    public ResponseEntity<Void> updateOrderConfirmed(@PathVariable Long orderId) {
+        OrderUpdateStatusDto dto = new OrderUpdateStatusDto(OrderStatus.Confirmed);
+        orderService.updateOrderStatus(orderId, dto);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/confirmed")

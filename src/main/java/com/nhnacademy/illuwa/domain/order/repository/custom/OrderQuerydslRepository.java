@@ -24,6 +24,8 @@ public interface OrderQuerydslRepository {
     // 주문 아이디로 주문 조회
     Optional<OrderResponseDto> findOrderDtoByOrderId(Long OrderId);
 
+    Optional<Order> findOrderByOrderId(Long orderId);
+
     // 주문 넘버로 주문 조회
     Optional<Order> findOrderByOrderNumber(String orderNumber);
 

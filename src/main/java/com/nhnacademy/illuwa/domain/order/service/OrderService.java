@@ -28,6 +28,9 @@ public interface OrderService {
     // orderId로 주문 내역 조회(ADMIN)
     OrderResponseDto getOrderByOrderId(Long orderId);
 
+    Order getOrderEntityByOrderId(Long orderId);
+
+    // 배달 날짜 변경
     void updateOrderDeliveryDate(Long orderId, LocalDate localDate);
 
     // memberId, orderId로 주문 내역 조회(MEMBERS)

@@ -83,6 +83,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order getOrderEntityByOrderId(Long orderId) {
+        return orderRepository.findByOrderId(orderId).orElseThrow(
+                () -> new NotFoundException("해당 주문을 찾을 수 없습니다.")
+        );
+    }
+
+    @Override
     public void updateOrderDeliveryDate(Long orderId, LocalDate localDate) {
         orderRepository.updateDeliveryDateByOrderId(orderId, localDate);
     }
@@ -182,8 +189,6 @@ public class OrderServiceImpl implements OrderService {
         );
         productApiClient.sendUpdateBooksCount(booksToUpdate);
 
-        TotalRequest totalRequest = new TotalRequest(memberId, order.getTotalPrice());
-        userApiClient.sendTotalPrice(totalRequest);
         return order;
     }
 
@@ -272,16 +277,14 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    /*@Override
-    public void cancelOrderByOrderNumber(String orderNumber) {
-        orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
-                -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
-    }*/
-
     @Override
     public void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto) {
-        orderRepository.findByOrderId(orderId).orElseThrow(()
+        Order order = orderRepository.findByOrderId(orderId).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
+        if (orderUpdateDto.getOrderStatus() == OrderStatus.Confirmed) {
+            TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice());
+            userApiClient.sendTotalPrice(totalRequest);
+        }
 
         orderRepository.updateStatusByOrderId(orderId, orderUpdateDto);
     }
