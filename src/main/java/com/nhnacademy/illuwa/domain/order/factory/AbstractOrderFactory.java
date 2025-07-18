@@ -45,7 +45,7 @@ public abstract class AbstractOrderFactory<RQ> {
      */
     protected Order.OrderBuilder initSkeleton() {
         Order.OrderBuilder builder = Order.builder()
-                .orderDate(null)
+                .orderDate(LocalDateTime.now())
                 .orderNumber(generateOrderNumber(LocalDateTime.now()));
         initDefaultFields(builder);   // 할인·포인트·상태 초기화
         return builder;

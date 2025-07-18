@@ -63,5 +63,9 @@ Content-Type: application/json
 POST localhost:10309/api/order/admin/delete-awaiting-orders
 Content-Type: application/json
 
+###
+
+POST localhost:10309/api/admin/batch/order-cleanup
+Content-Type: application/json
 
 ###
