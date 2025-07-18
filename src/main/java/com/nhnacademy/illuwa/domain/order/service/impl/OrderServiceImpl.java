@@ -222,7 +222,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDto refundOrderById(Long orderId, ReturnRequestCreateRequestDto dto) {
+    public OrderResponseDto refundOrderById(Long orderId, ReturnRequestCreateRequestDto dto) { // 반품 (주문 상에서만 처리)
         Order order = orderRepository.findByOrderId(orderId).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
 
