@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.coupons.strategy.impl;
+package com.nhnacademy.illuwa.domain.coupons.strategy.impl.coupon;
 
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponCreateRequest;
@@ -7,10 +7,10 @@ import com.nhnacademy.illuwa.domain.coupons.strategy.CouponTypeValidator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BirthdayCouponValidator implements CouponTypeValidator {
+public class WelcomeCouponValidator implements CouponTypeValidator {
     @Override
     public CouponType getType() {
-        return CouponType.BIRTHDAY;
+        return CouponType.WELCOME;
     }
 
     @Override

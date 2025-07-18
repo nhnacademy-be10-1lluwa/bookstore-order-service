@@ -1,7 +1,8 @@
-package com.nhnacademy.illuwa.domain.coupons.strategy;
+package com.nhnacademy.illuwa.domain.coupons.strategy.registry;
 
 import com.nhnacademy.illuwa.domain.coupons.entity.status.DiscountType;
 import com.nhnacademy.illuwa.domain.coupons.exception.couponPolicy.CouponPolicyNotFoundException;
+import com.nhnacademy.illuwa.domain.coupons.strategy.DiscountPolicyStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

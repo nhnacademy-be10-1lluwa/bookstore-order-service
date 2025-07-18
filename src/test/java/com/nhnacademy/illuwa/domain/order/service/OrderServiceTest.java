@@ -135,7 +135,7 @@ public class OrderServiceTest {
     @DisplayName("주문 취소")
     void testCancelOrder() {
         Order target = repository.findAll().getFirst();
-        service.cancelOrderById(target.getOrderId());
+        service.cancelOrderByOrderNumber(target.getOrderNumber());
 
         String status = jdbcTemplate.queryForObject(
                 "SELECT order_status FROM orders WHERE order_id = " + target.getOrderId(),

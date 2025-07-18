@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.coupons.strategy.impl;
+package com.nhnacademy.illuwa.domain.coupons.strategy.impl.coupon;
 
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponCreateRequest;

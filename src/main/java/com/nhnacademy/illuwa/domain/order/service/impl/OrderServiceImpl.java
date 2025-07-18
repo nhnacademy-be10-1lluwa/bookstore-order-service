@@ -200,18 +200,13 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public OrderResponseDto cancelOrderById(Long orderId) { // 결제 취소 (orderNumber로 넘김)
-        Order order = orderRepository.findByOrderId(orderId).orElseThrow(()
-                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
+    public OrderResponseDto cancelOrderByOrderNumber(String orderNumber) {
+        Order order = orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
+                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
 
-        long daysSinceDelivery = getDaysSinceDelivery(order.getDeliveryDate(), LocalDate.now());
-
-        if (daysSinceDelivery > 10) {
-            throw new BadRequestException("결제 취소를 할 수 있는 날짜를 지났습니다.");
+        if (!order.getOrderStatus().name().equals("Pending")) {
+            throw new BadRequestException("결제 취소 불가능한 상태입니다.");
         }
-
-        TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice().add(order.getUsedPoint()).add(order.getShippingFee()));
-        userApiClient.sendTotalPrice(totalRequest);
 
         // 수량 증가 로직 추가
         List<BookCountUpdateRequest> bookCount = new ArrayList<>();
@@ -219,10 +214,10 @@ public class OrderServiceImpl implements OrderService {
                 bookCount.add(new BookCountUpdateRequest(item.getBookId(), item.getQuantity())));
         productApiClient.sendRestoreBooksCount(bookCount);
 
-        orderRepository.updateStatusByOrderId(orderId, OrderStatus.Cancelled);
+        orderRepository.updateStatusByOrderId(order.getOrderId(), OrderStatus.Cancelled);
 
-        return orderRepository.findOrderDtoByOrderId(orderId).orElseThrow(
-                () -> new NotFoundException("Order not found: " + orderId)
+        return orderRepository.findOrderDtoByOrderId(order.getOrderId()).orElseThrow(
+                () -> new NotFoundException("Order not found: " + order.getOrderId())
         );
     }
 
