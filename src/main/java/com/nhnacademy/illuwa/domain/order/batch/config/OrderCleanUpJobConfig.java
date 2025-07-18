@@ -20,11 +20,9 @@ import org.springframework.batch.item.support.builder.CompositeItemWriterBuilder
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +30,7 @@ import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
-public class OrderCleanUpJopConfig {
+public class OrderCleanUpJobConfig {
 
     private final JobRepository jobRepository;
     private final EntityManagerFactory em;
@@ -54,7 +52,7 @@ public class OrderCleanUpJopConfig {
                 .<Long, Long>chunk(CHUNK_SIZE, transactionManager)
                 .reader(awaitingPaymentReader())
                 .writer(compositeWriter())
-                .faultTolerant().skip(DataIntegrityViolationException.class)
+                .faultTolerant()
                 .retry(LockTimeoutException.class)
                 .retryLimit(3)
                 .skip(jakarta.persistence.LockTimeoutException.class)

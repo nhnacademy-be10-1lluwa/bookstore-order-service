@@ -3,7 +3,6 @@ package com.nhnacademy.illuwa.domain.order.factory;
 
 
 import com.nhnacademy.illuwa.common.external.product.dto.OrderItemDto;
-import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDiscountDto;
 import com.nhnacademy.illuwa.domain.coupons.factory.DiscountCalculator;
 import com.nhnacademy.illuwa.domain.coupons.service.MemberCouponService;
 import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDirect;

@@ -34,6 +34,7 @@ import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;
+import com.rabbitmq.client.Return;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -78,6 +80,11 @@ public class OrderServiceImpl implements OrderService {
         setBookTitles(items); // 제목 설정
         orderResponseDto.setItems(items);
         return orderResponseDto;
+    }
+
+    @Override
+    public void updateOrderDeliveryDate(Long orderId, LocalDate localDate) {
+        orderRepository.updateDeliveryDateByOrderId(orderId, localDate);
     }
 
     @Override
@@ -153,7 +160,7 @@ public class OrderServiceImpl implements OrderService {
         productApiClient.sendUpdateBooksCount(booksToUpdate);
 
         order = memberOrderCartFactory.create(memberId, request);
-        return orderRepository.save(order);
+        return order;
     }
 
     // member 주문하기 (direct)
@@ -175,7 +182,7 @@ public class OrderServiceImpl implements OrderService {
 
         TotalRequest totalRequest = new TotalRequest(memberId, order.getTotalPrice());
         userApiClient.sendTotalPrice(totalRequest);
-        return orderRepository.save(order);
+        return order;
     }
 
 
@@ -195,7 +202,7 @@ public class OrderServiceImpl implements OrderService {
         productApiClient.sendUpdateBooksCount(booksToUpdate);
 
 
-        return orderRepository.save(order);
+        return order;
     }
 
 
@@ -229,17 +236,27 @@ public class OrderServiceImpl implements OrderService {
 
         long daysSinceDelivery = getDaysSinceDelivery(order.getDeliveryDate(), LocalDate.now());
 
+        BigDecimal returnPrice;
+
         if (daysSinceDelivery > 30) {
-            throw new BadRequestException("반품 할 수 없습니다.");
-        } else if (dto.getReason().equals(ReturnReason.Defective_Item) || dto.getReason().equals(ReturnReason.Item_Damaged)) {
-            TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice().add(order.getUsedPoint()).add(order.getShippingFee()));
-            userApiClient.sendTotalPrice(totalRequest);
+            throw new BadRequestException("바품 기한(30일) 초과");
+        }
+
+        boolean damaged = dto.getReason() == ReturnReason.Defective_Item || dto.getReason() == ReturnReason.Item_Damaged;
+
+        if (damaged) {
+            returnPrice = order.getTotalPrice().add(order.getUsedPoint()).add(order.getShippingFee());
+        } else if (daysSinceDelivery <= 10) {
+
+            returnPrice =
+                    order.getTotalPrice().add(order.getUsedPoint());
         } else {
-            TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice().add(order.getUsedPoint()));
-            userApiClient.sendTotalPrice(totalRequest);
+            throw new BadRequestException("반품 할 수 없습니다.");
         }
 
         orderRepository.updateOrderStatusByOrderId(orderId, OrderStatus.Refund);
+
+        userApiClient.sendReturnPrice(order.getMemberId(), returnPrice);
 
         // 수량 증가 로직 추가
         List<BookCountUpdateRequest> bookCount = new ArrayList<>();
@@ -250,6 +267,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findOrderDtoByOrderId(orderId).orElseThrow(
                 () -> new NotFoundException("Order not found: " + orderId)
         );
+
     }
 
     /*@Override

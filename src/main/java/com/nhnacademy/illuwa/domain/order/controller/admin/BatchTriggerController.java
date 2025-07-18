@@ -18,6 +18,7 @@ public class BatchTriggerController {
     private final JobLauncher jobLauncher;
     private final Job orderCleanUpJob;
     private final Job memberGradeJob;
+    private final Job orderConfirmedJob;
 
     @PostMapping("/order-cleanup")
     public ResponseEntity<String> runOrderCleanUp() throws Exception {
@@ -26,7 +27,7 @@ public class BatchTriggerController {
                 .toJobParameters();
 
         JobExecution execution = jobLauncher.run(orderCleanUpJob, params);
-        return ResponseEntity.ok("OrderCleanUpJob started. Status = " + execution.getStatus());
+        return ResponseEntity.ok("주문 테이블 정리 실행 결과 = " + execution.getStatus());
     }
 
     @PostMapping("/member-grade-update")
@@ -36,6 +37,16 @@ public class BatchTriggerController {
                 .toJobParameters();
 
         JobExecution execution = jobLauncher.run(memberGradeJob, params);
-        return ResponseEntity.ok("MemberGradeUpdate 시작. 결과 = " + execution.getStatus());
+        return ResponseEntity.ok("회원 등급 업데이트 실행 결과 = " + execution.getStatus());
+    }
+
+    @PostMapping("/order-confirmed-update")
+    public ResponseEntity<String> runOrderConfirmedUpdate() throws Exception {
+        JobParameters params = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+
+        JobExecution execution = jobLauncher.run(orderConfirmedJob, params);
+        return ResponseEntity.ok("주문확정 상태 업데이트 실행 결과 = " + execution.getStatus());
     }
 }

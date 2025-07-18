@@ -1,7 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
-import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderItemService;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Slf4j
@@ -73,6 +74,9 @@ public class AdminOrderController {
     // 주문 상태 변경 orderId
     @PutMapping("/orders/{orderId}")
     public ResponseEntity<Void> updateOrderStatus(@PathVariable Long orderId, @RequestBody OrderUpdateStatusDto dto) {
+        if (dto.getOrderStatus() == OrderStatus.Shipped) {
+            orderService.updateOrderDeliveryDate(orderId, LocalDate.now());
+        }
         orderService.updateOrderStatus(orderId, dto);
         return ResponseEntity.noContent()
                 .location(URI.create("/order/admin/orders/" + orderId)).build();

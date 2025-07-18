@@ -6,11 +6,10 @@ import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
-import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.swing.text.html.parser.Entity;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -34,7 +33,7 @@ public class ReaderConfig {
                 .entityManagerFactory(em)
                 .pageSize(CHUNK_SIZE)
                 .queryString("""
-                        SELECT NEW com.example.batch.MemberNetOrderAgg(
+                        SELECT NEW com.nhnacademy.illuwa.domain.order.batch.domain.MemberNetOrderAgg(
                                                        o.memberId,
                                                        SUM(o.totalPrice))
                                               FROM Order o

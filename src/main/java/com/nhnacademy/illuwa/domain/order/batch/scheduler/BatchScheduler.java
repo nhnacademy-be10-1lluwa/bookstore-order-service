@@ -28,7 +28,7 @@ public class BatchScheduler {
                 .addLong("time", System.currentTimeMillis())
                 .toJobParameters();
         JobExecution execution = jobLauncher.run(orderCleanUpJob, params);
-        log.info("OrderCleanUpJob 실행 결과 = {}", execution.getExitStatus());
+        log.info("주문 테이블 정리 실행 결과 = {}", execution.getExitStatus());
     }
 
     @Scheduled(cron = "0 0 10 1 * ?", zone = "Asia/Seoul")
@@ -39,6 +39,15 @@ public class BatchScheduler {
                 .toJobParameters();
 
         JobExecution execution = jobLauncher.run(memberGradeJob, params);
-        log.info("memberGradeJob 실행 결과 = {}", execution.getExitStatus());
+        log.info("회원 등급 업데이트 실행 결과 = {}", execution.getExitStatus());
+    }
+
+    @Scheduled(cron = "0 0 1 * * *")
+    public void launchConfirmStatus() throws Exception {
+        JobParameters params = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+        JobExecution execution = jobLauncher.run(orderCleanUpJob, params);
+        log.info("주문확정 상태 업데이트 실행 결과 = {}", execution.getExitStatus());
     }
 }
