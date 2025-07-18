@@ -148,8 +148,8 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = memberOrderCartFactory.create(memberId, request);
 
-        // 포인트 사용 처리
-        handleUsedPoint(memberId, order.getUsedPoint());
+        // 포인트 검증
+        handleUsedPoint(order.getMemberId(), order.getUsedPoint());
 
         // 재고 확인 및 처리
         List<BookCountUpdateRequest> booksToUpdate = collectBookCountRequests(
@@ -171,8 +171,10 @@ public class OrderServiceImpl implements OrderService {
                 request.getMemberCouponId() == null ? Collections.emptyList() : List.of(request.getMemberCouponId()));
 
         Order order = memberOrderDirectFactory.create(memberId, request);
-        // 포인트 사용 처리
-        handleUsedPoint(memberId, order.getUsedPoint());
+
+        // 포인트 검증
+        handleUsedPoint(order.getMemberId(), order.getUsedPoint());
+
         // 재고 확인 및 처리
         List<BookCountUpdateRequest> booksToUpdate = collectBookCountRequests(
                 List.of(new BookQuantity(request.getItem().getBookId(),
@@ -292,8 +294,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void updateOrderPaymentByOrderNumber(String orderNumber) {
-        orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
+        Order order = orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
                 -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+
+        PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
+        userApiClient.sendUsedPointByMemberId(usedPoint);
 
         orderRepository.updateStatusByOrderNumber(orderNumber);
     }
@@ -418,9 +423,6 @@ public class OrderServiceImpl implements OrderService {
         if (usedPoint.compareTo(pointBalance) > 0) {
             throw new BadRequestException("소유 포인트를 넘겼습니다.");
         }
-
-        PointRequest pointRequest = new PointRequest(memberId, usedPoint);
-        userApiClient.sendUsedPointByMemberId(pointRequest);
     }
 
     // 쿠폰 검증 및 사용 처리
