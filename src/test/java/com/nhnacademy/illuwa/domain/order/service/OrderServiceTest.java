@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.service;
 
+import com.nhnacademy.illuwa.OrderServiceApplication;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
@@ -25,7 +26,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(classes = OrderServiceApplication.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("db")
 @Transactional

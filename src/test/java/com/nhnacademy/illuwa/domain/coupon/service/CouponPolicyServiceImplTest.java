@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupon.service;
 
+import com.nhnacademy.illuwa.OrderServiceApplication;
 import com.nhnacademy.illuwa.domain.coupon.CouponPolicyTestUtils;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
@@ -26,7 +27,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@SpringBootTest
+@SpringBootTest(classes = OrderServiceApplication.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
 class CouponPolicyServiceImplTest {

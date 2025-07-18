@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupon.service;
 
+import com.nhnacademy.illuwa.OrderServiceApplication;
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberDto;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
@@ -35,7 +36,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
+@SpringBootTest(classes = OrderServiceApplication.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional // 테스트 후 데이터 자동 롤백
 

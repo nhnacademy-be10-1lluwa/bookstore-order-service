@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.domain.coupon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.illuwa.TestNoBatchApplication;
 import com.nhnacademy.illuwa.domain.coupons.controller.MemberCouponController;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponCreateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.memberCoupon.MemberCouponDto;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MemberCouponController.class)
+@ContextConfiguration(classes = TestNoBatchApplication.class)
 class MemberCouponControllerTest {
 
     @Autowired

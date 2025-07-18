@@ -1,6 +1,7 @@
 // src/test/java/com/nhnacademy/illuwa/domain/order/service/impl/PackagingServiceIntegrationTest.java
 package com.nhnacademy.illuwa.domain.order.service;
 
+import com.nhnacademy.illuwa.OrderServiceApplication;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingCreateRequestDto;
 import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Packaging;
@@ -24,7 +25,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(classes = OrderServiceApplication.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("db")
 @Transactional

@@ -2,6 +2,7 @@ package com.nhnacademy.illuwa.domain.coupon.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.illuwa.TestNoBatchApplication;
 import com.nhnacademy.illuwa.domain.coupons.controller.CouponPolicyController;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.couponPolicy.CouponPolicyUpdateRequest;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CouponPolicyController.class)
+@ContextConfiguration(classes = TestNoBatchApplication.class)
 class CouponPolicyControllerTest {
 
     @Autowired

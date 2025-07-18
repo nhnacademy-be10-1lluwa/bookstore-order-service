@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.coupon.service;
 
+import com.nhnacademy.illuwa.OrderServiceApplication;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.*;
 import com.nhnacademy.illuwa.domain.coupons.entity.Coupon;
 import com.nhnacademy.illuwa.domain.coupons.entity.CouponPolicy;
@@ -29,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 
-@SpringBootTest
+@SpringBootTest(classes = OrderServiceApplication.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
 class CouponServiceImplTest {

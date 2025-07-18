@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.service;
 
+import com.nhnacademy.illuwa.OrderServiceApplication;
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.OrderItem;
@@ -33,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *  - OrderItemServiceImpl 의 3가지 조회 메서드 + ID 파싱 예외 검증
  *  - 실제 DB 사용 (Replace.NONE)
  */
-@SpringBootTest
+@SpringBootTest(classes = OrderServiceApplication.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("db")
 @Transactional
