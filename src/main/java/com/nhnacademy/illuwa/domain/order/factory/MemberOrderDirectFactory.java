@@ -69,7 +69,7 @@ public class MemberOrderDirectFactory extends AbstractOrderFactory<MemberOrderRe
                 request.getMemberCouponId(),                 // orderCoupon
                 discountCalculator, memberCouponService);
 
-        return orderRepo.save(order);
+        return order;
     }
 
     public OrderItem buildOrderItem(MemberOrderRequestDirect request, Order order) {
