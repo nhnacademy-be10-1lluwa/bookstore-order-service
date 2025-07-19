@@ -1,7 +1,9 @@
 package com.nhnacademy.illuwa.domain.order.controller.common;
 
 
+import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestCreateRequestDto;
+import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +24,29 @@ public class CommonOrderController {
         return ResponseEntity.ok().build();
     }
 
-    // 주문 취소 - 배송 전
-    @PostMapping("/orders/{orderNumber}/cancel")
-    public ResponseEntity<Void> orderCancel(@PathVariable("orderNumber") String orderNumber) {
+    // 주문 확정 - 주문 확정 시, 환불 / 결제 취소 불가
+    @PostMapping("/orders/{orderId}/Confirmed")
+    public ResponseEntity<Void> updateOrderConfirmed(@PathVariable Long orderId) {
+        OrderUpdateStatusDto dto = new OrderUpdateStatusDto(OrderStatus.Confirmed);
+        orderService.updateOrderStatus(orderId, dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 주문 취소 - 결제 전 : 완료
+    @PostMapping("/orders/{order-id}/order-cancel")
+    public ResponseEntity<Void> orderCancel(@PathVariable("order-id") Long orderId) {
+        orderService.orderCancel(orderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 결제 취소 - 배송 전 : 완료
+    @PostMapping("/orders/{orderNumber}/payment-cancel")
+    public ResponseEntity<Void> paymentCancel(@PathVariable("orderNumber") String orderNumber) {
         orderService.cancelOrderByOrderNumber(orderNumber);
         return ResponseEntity.noContent().build();
     }
 
-    // 주문 환불 - 배송 후
+    // 주문 환불 - 배송 후 : 완료
     @PutMapping("/refund/{orderId}")
     public ResponseEntity<Void> guestOrderRequestRefund(@PathVariable Long orderId, ReturnRequestCreateRequestDto dto) {
         orderService.refundOrderById(orderId, dto);

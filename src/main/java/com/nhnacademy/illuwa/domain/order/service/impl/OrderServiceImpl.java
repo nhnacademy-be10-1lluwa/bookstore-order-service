@@ -34,7 +34,6 @@ import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;
-import com.rabbitmq.client.Return;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -166,7 +164,6 @@ public class OrderServiceImpl implements OrderService {
         );
         productApiClient.sendUpdateBooksCount(booksToUpdate);
 
-        order = memberOrderCartFactory.create(memberId, request);
         return order;
     }
 
@@ -210,6 +207,15 @@ public class OrderServiceImpl implements OrderService {
 
 
         return order;
+    }
+
+    @Override
+    public void orderCancel(Long orderId) {
+        Order order = orderRepository.findByOrderId(orderId).orElseThrow(
+                () -> new NotFoundException("해당 주문을 찾을 수 없습니다.", orderId));
+
+        orderItemRepository.deleteByOrderId(orderId);
+        orderRepository.deleteByOrderId(orderId);
     }
 
 
@@ -263,7 +269,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.updateOrderStatusByOrderId(orderId, OrderStatus.Refund);
 
-        userApiClient.sendReturnPrice(order.getMemberId(), returnPrice);
+        userApiClient.sendReturnPrice(new TotalRequest(order.getMemberId(), returnPrice));
 
         // 수량 증가 로직 추가
         List<BookCountUpdateRequest> bookCount = new ArrayList<>();

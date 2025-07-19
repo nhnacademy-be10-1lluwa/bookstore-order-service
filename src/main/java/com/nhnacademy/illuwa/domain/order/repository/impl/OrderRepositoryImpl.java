@@ -314,6 +314,13 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     }
 
     @Override
+    public long deleteByOrderId(Long orderId) {
+        return queryFactory.delete(order)
+                .where(order.orderId.eq(orderId))
+                .execute();
+    }
+
+    @Override
     public void updateStatusByOrderNumber(String orderNumber) {
         queryFactory.update(order)
                 .set(order.orderStatus, OrderStatus.Pending)

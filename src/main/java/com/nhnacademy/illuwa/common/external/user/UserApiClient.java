@@ -27,7 +27,7 @@ public interface UserApiClient {
 
     // 반품 가격
     @PostMapping(value = "/api/members/points/order/return")
-    Void sendReturnPrice(@RequestHeader("X-USER-ID") Long memberId, BigDecimal returnPrice);
+    Void sendReturnPrice(@RequestBody TotalRequest totalRequest);
 
     // 사용된 포인트 전송
     @PostMapping(value = "/api/members/points/order/use")

@@ -16,4 +16,5 @@ public interface OrderItemQuerydslRepository {
 
     List<OrderItemResponseDto> findOrderItemDtosByOrderNumber(String orderNumber);
 
+    long deleteByOrderId(Long orderId);
 }

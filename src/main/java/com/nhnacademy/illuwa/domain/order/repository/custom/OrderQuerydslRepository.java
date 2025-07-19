@@ -69,4 +69,6 @@ public interface OrderQuerydslRepository {
     // 주문 배송 날짜 변경
     void updateDeliveryDateByOrderId(Long orderId, LocalDate localDate);
 
+    long deleteByOrderId(Long orderId);
+
 }
