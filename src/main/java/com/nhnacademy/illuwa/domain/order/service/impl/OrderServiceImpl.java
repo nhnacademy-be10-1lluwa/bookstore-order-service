@@ -25,7 +25,6 @@ import com.nhnacademy.illuwa.domain.order.entity.types.ReturnReason;
 import com.nhnacademy.illuwa.domain.order.exception.common.AccessDeniedException;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
-import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundStringException;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberAddressDto;
 import com.nhnacademy.illuwa.domain.order.factory.GuestOrderDirectFactory;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderCartFactory;
@@ -107,7 +106,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDto getOrderByNumber(String orderNumber) {
         return orderRepository.findOrderDtoByOrderNumber(orderNumber).orElseThrow(() ->
-                new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+                new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
     }
 
     @Override
@@ -118,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact) {
         OrderResponseDto orderResponseDto = orderRepository.findOrderDtoByOrderNumberAndContact(orderNumber, recipientContact)
-                .orElseThrow(() -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+                .orElseThrow(() -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
 
         List<OrderItemResponseDto> items = orderItemRepository.findOrderItemDtosByOrderNumber(orderNumber);
         setBookTitles(items);
@@ -298,13 +297,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void updateOrderStatusByOrderNumber(String orderNumber, OrderUpdateStatusDto orderUpdateDto) {
         orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
-                -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
     }
 
     @Override
     public void updateOrderPaymentByOrderNumber(String orderNumber) {
         Order order = orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
-                -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
 
         PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
         userApiClient.sendUsedPointByMemberId(usedPoint);
