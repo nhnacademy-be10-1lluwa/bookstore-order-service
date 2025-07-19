@@ -34,7 +34,6 @@ import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.OrderService;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;
-import com.rabbitmq.client.Return;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -80,6 +78,13 @@ public class OrderServiceImpl implements OrderService {
         setBookTitles(items); // 제목 설정
         orderResponseDto.setItems(items);
         return orderResponseDto;
+    }
+
+    @Override
+    public Order getOrderEntityByOrderId(Long orderId) {
+        return orderRepository.findByOrderId(orderId).orElseThrow(
+                () -> new NotFoundException("해당 주문을 찾을 수 없습니다.")
+        );
     }
 
     @Override
@@ -159,7 +164,6 @@ public class OrderServiceImpl implements OrderService {
         );
         productApiClient.sendUpdateBooksCount(booksToUpdate);
 
-        order = memberOrderCartFactory.create(memberId, request);
         return order;
     }
 
@@ -182,8 +186,6 @@ public class OrderServiceImpl implements OrderService {
         );
         productApiClient.sendUpdateBooksCount(booksToUpdate);
 
-        TotalRequest totalRequest = new TotalRequest(memberId, order.getTotalPrice());
-        userApiClient.sendTotalPrice(totalRequest);
         return order;
     }
 
@@ -205,6 +207,15 @@ public class OrderServiceImpl implements OrderService {
 
 
         return order;
+    }
+
+    @Override
+    public void orderCancel(Long orderId) {
+        Order order = orderRepository.findByOrderId(orderId).orElseThrow(
+                () -> new NotFoundException("해당 주문을 찾을 수 없습니다.", orderId));
+
+        orderItemRepository.deleteByOrderId(orderId);
+        orderRepository.deleteByOrderId(orderId);
     }
 
 
@@ -258,7 +269,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.updateOrderStatusByOrderId(orderId, OrderStatus.Refund);
 
-        userApiClient.sendReturnPrice(order.getMemberId(), returnPrice);
+        userApiClient.sendReturnPrice(new TotalRequest(order.getMemberId(), returnPrice));
 
         // 수량 증가 로직 추가
         List<BookCountUpdateRequest> bookCount = new ArrayList<>();
@@ -272,16 +283,14 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    /*@Override
-    public void cancelOrderByOrderNumber(String orderNumber) {
-        orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
-                -> new NotFoundStringException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
-    }*/
-
     @Override
     public void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto) {
-        orderRepository.findByOrderId(orderId).orElseThrow(()
+        Order order = orderRepository.findByOrderId(orderId).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
+        if (orderUpdateDto.getOrderStatus() == OrderStatus.Confirmed) {
+            TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice());
+            userApiClient.sendTotalPrice(totalRequest);
+        }
 
         orderRepository.updateStatusByOrderId(orderId, orderUpdateDto);
     }

@@ -28,6 +28,9 @@ public interface OrderService {
     // orderId로 주문 내역 조회(ADMIN)
     OrderResponseDto getOrderByOrderId(Long orderId);
 
+    Order getOrderEntityByOrderId(Long orderId);
+
+    // 배달 날짜 변경
     void updateOrderDeliveryDate(Long orderId, LocalDate localDate);
 
     // memberId, orderId로 주문 내역 조회(MEMBERS)
@@ -55,6 +58,9 @@ public interface OrderService {
 
     // guest 주문하기 (direct)
     Order guestCreateOrderDirectWithItems(GuestOrderRequestDirect request);
+
+    // 주문 취소하기
+    void orderCancel(Long orderId);
 
     // orderNumber로 주문 취소하기(MEMBERS, GUEST) - 재고 수량 상승, -> 현재 final_price = (단가(price) + 포장비(package_fee)) * 수량(quantity) - 할인(discount_price) - 포인트(used_point) + 배송비(shipping_fee)
     OrderResponseDto cancelOrderByOrderNumber(String orderNumber);

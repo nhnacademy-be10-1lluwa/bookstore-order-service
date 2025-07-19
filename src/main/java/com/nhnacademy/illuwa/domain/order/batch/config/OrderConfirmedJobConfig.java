@@ -1,5 +1,7 @@
 package com.nhnacademy.illuwa.domain.order.batch.config;
 
+import com.nhnacademy.illuwa.common.external.user.UserApiClient;
+import com.nhnacademy.illuwa.domain.order.batch.writer.ConfirmAndPointWriter;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.LockTimeoutException;
@@ -17,6 +19,7 @@ import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilde
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -30,7 +33,9 @@ public class OrderConfirmedJobConfig {
 
     private final JobRepository jobRepository;
     private final EntityManagerFactory em;
-    private final DataSource dataSource;
+
+    private final JdbcTemplate jdbcTemplate;
+    private final UserApiClient userApiClient;
 
     private static final int CHUNK_SIZE = 1000;
 
@@ -60,7 +65,7 @@ public class OrderConfirmedJobConfig {
     @StepScope
     public JpaPagingItemReader<Long> deliveredReader() {
         LocalDate threshold = LocalDate.now().minusDays(10);
-        Map<String, Object> params = Map.of("status", OrderStatus.Shipped,
+        Map<String, Object> params = Map.of("status", OrderStatus.Shipped.name(),
                 "threshold", threshold);
 
         return new JpaPagingItemReaderBuilder<Long>()
@@ -79,14 +84,7 @@ public class OrderConfirmedJobConfig {
 
     @Bean
     public ItemWriter<Long> confirmWriter() {
-        return new JdbcBatchItemWriterBuilder<Long>()
-                .dataSource(dataSource)
-                .sql("""
-                        update orders set order_status = 'Confirmed'
-                        where order_id = ?
-                        """)
-                .itemPreparedStatementSetter((id, ps) -> ps.setLong(1, id))
-                .build();
+        return new ConfirmAndPointWriter(jdbcTemplate, userApiClient);
     }
 
 }

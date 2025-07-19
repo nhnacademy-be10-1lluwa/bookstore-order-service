@@ -7,12 +7,13 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/admin/batch")
+@RequestMapping("/api/order/admin/batch")
 @RequiredArgsConstructor
 public class BatchTriggerController {
     private final JobLauncher jobLauncher;
@@ -20,7 +21,7 @@ public class BatchTriggerController {
     private final Job memberGradeJob;
     private final Job orderConfirmedJob;
 
-    @PostMapping("/order-cleanup")
+    @GetMapping("/order-cleanup")
     public ResponseEntity<String> runOrderCleanUp() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
@@ -30,7 +31,7 @@ public class BatchTriggerController {
         return ResponseEntity.ok("주문 테이블 정리 실행 결과 = " + execution.getStatus());
     }
 
-    @PostMapping("/member-grade-update")
+    @GetMapping("/member-grade-update")
     public ResponseEntity<String> runMemberGradeUpdate() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
@@ -40,7 +41,7 @@ public class BatchTriggerController {
         return ResponseEntity.ok("회원 등급 업데이트 실행 결과 = " + execution.getStatus());
     }
 
-    @PostMapping("/order-confirmed-update")
+    @GetMapping("/order-confirmed-update")
     public ResponseEntity<String> runOrderConfirmedUpdate() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())

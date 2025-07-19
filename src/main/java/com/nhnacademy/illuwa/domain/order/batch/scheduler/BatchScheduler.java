@@ -42,7 +42,7 @@ public class BatchScheduler {
         log.info("회원 등급 업데이트 실행 결과 = {}", execution.getExitStatus());
     }
 
-    @Scheduled(cron = "0 0 1 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void launchConfirmStatus() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
