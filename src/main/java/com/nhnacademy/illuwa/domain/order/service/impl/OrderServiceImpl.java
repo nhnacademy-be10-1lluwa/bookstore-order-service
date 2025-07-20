@@ -266,7 +266,7 @@ public class OrderServiceImpl implements OrderService {
             throw new BadRequestException("반품 할 수 없습니다.");
         }
 
-        orderRepository.updateOrderStatusByOrderId(orderId, OrderStatus.Refund);
+        orderRepository.updateOrderStatusByOrderId(orderId, OrderStatus.Returned);
 
         userApiClient.sendReturnPrice(new TotalRequest(order.getMemberId(), returnPrice));
 
