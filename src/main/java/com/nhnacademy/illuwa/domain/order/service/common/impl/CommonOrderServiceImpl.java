@@ -102,7 +102,7 @@ public class CommonOrderServiceImpl implements CommonOrderService {
 
         long daysSinceDelivery = getDaysSinceDelivery(order.getDeliveryDate(), LocalDate.now());
 
-        BigDecimal returnPrice = null;
+        BigDecimal returnPrice;
 
         if (daysSinceDelivery > 30) {
             throw new BadRequestException("반품 기한(30일) 초과");

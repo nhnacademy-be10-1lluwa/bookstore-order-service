@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -42,6 +43,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberOrderServiceImpl implements MemberOrderService {
 
     private final MemberOrderCartFactory memberOrderCartFactory;
@@ -58,11 +60,13 @@ public class MemberOrderServiceImpl implements MemberOrderService {
     private final UserApiClient userApiClient;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<OrderListResponseDto> getOrdersByMemberId(Long memberId, Pageable pageable) {
         return orderRepository.findOrderListDtoByMemberId(memberId, pageable);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OrderResponseDto getOrderByMemberIdAndOrderId(Long memberId, Long orderId) {
         OrderResponseDto orderResponseDto = orderRepository.findOrderDtoByMemberIdAndOrderId(memberId, orderId).orElseThrow(()
                 -> new AccessDeniedException("해당 주문에 접근할 수 없습니다."));
@@ -120,6 +124,7 @@ public class MemberOrderServiceImpl implements MemberOrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MemberOrderInitFromCartResponseDto getOrderInitFromCartData(Long memberId) {
         CartResponse cart = productApiClient.getCart(memberId).orElseThrow(()
                 -> new NotFoundException("장바구니를 찾을 수 없습니다.", memberId));
@@ -156,6 +161,7 @@ public class MemberOrderServiceImpl implements MemberOrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MemberOrderInitDirectResponseDto getOrderInitDirectData(Long bookId, Long memberId) {
         BookItemOrderDto item = productApiClient.getOrderBookById(bookId).orElseThrow(
                 () -> new NotFoundException("해당 도서를 찾을 수 없습니다.", bookId));
