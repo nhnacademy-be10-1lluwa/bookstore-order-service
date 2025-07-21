@@ -1,3 +1,4 @@
+/*
 package com.nhnacademy.illuwa.domain.order.service.impl;
 
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
@@ -79,12 +80,14 @@ public class OrderServiceImpl implements OrderService {
         return orderResponseDto;
     }
 
-    @Override
+   */
+/* @Override
     public Order getOrderEntityByOrderId(Long orderId) {
         return orderRepository.findByOrderId(orderId).orElseThrow(
                 () -> new NotFoundException("해당 주문을 찾을 수 없습니다.")
         );
-    }
+    }*//*
+
 
     @Override
     public void updateOrderDeliveryDate(Long orderId, LocalDate localDate) {
@@ -114,7 +117,8 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findOrderListDtoByMemberId(memberId, pageable);
     }
 
-    @Override
+   */
+/* @Override
     public OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact) {
         OrderResponseDto orderResponseDto = orderRepository.findOrderDtoByOrderNumberAndContact(orderNumber, recipientContact)
                 .orElseThrow(() -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
@@ -124,7 +128,8 @@ public class OrderServiceImpl implements OrderService {
         orderResponseDto.setItems(items);
 
         return orderResponseDto;
-    }
+    }*//*
+
 
     @Override
     @Transactional(readOnly = true)
@@ -294,11 +299,13 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.updateStatusByOrderId(orderId, orderUpdateDto);
     }
 
-    @Override
+    */
+/*@Override
     public void updateOrderStatusByOrderNumber(String orderNumber, OrderUpdateStatusDto orderUpdateDto) {
         orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
-    }
+    }*//*
+
 
     @Override
     public void updateOrderPaymentByOrderNumber(String orderNumber) {
@@ -316,7 +323,9 @@ public class OrderServiceImpl implements OrderService {
         CartResponse cart = productApiClient.getCart(memberId).orElseThrow(()
                 -> new NotFoundException("장바구니를 찾을 수 없습니다.", memberId));
 
-        /* ㅡㅡㅡㅡㅡㅡ 사용 가능한 쿠폰 로직 ㅡㅡㅡㅡㅡㅡㅡ */
+        */
+/* ㅡㅡㅡㅡㅡㅡ 사용 가능한 쿠폰 로직 ㅡㅡㅡㅡㅡㅡㅡ *//*
+
 
         Map<Long, List<MemberCouponDto>> couponMap = new HashMap<>();
         for (BookCartResponse bookCart : cart.getBookCarts()) {
@@ -337,7 +346,9 @@ public class OrderServiceImpl implements OrderService {
 
 
 
-        /* ㅡㅡㅡㅡㅡㅡ 사용 가능한 쿠폰 로직 ㅡㅡㅡㅡㅡㅡㅡㅡ*/
+        */
+/* ㅡㅡㅡㅡㅡㅡ 사용 가능한 쿠폰 로직 ㅡㅡㅡㅡㅡㅡㅡㅡ*//*
+
 
         List<MemberAddressDto> addresses = userApiClient.getAddressByMemberId(memberId);
         List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
@@ -347,7 +358,8 @@ public class OrderServiceImpl implements OrderService {
         return new MemberOrderInitFromCartResponseDto(cart, addresses, couponMap, packaging, pointBalance);
     }
 
-    @Override
+   */
+/* @Override
     public GuestOrderInitFromCartResponseDto getGuestOrderInitFromCartData(Long cartId) {
         CreateOrderFromCartRequest request = productApiClient.getGuestCart(cartId).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", cartId));
@@ -356,7 +368,8 @@ public class OrderServiceImpl implements OrderService {
         List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
 
         return new GuestOrderInitFromCartResponseDto(cartItems, packaging);
-    }
+    }*//*
+
 
     @Override
     public MemberOrderInitDirectResponseDto getOrderInitDirectData(Long bookId, Long memberId) {
@@ -454,3 +467,4 @@ public class OrderServiceImpl implements OrderService {
         return ChronoUnit.DAYS.between(localDate, localDate2);
     }
 }
+*/

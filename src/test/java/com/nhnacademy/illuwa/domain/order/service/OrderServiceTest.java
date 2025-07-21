@@ -1,3 +1,4 @@
+/*
 package com.nhnacademy.illuwa.domain.order.service;
 
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
@@ -32,8 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Disabled
 public class OrderServiceTest {
 
-    @Autowired
-    private OrderService service;
+
 
     @Autowired
     private OrderRepository repository;
@@ -49,7 +49,9 @@ public class OrderServiceTest {
         repository.save(createTestOrder(2L, OrderStatus.Confirmed));
     }
 
-    /** Order NOT‑NULL 필드를 모두 채우는 헬퍼 */
+    */
+/** Order NOT‑NULL 필드를 모두 채우는 헬퍼 *//*
+
     private Order createTestOrder(long memberId, OrderStatus status) {
         LocalDateTime now = LocalDateTime.now();
         return Order.builder()
@@ -156,3 +158,4 @@ public class OrderServiceTest {
         assertThat(status).isEqualTo(OrderStatus.Shipped.name());
     }
 }
+*/
