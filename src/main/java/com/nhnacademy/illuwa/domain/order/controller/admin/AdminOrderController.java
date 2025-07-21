@@ -80,8 +80,7 @@ public class AdminOrderController {
             adminOrderService.updateOrderDeliveryDate(orderId, LocalDate.now());
         }
         commonOrderService.updateOrderStatus(orderId, dto);
-        return ResponseEntity.noContent()
-                .location(URI.create("/order/admin/orders/" + orderId)).build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/send-net-order-amount")

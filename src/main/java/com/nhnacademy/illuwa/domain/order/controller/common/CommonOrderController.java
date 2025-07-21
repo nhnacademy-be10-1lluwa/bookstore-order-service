@@ -47,7 +47,7 @@ public class CommonOrderController {
     }
 
     // 주문 환불 - 배송 후 : 완료
-    @PutMapping("/refund/{orderId}")
+    @PostMapping("/orders/{orderId}/refund")
     public ResponseEntity<Void> guestOrderRequestRefund(@PathVariable Long orderId, ReturnRequestCreateRequestDto dto) {
         commonOrderService.refundOrderById(orderId, dto);
         return ResponseEntity.noContent().build();

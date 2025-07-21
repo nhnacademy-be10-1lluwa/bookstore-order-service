@@ -31,6 +31,8 @@ public class GuestOrderController {
         return ResponseEntity.ok(response);
     }
 
+
+
     @GetMapping("/init-guest-info/books/{book-id}")
     public ResponseEntity<GuestOrderInitDirectResponseDto> getOrderInitDirect(@PathVariable("book-id") Long bookId) {
         GuestOrderInitDirectResponseDto response = guestOrderService.getGuestOrderInitDirectData(bookId);
