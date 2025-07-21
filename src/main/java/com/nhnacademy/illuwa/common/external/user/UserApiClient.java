@@ -25,6 +25,10 @@ public interface UserApiClient {
     @PostMapping(value = "/api/members/points/order/earn")
     MemberSavePointDto sendTotalPrice(@RequestBody TotalRequest request);
 
+    // 반품 가격
+    @PostMapping(value = "/api/members/points/order/return")
+    Void sendReturnPrice(@RequestBody TotalRequest totalRequest);
+
     // 사용된 포인트 전송
     @PostMapping(value = "/api/members/points/order/use")
     MemberUsedPointDto sendUsedPointByMemberId(@RequestBody PointRequest request);

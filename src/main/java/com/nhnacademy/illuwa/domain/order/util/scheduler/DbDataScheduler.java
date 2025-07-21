@@ -22,10 +22,14 @@ public class DbDataScheduler {
     public void cleanUpAwaitingPayments() {
         LocalDateTime threeDaysAgo = LocalDateTime.now().minusDays(3);
 
-        int deletedOrderItem = orderRepository.deleteItemsBefore(OrderStatus.AwaitingPayment, threeDaysAgo);
-        int deletedOrder = orderRepository.deleteByOrderStatusAndOrderDateBefore(
-                OrderStatus.AwaitingPayment,
-                threeDaysAgo);
-        log.info("삭제된 AwaitingPayment 주문 수 = {} \n 삭제된 orderItem 수 = {}", deletedOrder, deletedOrderItem);
+        try {
+            int deletedOrderItem = orderRepository.deleteItemsBefore(OrderStatus.AwaitingPayment, threeDaysAgo);
+            int deletedOrder = orderRepository.deleteByOrderStatusAndOrderDateBefore(
+                    OrderStatus.AwaitingPayment,
+                    threeDaysAgo);
+            log.info("삭제된 AwaitingPayment 주문 수 - {} \n 삭제된 orderItem 수 = {}", deletedOrder, deletedOrderItem);
+        } catch (Exception e) {
+            log.info("삭제 AwaitingPayment 주문 삭제 실패 - {}", e.getMessage());
+        }
     }
 }

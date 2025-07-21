@@ -7,17 +7,27 @@ import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponResponse;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponUpdateRequest;
 import com.nhnacademy.illuwa.domain.coupons.dto.coupon.CouponUpdateResponse;
 import com.nhnacademy.illuwa.domain.coupons.entity.status.CouponType;
+import com.nhnacademy.illuwa.domain.coupons.repository.CouponPolicyRepository;
+import com.nhnacademy.illuwa.domain.coupons.repository.CouponRepository;
 import com.nhnacademy.illuwa.domain.coupons.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 
 import static com.nhnacademy.illuwa.domain.coupon.CouponPolicyTestUtils.*;
@@ -27,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = AdminCouponController.class)
-public class AdminCouponControllerTest {
+class AdminCouponControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -35,7 +45,22 @@ public class AdminCouponControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
+    private JobRepository jobRepository;
+
+    @MockBean
+    private JobExplorer jobExplorer;
+
+    @MockBean
+    private JobOperator jobOperator;
+
+    @MockBean
     private CouponService couponService;
+
+//    @MockBean
+//    private CouponRepository couponRepository;
+
+//    @MockBean
+//    private CouponPolicyRepository couponPolicyRepository;
 
     String json;
 

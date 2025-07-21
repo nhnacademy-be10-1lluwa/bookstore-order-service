@@ -23,13 +23,12 @@ public interface ReturnRequestService {
     List<ReturnRequestListResponseDto> findReturnRequestsByMemberId(String memberId);
 
     // 반품 요청하기 (MEMBERS)
-    ReturnRequest addReturnRequest(String orderId, ReturnRequestCreateRequestDto returnRequestCreateDto);
+//    ReturnRequest addReturnRequest(String orderId, ReturnRequestCreateRequestDto returnRequestCreateDto);
 
     // 반품 취소하기 (MEMBERS)
     void removeReturnRequest(String returnRequestId);
 
     // 반품 수락하기 (ADMIN)
-
     void updateReturnRequest(Long returnId, AdminReturnRequestRegisterDto returnRequestRegisterDto);
 
 }

@@ -115,4 +115,12 @@ public class OrderItemRepositoryImpl extends QuerydslRepositorySupport implement
                 .fetch();
     }
 
+    @Override
+    public long deleteByOrderId(Long orderId) {
+        return queryFactory
+                .delete(orderItem)
+                .where(orderItem.order.orderId.eq(orderId))
+                .execute();
+    }
+
 }

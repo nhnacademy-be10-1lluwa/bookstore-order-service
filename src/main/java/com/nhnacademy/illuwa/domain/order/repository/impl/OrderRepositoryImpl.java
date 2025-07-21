@@ -96,6 +96,24 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     }
 
     @Override
+    public Optional<Order> findOrderByOrderId(Long orderId) {
+        return Optional.ofNullable(queryFactory.selectFrom(order)
+                .leftJoin(order.items, orderItem).fetchJoin()
+                .where(order.orderId.eq(orderId))
+                .fetchOne());
+    }
+
+    @Override
+    public Optional<Order> findOrderByOrderNumber(String orderNumber) {
+        return Optional.ofNullable(queryFactory.selectFrom(order)
+                .leftJoin(order.items, orderItem).fetchJoin()
+                .where(order.orderNumber.eq(orderNumber))
+                .fetchOne());
+    }
+
+
+
+    @Override
     public Optional<OrderResponseDto> findOrderDtoByMemberIdAndOrderId(Long memberId, Long orderId) {
 
         OrderResponseDto result = queryFactory
@@ -283,6 +301,21 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     public void updateStatusByOrderId(Long orderId, OrderStatus status) {
         queryFactory.update(order)
                 .set(order.orderStatus, status)
+                .where(order.orderId.eq(orderId))
+                .execute();
+    }
+
+    @Override
+    public void updateDeliveryDateByOrderId(Long orderId, LocalDate localDate) {
+        queryFactory.update(order)
+                .set(order.deliveryDate, localDate)
+                .where(order.orderId.eq(orderId))
+                .execute();
+    }
+
+    @Override
+    public long deleteByOrderId(Long orderId) {
+        return queryFactory.delete(order)
                 .where(order.orderId.eq(orderId))
                 .execute();
     }

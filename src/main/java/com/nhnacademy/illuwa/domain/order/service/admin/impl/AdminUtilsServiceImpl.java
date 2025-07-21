@@ -1,10 +1,10 @@
-package com.nhnacademy.illuwa.domain.order.service.impl;
+package com.nhnacademy.illuwa.domain.order.service.admin.impl;
 
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
-import com.nhnacademy.illuwa.domain.order.service.AdminUtilsService;
+import com.nhnacademy.illuwa.domain.order.service.admin.AdminUtilsService;
 import com.nhnacademy.illuwa.domain.order.util.scheduler.DbDataScheduler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

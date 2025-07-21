@@ -30,8 +30,8 @@ jobs:
 
       - name: Run SonarQube
         run: mvn sonar:sonar 
-          -Dsonar.projectKey=1lluwa-order-service 
-          -Dsonar.projectName=1lluwa-Order-Service 
+          -Dsonar.projectKey=1lluwa-order-service2 
+          -Dsonar.projectName=1lluwa-order-service2 
           -Dsonar.host.url=${{secrets.SONAR_HOST}} 
           -Dsonar.login=${{secrets.SONAR_TOKEN}}
           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml

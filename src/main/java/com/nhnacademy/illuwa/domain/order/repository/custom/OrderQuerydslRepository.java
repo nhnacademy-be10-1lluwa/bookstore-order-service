@@ -4,11 +4,14 @@ import com.nhnacademy.illuwa.domain.order.dto.order.OrderListResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
+import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,11 @@ public interface OrderQuerydslRepository {
 
     // 주문 아이디로 주문 조회
     Optional<OrderResponseDto> findOrderDtoByOrderId(Long OrderId);
+
+    Optional<Order> findOrderByOrderId(Long orderId);
+
+    // 주문 넘버로 주문 조회
+    Optional<Order> findOrderByOrderNumber(String orderNumber);
 
     // 주문/멤버 아이디로 주문 조회
     Optional<OrderResponseDto> findOrderDtoByMemberIdAndOrderId(Long memberId, Long orderId);
@@ -58,5 +66,9 @@ public interface OrderQuerydslRepository {
     // 주문 상태 변경하기
     void updateStatusByOrderId(Long orderId, OrderStatus status);
 
+    // 주문 배송 날짜 변경
+    void updateDeliveryDateByOrderId(Long orderId, LocalDate localDate);
+
+    long deleteByOrderId(Long orderId);
 
 }
