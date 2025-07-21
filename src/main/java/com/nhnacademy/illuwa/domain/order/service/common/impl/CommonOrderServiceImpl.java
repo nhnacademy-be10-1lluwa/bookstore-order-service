@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -54,8 +55,10 @@ public class CommonOrderServiceImpl implements CommonOrderService {
         Order order = orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
 
-        PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
-        userApiClient.sendUsedPointByMemberId(usedPoint);
+        if (Objects.nonNull(order.getMemberId())) {
+            PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
+            userApiClient.sendUsedPointByMemberId(usedPoint);
+        }
 
         orderRepository.updateStatusByOrderNumber(orderNumber);
     }
