@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,7 +35,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MemberCouponController.class)
-@Disabled
 class MemberCouponControllerTest {
 
     @Autowired
@@ -40,6 +42,15 @@ class MemberCouponControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private JobRepository jobRepository;
+
+    @MockBean
+    private JobExplorer jobExplorer;
+
+    @MockBean
+    private JobOperator jobOperator;
 
     @MockBean
     private MemberCouponService memberCouponService;
