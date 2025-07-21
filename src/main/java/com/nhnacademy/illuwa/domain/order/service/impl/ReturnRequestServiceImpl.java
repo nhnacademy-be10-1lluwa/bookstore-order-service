@@ -68,7 +68,7 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
         return repository.findByMemberId(id);
     }
 
-    // 차감 배송비
+    /*// 차감 배송비
     // 출고일로 부터 10일 이내 미사용 시 반품 택배비 차감 후 가능
     @Override
     public ReturnRequest addReturnRequest(String orderId, ReturnRequestCreateRequestDto returnRequestCreateDto) {
@@ -103,7 +103,7 @@ public class ReturnRequestServiceImpl implements ReturnRequestService {
                 .build();
 
         return repository.save(returnRequest);
-    }
+    }*/
 
     @Override
     public void removeReturnRequest(String returnRequestId) {

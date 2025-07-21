@@ -19,12 +19,14 @@ import com.nhnacademy.illuwa.domain.order.service.guest.GuestOrderService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GuestOrderServiceImpl implements GuestOrderService {
 
     private final GuestOrderDirectFactory guestOrderDirectFactory;
@@ -53,6 +55,7 @@ public class GuestOrderServiceImpl implements GuestOrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GuestOrderInitDirectResponseDto getGuestOrderInitDirectData(Long bookId) {
         BookItemOrderDto item = productApiClient.getOrderBookById(bookId).orElseThrow(
                 () -> new NotFoundException("해당 도서를 찾을 수 없습니다.", bookId));
