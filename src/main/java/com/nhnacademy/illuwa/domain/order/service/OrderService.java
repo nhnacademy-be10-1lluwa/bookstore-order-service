@@ -1,3 +1,4 @@
+/*
 package com.nhnacademy.illuwa.domain.order.service;
 
 import com.nhnacademy.illuwa.domain.order.dto.order.*;
@@ -17,8 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 
 public interface OrderService {
 
@@ -28,23 +27,25 @@ public interface OrderService {
     // orderId로 주문 내역 조회(ADMIN)
     OrderResponseDto getOrderByOrderId(Long orderId);
 
-    Order getOrderEntityByOrderId(Long orderId);
-
     // 배달 날짜 변경
     void updateOrderDeliveryDate(Long orderId, LocalDate localDate);
 
     // memberId, orderId로 주문 내역 조회(MEMBERS)
     OrderResponseDto getOrderByMemberIdAndOrderId(Long memberId, Long orderId);
 
-    // number 로 주문 내역 조회(ADMIN, MEMBERS)
+    // number 로 주문 내역 조회(ADMIN)
     OrderResponseDto getOrderByNumber(String orderNumber);
 
+    // memberId로 주문 내역들 조회(MEMBERS)
     Page<OrderListResponseDto> getOrdersByMemberId(Long memberId, Pageable pageable);
 
-    // 비회원 주문 조회
-    OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact);
+    */
+/*//*
+/ 비회원 주문 조회
+    OrderResponseDto getOrderByNumberAndContact(String orderNumber, String recipientContact);*//*
 
-    // member 별 주문 내역 조회 (ADMIN, MEMBERS)
+
+    // member 별 주문 내역 조회 (ADMIN)
     Page<OrderListResponseDto> getOrderByMemberId(Long memberId, Pageable pageable);
 
     // 주문 상태별 조회 (ADMIN)
@@ -62,26 +63,25 @@ public interface OrderService {
     // 주문 취소하기
     void orderCancel(Long orderId);
 
-    // orderNumber로 주문 취소하기(MEMBERS, GUEST) - 재고 수량 상승, -> 현재 final_price = (단가(price) + 포장비(package_fee)) * 수량(quantity) - 할인(discount_price) - 포인트(used_point) + 배송비(shipping_fee)
+    // orderNumber로 주문 취소하기(COMMON) - 재고 수량 상승, -> 현재 final_price = (단가(price) + 포장비(package_fee)) * 수량(quantity) - 할인(discount_price) - 포인트(used_point) + 배송비(shipping_fee)
     OrderResponseDto cancelOrderByOrderNumber(String orderNumber);
 
-   // id로 주문 환불하기(MEMBERS, GUEST)
+   // id로 주문 환불하기 (COMMON)
     OrderResponseDto refundOrderById(Long orderId, ReturnRequestCreateRequestDto dto);
 
-    // id로 주문 상태 변경하기(ADMIN)
+    // id로 주문 상태 변경하기(COMMON)
     void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto);
 
-    // number로 주문 상태 변경하기 (ADMIN)
-    void updateOrderStatusByOrderNumber(String orderNumber, OrderUpdateStatusDto orderUpdateDto);
-
-    // 결제 완료
+    // 결제 완료 (COMMON)
     void updateOrderPaymentByOrderNumber(String orderNumber);
 
     // 주문 초기 데이터 조회(member, 장바구니용)
     MemberOrderInitFromCartResponseDto getOrderInitFromCartData(Long memberId);
 
-    // 주문 초기 데이터 조회(Guest, 장바구니용)
-    GuestOrderInitFromCartResponseDto getGuestOrderInitFromCartData(Long cartId);
+   */
+/* // 주문 초기 데이터 조회(Guest, 장바구니용)
+    GuestOrderInitFromCartResponseDto getGuestOrderInitFromCartData(Long cartId);*//*
+
 
     // 주문 초기 게이터 조회(member, 바로 구매용)
     MemberOrderInitDirectResponseDto getOrderInitDirectData(Long bookId, Long memberId);
@@ -92,4 +92,4 @@ public interface OrderService {
     // 주문 도서에 대한 구매 확정여부를 검사
     boolean isConfirmedOrder(Long memberId, Long bookId);
 
-}
+}*/

@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.order.service;
+package com.nhnacademy.illuwa.domain.order.service.admin;
 
 import java.util.Map;
 
