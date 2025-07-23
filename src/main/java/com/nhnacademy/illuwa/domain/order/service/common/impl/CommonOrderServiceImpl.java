@@ -65,7 +65,7 @@ public class CommonOrderServiceImpl implements CommonOrderService {
 
     @Override
     public void orderCancel(Long orderId) {
-        Order order = orderRepository.findByOrderId(orderId).orElseThrow(
+        orderRepository.findByOrderId(orderId).orElseThrow(
                 () -> new NotFoundException("해당 주문을 찾을 수 없습니다.", orderId));
 
         orderItemRepository.deleteByOrderId(orderId);

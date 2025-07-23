@@ -21,7 +21,7 @@ import java.util.Map;
 public class AdminUtilsServiceImpl implements AdminUtilsService {
     private final OrderRepository orderRepository;
     private final UserApiClient userApiClient;
-    private final DbDataScheduler dbDataScheduler;
+
 
     @Override
     public int sendMonthlyNetOrderAmount() {
