@@ -6,6 +6,7 @@ import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
 public class OrderResponseDto {
 
     private Long orderId; // orderNumber

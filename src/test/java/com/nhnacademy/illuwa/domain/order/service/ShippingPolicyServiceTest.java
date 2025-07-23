@@ -24,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@ActiveProfiles("db")
 @Transactional
 public class ShippingPolicyServiceTest {
 
@@ -49,12 +48,6 @@ public class ShippingPolicyServiceTest {
                 );
 
         repository.save(ShippingPolicy.builder()
-                .minAmount(new BigDecimal("20000"))
-                .fee(new BigDecimal("3000"))
-                .active(true)
-                .build());
-
-        repository.save(ShippingPolicy.builder()
                 .minAmount(new BigDecimal("25000"))
                 .fee(new BigDecimal("4000"))
                 .active(false)
@@ -70,20 +63,6 @@ public class ShippingPolicyServiceTest {
                 .contains(new BigDecimal("5000.00"), new BigDecimal("3000.00"), new BigDecimal("4000.00"));
 
     }
-
-    @Test
-    @DisplayName("활성 정책 조회 테스트")
-    @Disabled
-    void testGetShippingPolicyByActive() {
-        ShippingPolicyResponseDto dto = service.getShippingPolicyByActive(true);
-
-        Integer activeCount = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM shipping_policies WHERE active = true", Integer.class
-        );
-
-        /*assertThat(dto).hasSize(activeCount);*/
-    }
-
 
     @Test
     @DisplayName("정책 주가 및 조회")
