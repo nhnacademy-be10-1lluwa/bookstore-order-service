@@ -11,7 +11,6 @@ import com.nhnacademy.illuwa.domain.order.dto.order.member.MemberOrderRequestDir
 import com.nhnacademy.illuwa.domain.order.dto.orderItem.OrderItemResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
-import com.nhnacademy.illuwa.domain.order.service.OrderItemService;
 import com.nhnacademy.illuwa.domain.order.service.member.MemberOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,35 +25,51 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/order/member")
+@RequestMapping("/api/order/members")
 public class MemberOrderController {
 
     private final MemberOrderService memberOrderService;
-    private final OrderItemService orderItemService;
     private final ProductApiClient productApiClient;
 
+    // 회원 바로 주문하기 내용 조회
+    @GetMapping(value = "/orders/init/books/{book-id}")
+    public ResponseEntity<MemberOrderInitDirectResponseDto> getOrderInitDirect(@RequestHeader("X-USER-ID") Long memberId, @PathVariable("book-id") Long bookId) {
+        MemberOrderInitDirectResponseDto response = memberOrderService.getOrderInitDirectData(bookId, memberId);
+        return ResponseEntity.ok(response);
+    }
 
-    @GetMapping(value = "/init-from-cart")
+    // 회원 장바구니 주문하기 내용 조회
+    @GetMapping(value = "/orders/init/cart")
     public ResponseEntity<MemberOrderInitFromCartResponseDto> getOrderInitFromCart(@RequestHeader("X-USER-ID") Long memberId) {
         MemberOrderInitFromCartResponseDto response = memberOrderService.getOrderInitFromCartData(memberId);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "/init-member-info/books/{bookId}")
-    public ResponseEntity<MemberOrderInitDirectResponseDto> getOrderInitDirect(@RequestHeader("X-USER-ID") Long memberId, @PathVariable("bookId") Long bookId) {
-        MemberOrderInitDirectResponseDto response = memberOrderService.getOrderInitDirectData(bookId, memberId);
+    // 회원 바로 주문하기
+    @PostMapping("/orders/direct")
+    public ResponseEntity<OrderCreateResponseDto> sendOrderRequestDirect(@RequestHeader("X-USER-ID") Long memberId, @RequestBody @Valid MemberOrderRequestDirect memberOrderRequestDirect) {
+        Order order = memberOrderService.memberCreateOrderDirectWithItems(memberId, memberOrderRequestDirect);
+        OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
+        // 책 제목 조회 및 설정
+        setTitle(response.getItems());
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "/orders/{orderId}")
-    public ResponseEntity<OrderResponseDto> getOrderByOrderId(@RequestHeader("X-USER-ID") Long memberId, @PathVariable("orderId") Long orderId) {
-        OrderResponseDto response = memberOrderService.getOrderByMemberIdAndOrderId(memberId, orderId);
+    // 회원 장바구니 주문하기
+    @PostMapping("/orders/cart")
+    public ResponseEntity<OrderCreateResponseDto> sendOrderRequest(@RequestHeader("X-USER-ID") Long memberId, @RequestBody @Valid MemberOrderRequest memberOrderRequest) {
+        Order order = memberOrderService.memberCreateOrderFromCartWithItems(memberId, memberOrderRequest);
+        OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
+
+        // 책 제목 조회 및 설정
+        setTitle(response.getItems());
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/orders/history")
+    // 회원 주문 내역들 조회
+    @GetMapping("/orders")
     public ResponseEntity<Map<String, Object>> getNewOrdersHistory(@RequestHeader("X-USER-ID") Long memberId,
-                                                                @PageableDefault(size = 10, sort = "orderDate") Pageable pageable) {
+                                                                   @PageableDefault(size = 10, sort = "orderDate") Pageable pageable) {
         Page<OrderListResponseDto> page = memberOrderService.getOrdersByMemberId(memberId, pageable);
         Map<String, Object> body = Map.of(
                 "content", page.getContent(),
@@ -68,26 +83,14 @@ public class MemberOrderController {
         return ResponseEntity.ok(body);
     }
 
-
-    @PostMapping("/submit")
-    public ResponseEntity<OrderCreateResponseDto> sendOrderRequest(@RequestHeader("X-USER-ID") Long memberId, @RequestBody @Valid MemberOrderRequest memberOrderRequest) {
-        Order order = memberOrderService.memberCreateOrderFromCartWithItems(memberId, memberOrderRequest);
-        OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
-
-        // 책 제목 조회 및 설정
-        setTitle(response.getItems());
+    // 회원 주문 상세 조회
+    @GetMapping(value = "/orders/{order-id}")
+    public ResponseEntity<OrderResponseDto> getOrderByOrderId(@RequestHeader("X-USER-ID") Long memberId, @PathVariable("order-id") Long orderId) {
+        OrderResponseDto response = memberOrderService.getOrderByMemberIdAndOrderId(memberId, orderId);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/submit-direct")
-    public ResponseEntity<OrderCreateResponseDto> sendOrderRequestDirect(@RequestHeader("X-USER-ID") Long memberId, @RequestBody @Valid MemberOrderRequestDirect memberOrderRequestDirect) {
-        Order order = memberOrderService.memberCreateOrderDirectWithItems(memberId, memberOrderRequestDirect);
-        OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
-        // 책 제목 조회 및 설정
-        setTitle(response.getItems());
-        return ResponseEntity.ok(response);
-    }
-
+    // 회원의 도서 구매확정 여부 ( 리뷰 도메인 )
     @GetMapping("/confirmed")
     public ResponseEntity<Boolean> isConfirmedOrder(@RequestHeader("X-USER-ID") Long memberId, @RequestParam Long bookId) {
         return ResponseEntity.ok(memberOrderService.isConfirmedOrder(memberId, bookId));
