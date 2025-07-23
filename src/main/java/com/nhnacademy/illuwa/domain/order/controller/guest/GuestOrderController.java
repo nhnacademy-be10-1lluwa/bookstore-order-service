@@ -18,29 +18,22 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping("/api/order/guest")
+@RequestMapping("/api/order/guests")
 public class GuestOrderController {
 
     private final GuestOrderService guestOrderService;
     private final AdminOrderService adminOrderService;
     private final ProductApiClient productApiClient;
 
-    @GetMapping("/order-history/{orderId}")
-    public ResponseEntity<OrderResponseDto> getOrderHistory(@PathVariable("orderId") Long orderId) {
-        OrderResponseDto response = adminOrderService.getOrderByOrderId(orderId);
-        return ResponseEntity.ok(response);
-    }
-
-
-
-    @GetMapping("/init-guest-info/books/{book-id}")
+    // 비회원 바로 주문하기 내용 조회
+    @GetMapping("/orders/init/books/{book-id}")
     public ResponseEntity<GuestOrderInitDirectResponseDto> getOrderInitDirect(@PathVariable("book-id") Long bookId) {
         GuestOrderInitDirectResponseDto response = guestOrderService.getGuestOrderInitDirectData(bookId);
         return ResponseEntity.ok(response);
     }
 
     // 비회원 바로 구매
-    @PostMapping("/submit-direct")
+    @PostMapping("/orders/direct")
     public ResponseEntity<OrderCreateResponseDto> guestOrderRequestDirect(@RequestBody @Valid GuestOrderRequestDirect request) {
         Order order = guestOrderService.guestCreateOrderDirectWithItems(request);
         OrderCreateResponseDto response = OrderCreateResponseDto.fromEntity(order);
@@ -53,4 +46,12 @@ public class GuestOrderController {
         }
         return ResponseEntity.ok(response);
     }
+
+    // 비회원 주문조회
+    @GetMapping("/orders/{order-id}")
+    public ResponseEntity<OrderResponseDto> getOrderHistory(@PathVariable("order-id") Long orderId) {
+        OrderResponseDto response = adminOrderService.getOrderByOrderId(orderId);
+        return ResponseEntity.ok(response);
+    }
+
 }

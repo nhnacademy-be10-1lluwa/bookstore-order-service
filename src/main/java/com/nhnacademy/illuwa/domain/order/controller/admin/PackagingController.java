@@ -14,10 +14,24 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/packaging")
+@RequestMapping("/api/order/packagings")
 public class PackagingController {
 
     private final PackagingService packagingService;
+
+    // 포장 옵션 전체 조회 (활성화)
+    @GetMapping
+    public ResponseEntity<List<PackagingResponseDto>> getAllPackaging() {
+        List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
+        return ResponseEntity.ok(packaging);
+    }
+
+    // 포장 옵션 단일 조회
+    @GetMapping("/{packaging-id}")
+    public ResponseEntity<PackagingResponseDto> getPackaging(@PathVariable("packaging-id") Long id) {
+        PackagingResponseDto response = packagingService.getPackaging(id);
+        return ResponseEntity.ok(response);
+    }
 
     // 포장 옵션 생성
     @PostMapping
@@ -26,19 +40,10 @@ public class PackagingController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // 포장 옵션 단일 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<PackagingResponseDto> getPackaging(@PathVariable Long id) {
-        PackagingResponseDto response = packagingService.getPackaging(id);
-        return ResponseEntity.ok(response);
-    }
-
-    // 포장 옵션 전체 조회 (활성화)
-    @GetMapping
-    public ResponseEntity<List<PackagingResponseDto>> getAllPackaging() {
-        List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
-        return ResponseEntity.ok(packaging);
-    }
+    /*
+    아래는 미사용 컨트롤러
+    ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+    * */
 
     // 포장 옵션 수정 (기존 포장 옵션 비활성화 후, 새로운 포장 옵션 생성)
     @PutMapping("/{id}")

@@ -35,8 +35,8 @@ public class AdminOrderController {
     }
 
     // orderId로 주문 상세 조회
-    @GetMapping("/orders/{orderId}")
-    public ResponseEntity<OrderResponseDto> getOrderDetail(@PathVariable("orderId") Long orderId) {
+    @GetMapping("/orders/{order-id}")
+    public ResponseEntity<OrderResponseDto> getOrderDetail(@PathVariable("order-id") Long orderId) {
         OrderResponseDto response = adminOrderService.getOrderByOrderId(orderId);
         return ResponseEntity.ok(response);
     }
@@ -59,41 +59,26 @@ public class AdminOrderController {
     }
 
     // 멤버별 주문내역 조회
-    @GetMapping(value = "/orders", params = "memberId")
-    public ResponseEntity<Page<OrderListResponseDto>> getOrdersByMemberId(@RequestParam("memberId") Long memberId, Pageable pageable) {
+    @GetMapping(value = "/orders", params = "member-id")
+    public ResponseEntity<Page<OrderListResponseDto>> getOrdersByMemberId(@RequestParam("member-id") Long memberId, Pageable pageable) {
         Page<OrderListResponseDto> response = adminOrderService.getOrderByMemberId(memberId, pageable);
         return ResponseEntity.ok(response);
     }
 
     // 주문 내역 단건조회
-    @GetMapping("/orders/by-number/{orderNumber}")
-    public ResponseEntity<OrderResponseDto> getOrderByOrderId(@PathVariable String orderNumber) {
+    @GetMapping("/orders/by-number/{order-number}")
+    public ResponseEntity<OrderResponseDto> getOrderByOrderId(@PathVariable("order-number") String orderNumber) {
         OrderResponseDto response = adminOrderService.getOrderByNumber(orderNumber);
         return ResponseEntity.ok(response);
     }
 
     // 주문 상태 변경 orderId
-    @PutMapping("/orders/{orderId}")
-    public ResponseEntity<Void> updateOrderStatus(@PathVariable Long orderId, @RequestBody OrderUpdateStatusDto dto) {
+    @PutMapping("/orders/{order-id}")
+    public ResponseEntity<Void> updateOrderStatus(@PathVariable("order-id") Long orderId, @RequestBody OrderUpdateStatusDto dto) {
         if (dto.getOrderStatus() == OrderStatus.Shipped) {
             adminOrderService.updateOrderDeliveryDate(orderId, LocalDate.now());
         }
         commonOrderService.updateOrderStatus(orderId, dto);
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/send-net-order-amount")
-    public ResponseEntity<Void> triggerSchedulerManually() {
-        int count = adminUtilsService.sendMonthlyNetOrderAmount();
-        log.info("수동으로 월간 순주문 금액 전송 와료 - {}건", count);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/delete-awaiting-orders")
-    public ResponseEntity<Void> triggerSchedulerDeleteOrder() {
-        Map<String, Integer> map = adminUtilsService.dbDataScheduler();
-        log.info("수동으로 3일간 AwaitingPayment 상태의 주문 내역 삭제 - {}건 \n" +
-                "삭제된 order item 개수 - {}개", map.get("deleteOrder"), map.get("deleteOrderItem"));
-        return ResponseEntity.ok().build();
     }
 }

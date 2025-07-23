@@ -18,15 +18,9 @@ public class CommonOrderController {
 
     private final CommonOrderService commonOrderService;
 
-    @PostMapping("/payment-success/{orderNumber}")
-    public ResponseEntity<Void> updateOrderStatus(@PathVariable("orderNumber") String orderNumber) {
-        commonOrderService.updateOrderPaymentByOrderNumber(orderNumber);
-        return ResponseEntity.ok().build();
-    }
-
     // 주문 확정 - 주문 확정 시, 환불 / 결제 취소 불가
-    @PostMapping("/orders/{orderId}/Confirmed")
-    public ResponseEntity<Void> updateOrderConfirmed(@PathVariable Long orderId) {
+    @PostMapping("/orders/{order-id}/confirm")
+    public ResponseEntity<Void> updateOrderConfirmed(@PathVariable("order-id") Long orderId) {
         OrderUpdateStatusDto dto = new OrderUpdateStatusDto(OrderStatus.Confirmed);
         commonOrderService.updateOrderStatus(orderId, dto);
         return ResponseEntity.noContent().build();
@@ -40,16 +34,24 @@ public class CommonOrderController {
     }
 
     // 결제 취소 - 배송 전 : 완료
-    @PostMapping("/orders/{orderNumber}/payment-cancel")
-    public ResponseEntity<Void> paymentCancel(@PathVariable("orderNumber") String orderNumber) {
+    @PostMapping("/orders/{order-number}/payment-cancel")
+    public ResponseEntity<Void> paymentCancel(@PathVariable("order-number") String orderNumber) {
         commonOrderService.cancelOrderByOrderNumber(orderNumber);
         return ResponseEntity.noContent().build();
     }
 
     // 주문 환불 - 배송 후 : 완료
-    @PostMapping("/orders/{orderId}/refund")
-    public ResponseEntity<Void> guestOrderRequestRefund(@PathVariable Long orderId, ReturnRequestCreateRequestDto dto) {
+    @PostMapping("/orders/{order-id}/refund")
+    public ResponseEntity<Void> guestOrderRequestRefund(@PathVariable("order-id") Long orderId, @RequestBody ReturnRequestCreateRequestDto dto) {
         commonOrderService.refundOrderById(orderId, dto);
         return ResponseEntity.noContent().build();
+    }
+
+
+    // 결제 완료 ( payment -> order )
+    @PostMapping("/payment-success/{order-number}")
+    public ResponseEntity<Void> updateOrderStatus(@PathVariable("order-number") String orderNumber) {
+        commonOrderService.updateOrderPaymentByOrderNumber(orderNumber);
+        return ResponseEntity.ok().build();
     }
 }
