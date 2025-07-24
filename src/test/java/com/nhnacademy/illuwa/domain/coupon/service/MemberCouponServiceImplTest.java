@@ -245,6 +245,7 @@ class MemberCouponServiceImplTest {
     @Test
     @DisplayName("생일 쿠폰 발급 -> 생일 쿠폰 존재 X")
     void birthdayCouponNotFoundTest() {
-
+        MemberDto birthdayMember = Mockito.mock(MemberDto.class);
+        Mockito.when(birthdayMember.getBirth()).thenReturn(LocalDate.now());
     }
 }
