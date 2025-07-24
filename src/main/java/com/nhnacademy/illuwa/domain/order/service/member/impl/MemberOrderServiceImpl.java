@@ -24,6 +24,7 @@ import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.exception.common.AccessDeniedException;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
+import com.nhnacademy.illuwa.domain.order.exception.common.OutOfStockException;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderCartFactory;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderDirectFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
@@ -167,7 +168,7 @@ public class MemberOrderServiceImpl implements MemberOrderService {
                 () -> new NotFoundException("해당 도서를 찾을 수 없습니다.", bookId));
 
         if (item.getCount() <= 0) {
-            throw new BadRequestException("품절입니다.");
+            throw new OutOfStockException(item.getBookId());
         }
 
         List<MemberCouponDto> availableCoupons = new ArrayList<>(memberCouponService.getAvailableCouponsForBook(memberId, bookId, CouponType.BOOKS));
