@@ -12,6 +12,7 @@ import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
+import com.nhnacademy.illuwa.domain.order.exception.common.OutOfStockException;
 import com.nhnacademy.illuwa.domain.order.factory.GuestOrderDirectFactory;
 import com.nhnacademy.illuwa.domain.order.service.BookInventoryService;
 import com.nhnacademy.illuwa.domain.order.service.PackagingService;
@@ -59,6 +60,10 @@ public class GuestOrderServiceImpl implements GuestOrderService {
     public GuestOrderInitDirectResponseDto getGuestOrderInitDirectData(Long bookId) {
         BookItemOrderDto item = productApiClient.getOrderBookById(bookId).orElseThrow(
                 () -> new NotFoundException("해당 도서를 찾을 수 없습니다.", bookId));
+
+        if (item.getCount() <= 0) {
+            throw new OutOfStockException(item.getBookId());
+        }
         List<PackagingResponseDto> packaging = packagingService.getPackagingByActive(true);
         return new GuestOrderInitDirectResponseDto(item, packaging);
     }
