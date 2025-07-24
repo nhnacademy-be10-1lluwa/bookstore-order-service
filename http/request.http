@@ -37,9 +37,9 @@ Content-Type: application/json
 
 {
   "code": "BOOK_DC",
-  "minOrderAmount": 1000,
+  "minOrderAmount": 0,
   "discountType": "AMOUNT",
-  "discountAmount": 8000
+  "discountAmount": 4000
 }
 
 ### 쿠폰 정책 생성 -> * 관리자용 * (= 카테고리 쿠폰 정책)
@@ -48,7 +48,7 @@ Content-Type: application/json
 
 {
   "code": "CATEGORY_DC",
-  "minOrderAmount": 10000,
+  "minOrderAmount": 0,
   "discountType": "AMOUNT",
   "discountAmount": 4000
 }

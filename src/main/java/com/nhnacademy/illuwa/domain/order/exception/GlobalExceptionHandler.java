@@ -3,6 +3,7 @@ package com.nhnacademy.illuwa.domain.order.exception;
 import com.nhnacademy.illuwa.domain.order.exception.common.AccessDeniedException;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
+import com.nhnacademy.illuwa.domain.order.exception.common.OutOfStockException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,17 @@ public class GlobalExceptionHandler {
                         "status", HttpStatus.BAD_REQUEST.value(),
                         "error", HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         "code", "BAD_REQUEST",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(OutOfStockException.class)
+    public ResponseEntity<?> handlerOutOfStock(OutOfStockException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("timestamp", LocalDateTime.now(),
+                        "status", HttpStatus.CONFLICT.value(),
+                        "error", HttpStatus.CONFLICT.getReasonPhrase(),
+                        "code", "CONFLICT",
                         "message", ex.getMessage()
                 ));
     }
