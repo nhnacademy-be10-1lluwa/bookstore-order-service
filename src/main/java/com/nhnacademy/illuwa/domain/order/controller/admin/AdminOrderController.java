@@ -24,7 +24,6 @@ import java.util.Map;
 public class AdminOrderController {
 
     private final AdminOrderService adminOrderService;
-    private final AdminUtilsService adminUtilsService;
     private final CommonOrderService commonOrderService;
 
     // 전체 주문내역 확인
