@@ -132,7 +132,7 @@ class MemberOrderServiceTest {
         // 재고 업데이트
         List<BookCountUpdateRequest> updateList = List.of(mock(BookCountUpdateRequest.class));
         given(bookInventoryService.validateAndCollect(anyList())).willReturn(updateList);
-        doNothing().when(productApiClient).sendUpdateBooksCount(updateList);
+        doNothing().when(productApiClient).sendUpdateBooksCount("negative", updateList);
 
         // when
         Order result = memberOrderService.memberCreateOrderFromCartWithItems(memberId, request);
@@ -146,7 +146,7 @@ class MemberOrderServiceTest {
 
         // 재고 업데이트 호출 검증
         ArgumentCaptor<List<BookCountUpdateRequest>> captor = ArgumentCaptor.forClass(List.class);
-        verify(productApiClient).sendUpdateBooksCount(captor.capture());
+        verify(productApiClient).sendUpdateBooksCount(anyString(), captor.capture());
         assertThat(captor.getValue()).hasSize(1);
 
         verify(bookInventoryService).validateAndCollect(anyList());
@@ -209,13 +209,13 @@ class MemberOrderServiceTest {
 
         List<BookCountUpdateRequest> list = List.of(mock(BookCountUpdateRequest.class));
         given(bookInventoryService.validateAndCollect(anyList())).willReturn(list);
-        doNothing().when(productApiClient).sendUpdateBooksCount(list);
+        doNothing().when(productApiClient).sendUpdateBooksCount("negative", list);
 
         Order result = memberOrderService.memberCreateOrderDirectWithItems(memberId, request);
 
         assertThat(result).isSameAs(createdOrder);
         verify(memberCouponService).useCoupon(memberId, 99L);
-        verify(productApiClient).sendUpdateBooksCount(anyList());
+        verify(productApiClient).sendUpdateBooksCount(anyString(), anyList());
     }
 
     /* ---------- 초기 데이터 ---------- */

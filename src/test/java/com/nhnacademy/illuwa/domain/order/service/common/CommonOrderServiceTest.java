@@ -167,7 +167,7 @@ public class CommonOrderServiceTest {
         when(dto.getReason()).thenReturn(ReturnReason.Item_Damaged);
 
         doNothing().when(userApiClient).sendReturnPrice(any(TotalRequest.class));
-        doNothing().when(productApiClient).sendRestoreBooksCount(anyList());
+        doNothing().when(productApiClient).sendUpdateBooksCount(anyString(), anyList());
 
         // when
         OrderResponseDto response = commonOrderService.refundOrderById(order.getOrderId(), dto);
@@ -181,7 +181,7 @@ public class CommonOrderServiceTest {
         BigDecimal expected = BigDecimal.valueOf(50000).add(BigDecimal.valueOf(1000)).add(BigDecimal.valueOf(3000));
         assertThat(totalCaptor.getValue().getPrice()).isEqualByComparingTo(expected);
 
-        verify(productApiClient).sendRestoreBooksCount(anyList());
+        verify(productApiClient).sendUpdateBooksCount(anyString(), anyList());
     }
 
     @Test
@@ -194,7 +194,7 @@ public class CommonOrderServiceTest {
         when(dto.getReason()).thenReturn(ReturnReason.Change_Mind); // 파손/파본 아님
 
         doNothing().when(userApiClient).sendReturnPrice(any(TotalRequest.class));
-        doNothing().when(productApiClient).sendRestoreBooksCount(anyList());
+        doNothing().when(productApiClient).sendUpdateBooksCount(anyString(), anyList());
 
         // when
         OrderResponseDto response = commonOrderService.refundOrderById(order.getOrderId(), dto);

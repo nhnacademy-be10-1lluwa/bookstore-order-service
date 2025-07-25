@@ -85,7 +85,7 @@ public class CommonOrderServiceImpl implements CommonOrderService {
         List<BookCountUpdateRequest> bookCount = new ArrayList<>();
         order.getItems().forEach(item ->
                 bookCount.add(new BookCountUpdateRequest(item.getBookId(), item.getQuantity())));
-        productApiClient.sendRestoreBooksCount(bookCount);
+        productApiClient.sendUpdateBooksCount("positive", bookCount);
 
         orderRepository.updateStatusByOrderId(order.getOrderId(), OrderStatus.Cancelled);
 
@@ -127,7 +127,7 @@ public class CommonOrderServiceImpl implements CommonOrderService {
         List<BookCountUpdateRequest> bookCount = new ArrayList<>();
         order.getItems().forEach(item ->
                 bookCount.add(new BookCountUpdateRequest(item.getBookId(), item.getQuantity())));
-        productApiClient.sendRestoreBooksCount(bookCount);
+        productApiClient.sendUpdateBooksCount("positive", bookCount);
 
         return orderRepository.findOrderDtoByOrderId(orderId).orElseThrow(
                 () -> new NotFoundException("Order not found: " + orderId)
