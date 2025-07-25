@@ -50,7 +50,7 @@ public class GuestOrderServiceImpl implements GuestOrderService {
 
         List<BookCountUpdateRequest> booksToUpdate = bookInventoryService.validateAndCollect(quantities);
 
-        productApiClient.sendUpdateBooksCount(booksToUpdate);
+        productApiClient.sendUpdateBooksCount("negative", booksToUpdate);
 
         return order;
     }

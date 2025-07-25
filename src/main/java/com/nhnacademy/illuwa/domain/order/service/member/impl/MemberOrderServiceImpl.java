@@ -98,7 +98,7 @@ public class MemberOrderServiceImpl implements MemberOrderService {
                 .map(i -> new BookQuantity(i.getBookId(), i.getQuantity())).toList();
 
         List<BookCountUpdateRequest> booksToUpdate = bookInventoryService.validateAndCollect(quantities);
-        productApiClient.sendUpdateBooksCount(booksToUpdate);
+        productApiClient.sendUpdateBooksCount("negative", booksToUpdate);
 
         return order;
     }
@@ -113,13 +113,13 @@ public class MemberOrderServiceImpl implements MemberOrderService {
         // 포인트 검증
         handleUsedPoint(order.getMemberId(), order.getUsedPoint());
 
-        BookQuantity bookQuantity = new BookQuantity(request.getItem().getBookId(), request.getItem().getQuantity());
+        BookQuantity bookQuantity = new BookQuantity(request.getItem().getBookId(), -request.getItem().getQuantity());
         // 재고 처리
         List<BookQuantity> quantities = new ArrayList<>();
         quantities.add(bookQuantity);
 
         List<BookCountUpdateRequest> booksToUpdate = bookInventoryService.validateAndCollect(quantities);
-        productApiClient.sendUpdateBooksCount(booksToUpdate);
+        productApiClient.sendUpdateBooksCount("negative",booksToUpdate);
 
         return order;
     }

@@ -18,6 +18,7 @@ import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
+import com.nhnacademy.illuwa.domain.order.exception.common.OutOfStockException;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderCartFactory;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderDirectFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
@@ -131,7 +132,7 @@ class MemberOrderServiceTest {
         // 재고 업데이트
         List<BookCountUpdateRequest> updateList = List.of(mock(BookCountUpdateRequest.class));
         given(bookInventoryService.validateAndCollect(anyList())).willReturn(updateList);
-        doNothing().when(productApiClient).sendUpdateBooksCount(updateList);
+        doNothing().when(productApiClient).sendUpdateBooksCount("negative", updateList);
 
         // when
         Order result = memberOrderService.memberCreateOrderFromCartWithItems(memberId, request);
@@ -145,7 +146,7 @@ class MemberOrderServiceTest {
 
         // 재고 업데이트 호출 검증
         ArgumentCaptor<List<BookCountUpdateRequest>> captor = ArgumentCaptor.forClass(List.class);
-        verify(productApiClient).sendUpdateBooksCount(captor.capture());
+        verify(productApiClient).sendUpdateBooksCount(anyString(), captor.capture());
         assertThat(captor.getValue()).hasSize(1);
 
         verify(bookInventoryService).validateAndCollect(anyList());
@@ -208,13 +209,13 @@ class MemberOrderServiceTest {
 
         List<BookCountUpdateRequest> list = List.of(mock(BookCountUpdateRequest.class));
         given(bookInventoryService.validateAndCollect(anyList())).willReturn(list);
-        doNothing().when(productApiClient).sendUpdateBooksCount(list);
+        doNothing().when(productApiClient).sendUpdateBooksCount("negative", list);
 
         Order result = memberOrderService.memberCreateOrderDirectWithItems(memberId, request);
 
         assertThat(result).isSameAs(createdOrder);
         verify(memberCouponService).useCoupon(memberId, 99L);
-        verify(productApiClient).sendUpdateBooksCount(anyList());
+        verify(productApiClient).sendUpdateBooksCount(anyString(), anyList());
     }
 
     /* ---------- 초기 데이터 ---------- */
@@ -284,8 +285,8 @@ class MemberOrderServiceTest {
         given(productApiClient.getOrderBookById(bookId)).willReturn(Optional.of(item));
 
         assertThatThrownBy(() -> memberOrderService.getOrderInitDirectData(bookId, memberId))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining("품절");
+                .isInstanceOf(OutOfStockException.class)
+                .hasMessageContaining("재고");
     }
 
     @Test

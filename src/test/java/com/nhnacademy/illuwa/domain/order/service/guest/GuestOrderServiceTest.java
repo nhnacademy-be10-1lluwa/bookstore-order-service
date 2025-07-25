@@ -71,7 +71,7 @@ public class GuestOrderServiceTest {
             given(userApiClient.resisterGuest(guestCreateReq))
                     .willReturn(Optional.of(mock(GuestCreateResponse.class)));
 
-            doNothing().when(productApiClient).sendUpdateBooksCount(updateList);
+            doNothing().when(productApiClient).sendUpdateBooksCount("negative", updateList);
 
             // when
             Order result = guestOrderService.guestCreateOrderDirectWithItems(request);
@@ -83,7 +83,7 @@ public class GuestOrderServiceTest {
             verify(userApiClient).resisterGuest(guestCreateReq);
 
             ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-            verify(productApiClient).sendUpdateBooksCount(captor.capture());
+            verify(productApiClient).sendUpdateBooksCount(anyString(), captor.capture());
             assertThat(captor.getValue().size()).isEqualTo(1);
 
             verify(bookInventoryService).validateAndCollect(anyList());
@@ -99,6 +99,7 @@ public class GuestOrderServiceTest {
         given(productApiClient.getOrderBookById(bookId)).willReturn(Optional.of(itemDto));
 
         List<PackagingResponseDto> packagingList = List.of(mock(PackagingResponseDto.class));
+        given(itemDto.getCount()).willReturn(5);
         given(packagingService.getPackagingByActive(true)).willReturn(packagingList);
 
         // when
