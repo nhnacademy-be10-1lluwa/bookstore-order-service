@@ -99,6 +99,7 @@ public class GuestOrderServiceTest {
         given(productApiClient.getOrderBookById(bookId)).willReturn(Optional.of(itemDto));
 
         List<PackagingResponseDto> packagingList = List.of(mock(PackagingResponseDto.class));
+        given(itemDto.getCount()).willReturn(5);
         given(packagingService.getPackagingByActive(true)).willReturn(packagingList);
 
         // when

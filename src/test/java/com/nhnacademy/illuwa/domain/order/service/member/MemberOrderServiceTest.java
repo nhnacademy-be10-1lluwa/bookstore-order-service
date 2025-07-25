@@ -18,6 +18,7 @@ import com.nhnacademy.illuwa.domain.order.dto.packaging.PackagingResponseDto;
 import com.nhnacademy.illuwa.domain.order.entity.Order;
 import com.nhnacademy.illuwa.domain.order.exception.common.BadRequestException;
 import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
+import com.nhnacademy.illuwa.domain.order.exception.common.OutOfStockException;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderCartFactory;
 import com.nhnacademy.illuwa.domain.order.factory.MemberOrderDirectFactory;
 import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
@@ -284,8 +285,8 @@ class MemberOrderServiceTest {
         given(productApiClient.getOrderBookById(bookId)).willReturn(Optional.of(item));
 
         assertThatThrownBy(() -> memberOrderService.getOrderInitDirectData(bookId, memberId))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining("품절");
+                .isInstanceOf(OutOfStockException.class)
+                .hasMessageContaining("재고");
     }
 
     @Test
