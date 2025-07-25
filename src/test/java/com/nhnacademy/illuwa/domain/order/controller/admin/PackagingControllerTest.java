@@ -52,12 +52,12 @@ class PackagingControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/packaging - 포장 옵션 생성 (201)")
+    @DisplayName("POST /api/order/packagings - 포장 옵션 생성 (201)")
     void createPackaging_success() throws Exception {
         Mockito.when(packagingService.addPackaging(any(PackagingCreateRequestDto.class)))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(post("/api/packaging")
+        mockMvc.perform(post("/api/order/packagings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
@@ -68,11 +68,11 @@ class PackagingControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/packaging/{id} - 포장 옵션 단일 조회 (200)")
+    @DisplayName("GET /api/order/packagings/{id} - 포장 옵션 단일 조회 (200)")
     void getPackaging_success() throws Exception {
         Mockito.when(packagingService.getPackaging(1L)).thenReturn(responseDto);
 
-        mockMvc.perform(get("/api/packaging/{id}", 1L))
+        mockMvc.perform(get("/api/order/packagings/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.packagingId", is(1)))
                 .andExpect(jsonPath("$.packagingName", is("선물포장")))
@@ -80,12 +80,12 @@ class PackagingControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/packaging - 활성 포장 옵션 리스트 조회 (200)")
+    @DisplayName("GET /api/order/packagings - 활성 포장 옵션 리스트 조회 (200)")
     void getAllPackaging_success() throws Exception {
         Mockito.when(packagingService.getPackagingByActive(true))
                 .thenReturn(List.of(responseDto));
 
-        mockMvc.perform(get("/api/packaging"))
+        mockMvc.perform(get("/api/order/packagings"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].packagingId", is(1)))
                 .andExpect(jsonPath("$[0].packagingName", is("선물포장")))
@@ -93,7 +93,7 @@ class PackagingControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/packaging/{id} - 포장 옵션 수정 (200)")
+    @DisplayName("PUT /api/order/packagings/{id} - 포장 옵션 수정 (200)")
     void updatePackaging_success() throws Exception {
         PackagingCreateRequestDto updateDto = new PackagingCreateRequestDto("새포장", new BigDecimal("2000"));
         PackagingResponseDto updatedResponse = new PackagingResponseDto(1L, "새포장", new BigDecimal("2000"));
@@ -101,7 +101,7 @@ class PackagingControllerTest {
         Mockito.when(packagingService.updatePackaging(eq(1L), any(PackagingCreateRequestDto.class)))
                 .thenReturn(updatedResponse);
 
-        mockMvc.perform(put("/api/packaging/{id}", 1L)
+        mockMvc.perform(put("/api/order/packagings/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
@@ -110,11 +110,11 @@ class PackagingControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/packaging/{id} - 포장 옵션 비활성화 (204)")
+    @DisplayName("DELETE /api/order/packagings/{id} - 포장 옵션 비활성화 (204)")
     void deletePackaging_success() throws Exception {
         Mockito.when(packagingService.removePackaging(1L)).thenReturn(1);
 
-        mockMvc.perform(delete("/api/packaging/{id}", 1L))
+        mockMvc.perform(delete("/api/order/packagings/{id}", 1L))
                 .andExpect(status().isNoContent());
     }
 }
