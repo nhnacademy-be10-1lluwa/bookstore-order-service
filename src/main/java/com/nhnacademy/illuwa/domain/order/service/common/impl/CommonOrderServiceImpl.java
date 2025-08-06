@@ -5,6 +5,7 @@ import com.nhnacademy.illuwa.common.external.product.dto.BookCountUpdateRequest;
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.PointRequest;
 import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
+import com.nhnacademy.illuwa.domain.order.dto.event.PointUsedEvent;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
 import com.nhnacademy.illuwa.domain.order.dto.returnRequest.ReturnRequestCreateRequestDto;
@@ -16,6 +17,7 @@ import com.nhnacademy.illuwa.domain.order.exception.common.NotFoundException;
 import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.common.CommonOrderService;
+import com.nhnacademy.illuwa.domain.order.service.publisher.PointEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,7 @@ public class CommonOrderServiceImpl implements CommonOrderService {
 
     private final UserApiClient userApiClient;
     private final ProductApiClient productApiClient;
+    private final PointEventPublisher pointEventPublisher;
 
     @Override
     public void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto) {
@@ -57,17 +60,18 @@ public class CommonOrderServiceImpl implements CommonOrderService {
         Order order = orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
 
-//        if (Objects.nonNull(order.getMemberId())) {
-//            PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
-//            userApiClient.sendUsedPointByMemberId(usedPoint);
+//        try {
+//            if (Objects.nonNull(order.getMemberId())) {
+//                PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
+//                userApiClient.sendUsedPointByMemberId(usedPoint);
+//            }
+//        } catch (Exception e) {
+//            log.warn("포인트 차감 요청 실패", e); // 로깅만 하고 흐름 끊기지 않도록
 //        }
-        try {
-            if (Objects.nonNull(order.getMemberId())) {
-                PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
-                userApiClient.sendUsedPointByMemberId(usedPoint);
-            }
-        } catch (Exception e) {
-            log.warn("포인트 차감 요청 실패", e); // 로깅만 하고 흐름 끊기지 않도록
+
+        if (order.getMemberId() != null && order.getUsedPoint().compareTo(BigDecimal.ZERO) > 0) {
+            PointUsedEvent event = new PointUsedEvent(order.getMemberId(), order.getUsedPoint());
+            pointEventPublisher.sendPointUsedEvent(event);
         }
 
         orderRepository.updateStatusByOrderNumber(orderNumber);

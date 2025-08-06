@@ -18,6 +18,7 @@ import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.PointRequest;
 import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -123,24 +124,6 @@ public class CommonOrderServiceTest {
                 .build());
 
         return order;
-    }
-
-    @Test
-    @DisplayName("updateOrderPaymentByOrderNumber: member가 있으면 사용 포인트를 전송한다")
-    void updateOrderPaymentByOrderNumber_sendsUsedPoint() {
-        // given
-        BigDecimal usedPoint = BigDecimal.valueOf(1234);
-        Order order = createOrder(ORDER_ID_2, MEMBER_ID_2, OrderStatus.Pending, usedPoint, LocalDate.now(), BigDecimal.valueOf(75000));
-
-
-        // when
-        commonOrderService.updateOrderPaymentByOrderNumber(order.getOrderNumber());
-
-        // then
-        ArgumentCaptor<PointRequest> captor = ArgumentCaptor.forClass(PointRequest.class);
-        verify(userApiClient).sendUsedPointByMemberId(captor.capture());
-        assertThat(captor.getValue().getMemberId()).isEqualTo(MEMBER_ID_2);
-        assertThat(captor.getValue().getUsedPoint()).isEqualByComparingTo(usedPoint);
     }
 
     @Test
