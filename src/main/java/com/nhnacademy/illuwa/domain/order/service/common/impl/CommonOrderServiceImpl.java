@@ -17,6 +17,7 @@ import com.nhnacademy.illuwa.domain.order.repository.OrderItemRepository;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.common.CommonOrderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -55,9 +57,17 @@ public class CommonOrderServiceImpl implements CommonOrderService {
         Order order = orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
 
-        if (Objects.nonNull(order.getMemberId())) {
-            PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
-            userApiClient.sendUsedPointByMemberId(usedPoint);
+//        if (Objects.nonNull(order.getMemberId())) {
+//            PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
+//            userApiClient.sendUsedPointByMemberId(usedPoint);
+//        }
+        try {
+            if (Objects.nonNull(order.getMemberId())) {
+                PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
+                userApiClient.sendUsedPointByMemberId(usedPoint);
+            }
+        } catch (Exception e) {
+            log.warn("포인트 차감 요청 실패", e); // 로깅만 하고 흐름 끊기지 않도록
         }
 
         orderRepository.updateStatusByOrderNumber(orderNumber);

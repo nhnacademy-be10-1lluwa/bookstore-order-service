@@ -99,7 +99,7 @@ class CommonOrderControllerTest {
         String orderNumber = "ORD-99999";
 
         mockMvc.perform(post("/api/order/common/payment-success/{order-number}", orderNumber))
-               .andExpect(status().isOk());
+               .andExpect(status().isNoContent());
 
         Mockito.verify(commonOrderService, times(1))
                .updateOrderPaymentByOrderNumber(eq(orderNumber));
