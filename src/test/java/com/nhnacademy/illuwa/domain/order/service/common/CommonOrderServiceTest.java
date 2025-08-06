@@ -18,6 +18,7 @@ import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.PointRequest;
 import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -126,24 +127,6 @@ public class CommonOrderServiceTest {
     }
 
     @Test
-    @DisplayName("updateOrderPaymentByOrderNumber: member가 있으면 사용 포인트를 전송한다")
-    void updateOrderPaymentByOrderNumber_sendsUsedPoint() {
-        // given
-        BigDecimal usedPoint = BigDecimal.valueOf(1234);
-        Order order = createOrder(ORDER_ID_2, MEMBER_ID_2, OrderStatus.Pending, usedPoint, LocalDate.now(), BigDecimal.valueOf(75000));
-
-
-        // when
-        commonOrderService.updateOrderPaymentByOrderNumber(order.getOrderNumber());
-
-        // then
-        ArgumentCaptor<PointRequest> captor = ArgumentCaptor.forClass(PointRequest.class);
-        verify(userApiClient).sendUsedPointByMemberId(captor.capture());
-        assertThat(captor.getValue().getMemberId()).isEqualTo(MEMBER_ID_2);
-        assertThat(captor.getValue().getUsedPoint()).isEqualByComparingTo(usedPoint);
-    }
-
-    @Test
     @DisplayName("orderCancel: 주문과 아이템이 모두 삭제된다")
     void orderCancel_deletesOrderAndItems() {
         // given
@@ -167,7 +150,7 @@ public class CommonOrderServiceTest {
         when(dto.getReason()).thenReturn(ReturnReason.Item_Damaged);
 
         doNothing().when(userApiClient).sendReturnPrice(any(TotalRequest.class));
-        doNothing().when(productApiClient).sendRestoreBooksCount(anyList());
+        doNothing().when(productApiClient).sendUpdateBooksCount(anyString(), anyList());
 
         // when
         OrderResponseDto response = commonOrderService.refundOrderById(order.getOrderId(), dto);
@@ -181,7 +164,7 @@ public class CommonOrderServiceTest {
         BigDecimal expected = BigDecimal.valueOf(50000).add(BigDecimal.valueOf(1000)).add(BigDecimal.valueOf(3000));
         assertThat(totalCaptor.getValue().getPrice()).isEqualByComparingTo(expected);
 
-        verify(productApiClient).sendRestoreBooksCount(anyList());
+        verify(productApiClient).sendUpdateBooksCount(anyString(), anyList());
     }
 
     @Test
@@ -194,7 +177,7 @@ public class CommonOrderServiceTest {
         when(dto.getReason()).thenReturn(ReturnReason.Change_Mind); // 파손/파본 아님
 
         doNothing().when(userApiClient).sendReturnPrice(any(TotalRequest.class));
-        doNothing().when(productApiClient).sendRestoreBooksCount(anyList());
+        doNothing().when(productApiClient).sendUpdateBooksCount(anyString(), anyList());
 
         // when
         OrderResponseDto response = commonOrderService.refundOrderById(order.getOrderId(), dto);

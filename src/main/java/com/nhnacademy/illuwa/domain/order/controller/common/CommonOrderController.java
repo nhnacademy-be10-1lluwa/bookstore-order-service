@@ -95,6 +95,6 @@ public class CommonOrderController {
             @Parameter(name = "orderNumber", description = "주문 번호", required = true)
             @PathVariable("order-number") String orderNumber) {
         commonOrderService.updateOrderPaymentByOrderNumber(orderNumber);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
