@@ -18,8 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -41,12 +40,13 @@ public class AdminUtilsServiceTest {
     @Test
     @DisplayName("멤버별 3개월 간 순수 주문 금액 전송")
     void sendMonthlyNetOrderAmount_success() {
+
         List<MemberGradeUpdateRequest> requests = List.of(
                 new MemberGradeUpdateRequest(1L, BigDecimal.valueOf(300000)),
                 new MemberGradeUpdateRequest(2L, BigDecimal.valueOf(150000))
         );
         given(orderRepository.buildMemberGradeUpdateRequest()).willReturn(requests);
-        given(userApiClient.sendNetOrderAmount(requests)).willReturn(3);
+        given(userApiClient.sendNetOrderAmount(anyString(), eq(requests))).willReturn(3);
 
         // when
         int result = adminUtilsService.sendMonthlyNetOrderAmount();
@@ -54,7 +54,7 @@ public class AdminUtilsServiceTest {
         // then
         assertThat(result).isEqualTo(3);
         verify(orderRepository).buildMemberGradeUpdateRequest();
-        verify(userApiClient).sendNetOrderAmount(requests);
+        verify(userApiClient).sendNetOrderAmount(anyString(), eq(requests));
         verifyNoMoreInteractions(orderRepository, userApiClient);
     }
 

@@ -39,7 +39,7 @@ public interface UserApiClient {
 
     // 멤버들의 3개월간 순수 주문 금액 전송 (주문 상태: confirmed )
     @PostMapping(value = "/api/members/grades/recalculate")
-    Integer sendNetOrderAmount(@RequestBody List<MemberGradeUpdateRequest> request);
+    Integer sendNetOrderAmount(@RequestHeader("Idempotency-Key") String idempotencyKey, @RequestBody List<MemberGradeUpdateRequest> request);
 
     @PostMapping(value = "/api/guests/create")
     Optional<GuestCreateResponse> resisterGuest(@RequestBody @Valid GuestCreateRequest request);

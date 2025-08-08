@@ -5,7 +5,6 @@ import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
 import com.nhnacademy.illuwa.domain.order.repository.OrderRepository;
 import com.nhnacademy.illuwa.domain.order.service.admin.AdminUtilsService;
-import com.nhnacademy.illuwa.domain.order.util.scheduler.DbDataScheduler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,8 @@ public class AdminUtilsServiceImpl implements AdminUtilsService {
     @Override
     public int sendMonthlyNetOrderAmount() {
         List<MemberGradeUpdateRequest> reqs = orderRepository.buildMemberGradeUpdateRequest();
-        return userApiClient.sendNetOrderAmount(reqs);
+        String idempotencyKey = UUID.randomUUID().toString();
+        return userApiClient.sendNetOrderAmount(idempotencyKey, reqs);
     }
 
     @Override
