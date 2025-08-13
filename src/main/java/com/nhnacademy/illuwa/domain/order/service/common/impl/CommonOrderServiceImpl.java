@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StopWatch;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -57,25 +58,33 @@ public class CommonOrderServiceImpl implements CommonOrderService {
 
     @Override
     public void updateOrderPaymentByOrderNumber(String orderNumber) {
+        StopWatch sw = new StopWatch("order-payment-update");
+        sw.start("find-order");
         Order order = orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+        sw.stop();
 
-//        try {
-//            if (Objects.nonNull(order.getMemberId())) {
-//                PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
-//                userApiClient.sendUsedPointByMemberId(usedPoint);
-//            }
-//        } catch (Exception e) {
-//            log.warn("포인트 차감 요청 실패", e); // 로깅만 하고 흐름 끊기지 않도록
-//        }
-
-        if (order.getMemberId() != null && order.getUsedPoint().compareTo(BigDecimal.ZERO) > 0) {
-            PointUsedEvent event = new PointUsedEvent(order.getMemberId(), order.getUsedPoint());
-            pointEventPublisher.sendPointUsedEvent(event);
+        if (Objects.nonNull(order.getMemberId())) {
+            sw.start("point-deduct-feign");
+            PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
+            userApiClient.sendUsedPointByMemberId(usedPoint);
+            sw.stop();
         }
 
+//        if (order.getMemberId() != null && order.getUsedPoint().compareTo(BigDecimal.ZERO) > 0) {
+//            sw.start("point-deduct-rabbit");
+//            PointUsedEvent event = new PointUsedEvent(order.getMemberId(), order.getUsedPoint());
+//            pointEventPublisher.sendPointUsedEvent(event);
+//            sw.stop();
+//        }
+
+        sw.start("repo-update-status");
         orderRepository.updateStatusByOrderNumber(orderNumber);
+        sw.stop();
+
+        log.info("[updateOrderPaymentByOrderNumber] total={}ms detail=\n{}", sw.getTotalTimeMillis(), sw.prettyPrint());
     }
+
 
     @Override
     public void orderCancel(Long orderId) {
