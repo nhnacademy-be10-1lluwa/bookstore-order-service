@@ -21,7 +21,7 @@ public class BatchScheduler {
     private final Job orderCleanUpJob;
     private final Job memberGradeJob;
 
-    // 매일 02:00
+    // 매일 02:00 paymentAwaiting -> 삭제
     @Scheduled(cron = "0 0 2 * * *")
     public void launchCleanUp() throws Exception {
         JobParameters params = new JobParametersBuilder()
@@ -31,6 +31,7 @@ public class BatchScheduler {
         log.info("주문 테이블 정리 실행 결과 = {}", execution.getExitStatus());
     }
 
+    // 매월 1일 10시 멤버 등급 재조정
     @Scheduled(cron = "0 0 10 1 * ?", zone = "Asia/Seoul")
     @Transactional
     public void launchMemberGradeJob() throws Exception {
@@ -42,6 +43,7 @@ public class BatchScheduler {
         log.info("회원 등급 업데이트 실행 결과 = {}", execution.getExitStatus());
     }
 
+    // 배송일로부터 10일 후 결제확정
     @Scheduled(cron = "0 0 0 * * *")
     public void launchConfirmStatus() throws Exception {
         JobParameters params = new JobParametersBuilder()

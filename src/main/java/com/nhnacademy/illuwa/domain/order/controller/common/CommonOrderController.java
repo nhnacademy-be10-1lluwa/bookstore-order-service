@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -94,7 +95,11 @@ public class CommonOrderController {
     public ResponseEntity<Void> updateOrderStatus(
             @Parameter(name = "orderNumber", description = "주문 번호", required = true)
             @PathVariable("order-number") String orderNumber) {
+        StopWatch sw = new StopWatch("payment-success-callback");
+        sw.start("update-order-status");
         commonOrderService.updateOrderPaymentByOrderNumber(orderNumber);
+        sw.stop();
+        log.info("[/payment-success] total={}ms detail=\n{}", sw.getTotalTimeMillis(), sw.prettyPrint());
         return ResponseEntity.noContent().build();
     }
 }

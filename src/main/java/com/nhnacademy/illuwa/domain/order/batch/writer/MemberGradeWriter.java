@@ -1,5 +1,6 @@
 package com.nhnacademy.illuwa.domain.order.batch.writer;
 
+import java.util.UUID;
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.MemberGradeUpdateRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,8 @@ public class MemberGradeWriter implements ItemWriter<MemberGradeUpdateRequest> {
     @Override
     public void write(Chunk<? extends MemberGradeUpdateRequest> chunk) {
         if (!chunk.isEmpty()) {
-            userApiClient.sendNetOrderAmount(new ArrayList<>(chunk.getItems()));
+            String idempotencyKey = UUID.randomUUID().toString();
+            userApiClient.sendNetOrderAmount(idempotencyKey, new ArrayList<>(chunk.getItems()));
         }
     }
 }
