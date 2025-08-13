@@ -3,8 +3,8 @@ package com.nhnacademy.illuwa.domain.order.service.common.impl;
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
 import com.nhnacademy.illuwa.common.external.product.dto.BookCountUpdateRequest;
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
-import com.nhnacademy.illuwa.common.external.user.dto.PointRequest;
 import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
+import com.nhnacademy.illuwa.domain.order.dto.event.PointSavedEvent;
 import com.nhnacademy.illuwa.domain.order.dto.event.PointUsedEvent;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
@@ -29,7 +29,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -49,8 +48,10 @@ public class CommonOrderServiceImpl implements CommonOrderService {
         Order order = orderRepository.findByOrderId(orderId).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
         if (orderUpdateDto.getOrderStatus() == OrderStatus.Confirmed) {
-            TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice());
-            userApiClient.sendTotalPrice(totalRequest);
+//            TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice());
+//            userApiClient.sendTotalPrice(totalRequest);
+            PointSavedEvent event = new PointSavedEvent(order.getMemberId(), order.getTotalPrice());
+            pointEventPublisher.sendPointSavedEvent(event);
         }
 
         orderRepository.updateStatusByOrderId(orderId, orderUpdateDto);
