@@ -1,8 +1,8 @@
 package com.nhnacademy.illuwa.domain.order.batch.config;
 
-import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.domain.order.batch.writer.ConfirmAndPointWriter;
 import com.nhnacademy.illuwa.domain.order.entity.types.OrderStatus;
+import com.nhnacademy.illuwa.domain.order.service.publisher.PointEventPublisher;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.LockTimeoutException;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +15,13 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @Configuration
@@ -35,7 +32,8 @@ public class OrderConfirmedJobConfig {
     private final EntityManagerFactory em;
 
     private final JdbcTemplate jdbcTemplate;
-    private final UserApiClient userApiClient;
+//    private final UserApiClient userApiClient;
+    private final PointEventPublisher pointEventPublisher;
 
     private static final int CHUNK_SIZE = 1000;
 
@@ -84,7 +82,7 @@ public class OrderConfirmedJobConfig {
 
     @Bean
     public ItemWriter<Long> confirmWriter() {
-        return new ConfirmAndPointWriter(jdbcTemplate, userApiClient);
+        return new ConfirmAndPointWriter(jdbcTemplate, pointEventPublisher);
     }
 
 }
