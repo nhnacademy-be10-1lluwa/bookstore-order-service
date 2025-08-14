@@ -20,6 +20,7 @@ import com.nhnacademy.illuwa.domain.order.service.common.CommonOrderService;
 import com.nhnacademy.illuwa.domain.order.service.publisher.PointEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
@@ -44,6 +45,8 @@ public class CommonOrderServiceImpl implements CommonOrderService {
     private final ProductApiClient productApiClient;
     private final PointEventPublisher pointEventPublisher;
 
+    private String pointMode = "async";
+
     @Override
     public void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto) {
         Order order = orderRepository.findByOrderId(orderId).orElseThrow(()
@@ -59,30 +62,34 @@ public class CommonOrderServiceImpl implements CommonOrderService {
     @Override
     public void updateOrderPaymentByOrderNumber(String orderNumber) {
         StopWatch sw = new StopWatch("order-payment-update");
+
+        // 1) 조회
         sw.start("find-order");
-        Order order = orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
-                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+        Order order = orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
         sw.stop();
 
-        if (Objects.nonNull(order.getMemberId())) {
-            sw.start("point-deduct-feign");
-            PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
-            userApiClient.sendUsedPointByMemberId(usedPoint);
-            sw.stop();
-        }
-
-//        if (order.getMemberId() != null && order.getUsedPoint().compareTo(BigDecimal.ZERO) > 0) {
-//            sw.start("point-deduct-rabbit");
-//            PointUsedEvent event = new PointUsedEvent(order.getMemberId(), order.getUsedPoint());
-//            pointEventPublisher.sendPointUsedEvent(event);
-//            sw.stop();
-//        }
-
+        // 2) 주문 상태 업데이트
         sw.start("repo-update-status");
         orderRepository.updateStatusByOrderNumber(orderNumber);
         sw.stop();
 
-        log.info("[updateOrderPaymentByOrderNumber] total={}ms detail=\n{}", sw.getTotalTimeMillis(), sw.prettyPrint());
+        // 3) 포인트 처리
+        if (order.getMemberId() != null && order.getUsedPoint().compareTo(BigDecimal.ZERO) > 0) {
+            if ("sync".equalsIgnoreCase(pointMode)) {
+                sw.start("point-deduct-feign");
+                userApiClient.sendUsedPointByMemberId(new PointRequest(order.getMemberId(), order.getUsedPoint()));
+                sw.stop();
+            } else {
+                sw.start("point-deduct-rabbit");
+                PointUsedEvent event = new PointUsedEvent(order.getMemberId(), order.getUsedPoint());
+                pointEventPublisher.sendPointUsedEvent(event);
+                sw.stop();
+            }
+        }
+
+        log.info("[updateOrderPaymentByOrderNumber mode={}] total={}ms detail=\n{}",
+                pointMode, sw.getTotalTimeMillis(), sw.prettyPrint());
     }
 
 

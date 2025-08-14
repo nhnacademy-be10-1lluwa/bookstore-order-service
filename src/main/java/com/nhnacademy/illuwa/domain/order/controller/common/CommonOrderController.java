@@ -26,6 +26,8 @@ public class CommonOrderController {
 
     private final CommonOrderService commonOrderService;
 
+    private String mode = "sync";
+
     // 주문 확정 - 주문 확정 시, 환불 / 결제 취소 불가
     @Operation(summary = "주문 확정", description = "사용자가 해당 주문의 상태를 주문 확정으로 변경합니다.")
     @ApiResponses({
@@ -94,7 +96,7 @@ public class CommonOrderController {
     @PostMapping("/payment-success/{order-number}")
     public ResponseEntity<Void> updateOrderStatus(
             @Parameter(name = "orderNumber", description = "주문 번호", required = true)
-            @PathVariable("order-number") String orderNumber) {
+            @PathVariable("order-number") String orderNumber){
         StopWatch sw = new StopWatch("payment-success-callback");
         sw.start("update-order-status");
         commonOrderService.updateOrderPaymentByOrderNumber(orderNumber);
