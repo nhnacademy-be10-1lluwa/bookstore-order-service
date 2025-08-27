@@ -4,6 +4,7 @@ import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
 import com.nhnacademy.illuwa.common.external.product.dto.BookCountUpdateRequest;
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
 import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
+import com.nhnacademy.illuwa.domain.order.dto.common.UsedPointRequest;
 import com.nhnacademy.illuwa.domain.order.dto.event.PointSavedEvent;
 import com.nhnacademy.illuwa.domain.order.dto.event.PointUsedEvent;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
@@ -79,7 +80,7 @@ public class CommonOrderServiceImpl implements CommonOrderService {
         if (order.getMemberId() != null && order.getUsedPoint().compareTo(BigDecimal.ZERO) > 0) {
             if ("sync".equalsIgnoreCase(pointMode)) {
                 sw.start("point-deduct-feign");
-                userApiClient.sendUsedPointByMemberId(new PointRequest(order.getMemberId(), order.getUsedPoint()));
+                userApiClient.sendUsedPointByMemberId(new UsedPointRequest(order.getMemberId(), order.getUsedPoint()));
                 sw.stop();
             } else {
                 sw.start("point-deduct-rabbit");

@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.common.external.user;
 
 import com.nhnacademy.illuwa.common.external.user.dto.*;
+import com.nhnacademy.illuwa.domain.order.dto.common.UsedPointRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestCreateRequest;
 import com.nhnacademy.illuwa.domain.order.dto.order.guest.GuestCreateResponse;
 import jakarta.validation.Valid;
@@ -28,9 +29,9 @@ public interface UserApiClient {
     @PostMapping(value = "/api/members/points/order/return")
     Void sendReturnPrice(@RequestBody TotalRequest totalRequest);
 
-/*    // 사용된 포인트 전송
+    // 사용된 포인트 전송
     @PostMapping(value = "/api/members/points/order/use")
-    MemberUsedPointDto sendUsedPointByMemberId(@RequestBody PointRequest request);*/
+    Void sendUsedPointByMemberId(@RequestBody UsedPointRequest request);
 
     // 해당 멤버의 포인트 조회 (RequestHeader 로 memberId 전달)
     @GetMapping(value = "/api/members/points")
