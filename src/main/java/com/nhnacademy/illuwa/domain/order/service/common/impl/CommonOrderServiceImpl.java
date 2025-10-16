@@ -3,8 +3,9 @@ package com.nhnacademy.illuwa.domain.order.service.common.impl;
 import com.nhnacademy.illuwa.common.external.product.ProductApiClient;
 import com.nhnacademy.illuwa.common.external.product.dto.BookCountUpdateRequest;
 import com.nhnacademy.illuwa.common.external.user.UserApiClient;
-import com.nhnacademy.illuwa.common.external.user.dto.PointRequest;
 import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
+import com.nhnacademy.illuwa.domain.order.dto.common.UsedPointRequest;
+import com.nhnacademy.illuwa.domain.order.dto.event.PointSavedEvent;
 import com.nhnacademy.illuwa.domain.order.dto.event.PointUsedEvent;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderResponseDto;
 import com.nhnacademy.illuwa.domain.order.dto.order.OrderUpdateStatusDto;
@@ -20,6 +21,7 @@ import com.nhnacademy.illuwa.domain.order.service.common.CommonOrderService;
 import com.nhnacademy.illuwa.domain.order.service.publisher.PointEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
@@ -29,7 +31,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -44,13 +45,17 @@ public class CommonOrderServiceImpl implements CommonOrderService {
     private final ProductApiClient productApiClient;
     private final PointEventPublisher pointEventPublisher;
 
+    private String pointMode = "async";
+
     @Override
     public void updateOrderStatus(Long orderId, OrderUpdateStatusDto orderUpdateDto) {
         Order order = orderRepository.findByOrderId(orderId).orElseThrow(()
                 -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderId));
         if (orderUpdateDto.getOrderStatus() == OrderStatus.Confirmed) {
-            TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice());
-            userApiClient.sendTotalPrice(totalRequest);
+//            TotalRequest totalRequest = new TotalRequest(order.getMemberId(), order.getTotalPrice());
+//            userApiClient.sendTotalPrice(totalRequest);
+            PointSavedEvent event = new PointSavedEvent(order.getMemberId(), order.getTotalPrice());
+            pointEventPublisher.sendPointSavedEvent(event);
         }
 
         orderRepository.updateStatusByOrderId(orderId, orderUpdateDto);
@@ -59,30 +64,34 @@ public class CommonOrderServiceImpl implements CommonOrderService {
     @Override
     public void updateOrderPaymentByOrderNumber(String orderNumber) {
         StopWatch sw = new StopWatch("order-payment-update");
+
+        // 1) 조회
         sw.start("find-order");
-        Order order = orderRepository.findByOrderNumber(orderNumber).orElseThrow(()
-                -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
+        Order order = orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new NotFoundException("해당 주문 내역을 찾을 수 없습니다.", orderNumber));
         sw.stop();
 
-        if (Objects.nonNull(order.getMemberId())) {
-            sw.start("point-deduct-feign");
-            PointRequest usedPoint = new PointRequest(order.getMemberId(), order.getUsedPoint());
-            userApiClient.sendUsedPointByMemberId(usedPoint);
-            sw.stop();
-        }
-
-//        if (order.getMemberId() != null && order.getUsedPoint().compareTo(BigDecimal.ZERO) > 0) {
-//            sw.start("point-deduct-rabbit");
-//            PointUsedEvent event = new PointUsedEvent(order.getMemberId(), order.getUsedPoint());
-//            pointEventPublisher.sendPointUsedEvent(event);
-//            sw.stop();
-//        }
-
+        // 2) 주문 상태 업데이트
         sw.start("repo-update-status");
         orderRepository.updateStatusByOrderNumber(orderNumber);
         sw.stop();
 
-        log.info("[updateOrderPaymentByOrderNumber] total={}ms detail=\n{}", sw.getTotalTimeMillis(), sw.prettyPrint());
+        // 3) 포인트 처리
+        if (order.getMemberId() != null && order.getUsedPoint().compareTo(BigDecimal.ZERO) > 0) {
+            if ("sync".equalsIgnoreCase(pointMode)) {
+                sw.start("point-deduct-feign");
+                userApiClient.sendUsedPointByMemberId(new UsedPointRequest(order.getMemberId(), order.getUsedPoint()));
+                sw.stop();
+            } else {
+                sw.start("point-deduct-rabbit");
+                PointUsedEvent event = new PointUsedEvent(order.getMemberId(), order.getUsedPoint());
+                pointEventPublisher.sendPointUsedEvent(event);
+                sw.stop();
+            }
+        }
+
+        log.info("[updateOrderPaymentByOrderNumber mode={}] total={}ms detail=\n{}",
+                pointMode, sw.getTotalTimeMillis(), sw.prettyPrint());
     }
 
 

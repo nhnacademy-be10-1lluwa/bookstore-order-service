@@ -1,8 +1,8 @@
 package com.nhnacademy.illuwa.domain.order.batch.writer;
 
-import com.nhnacademy.illuwa.common.external.user.UserApiClient;
-import com.nhnacademy.illuwa.common.external.user.dto.TotalRequest;
 import com.nhnacademy.illuwa.domain.order.batch.domain.OrderRow;
+import com.nhnacademy.illuwa.domain.order.dto.event.PointSavedEvent;
+import com.nhnacademy.illuwa.domain.order.service.publisher.PointEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -15,7 +15,8 @@ import java.util.*;
 public class ConfirmAndPointWriter implements ItemWriter<Long> {
 
     private final JdbcTemplate jdbc;
-    private final UserApiClient userApi;
+    private final PointEventPublisher pointEventPublisher;
+    //    private final UserApiClient userApi;
 
     private static final String SELECT_SQL = """
             select order_id, member_id, total_price
@@ -60,7 +61,8 @@ public class ConfirmAndPointWriter implements ItemWriter<Long> {
         );
 
         memberTotals.forEach((memberId, total) -> {
-            userApi.sendTotalPrice(new TotalRequest(memberId, total));
+//            userApi.sendTotalPrice(new TotalRequest(memberId, total));
+            pointEventPublisher.sendPointSavedEvent(new PointSavedEvent(memberId, total));
         });
     }
 
